@@ -13,9 +13,8 @@ class ProjetSeeder extends Seeder
     public function run(): void
     {
         Projet::insert([
-            ['name' => 'Sales Department'],
-            ['name' => 'Technical Support'],
-            ['name' => 'Billing Support'],
+            ['name' => 'Coprofa'],
+            ['name' => 'SOTUFAB'],
         ]);
     }
 }

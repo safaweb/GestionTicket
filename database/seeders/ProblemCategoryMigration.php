@@ -15,19 +15,15 @@ class ProblemCategoryMigration extends Seeder
         ProblemCategory::insert([
             [
                 'projet_id' => 1,
-                'name' => 'Problem One at Sales Department',
+                'name' => ' Dev Devalto',
             ],
             [
                 'projet_id' => 1,
-                'name' => 'Problem Two at Sales Department',
+                'name' => 'Dev Web',
             ],
             [
                 'projet_id' => 2,
-                'name' => 'Problem One at Technical Support',
-            ],
-            [
-                'projet_id' => 3,
-                'name' => 'Problem One at Billing Support',
+                'name' => 'Dev Mobile',
             ],
         ]);
     }
