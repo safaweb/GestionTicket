@@ -57,7 +57,7 @@ class TicketPolicy
      */
     public function delete(User $user, Ticket $ticket): bool
     {
-        if ($ticket->statut_des_tickets_id != StatutDuTicket::OPEN) {
+        if ($ticket->statut_des_tickets_id != StatutDuTicket::OUVERT) {
             return false;
         }
 

@@ -13,14 +13,14 @@ class StatutDuTicketSeeder extends Seeder
     public function run(): void
     {
         StatutDuTicket::insert([
-            ['id' => StatutDuTicket::OPEN, 'name' => 'Open'],
-            ['id' => StatutDuTicket::ASSIGNED, 'name' => 'Assigned'],
-            ['id' => StatutDuTicket::IN_PROGRESS, 'name' => 'In Progress'],
-            ['id' => StatutDuTicket::ON_HOLD, 'name' => 'On Hold'],
-            ['id' => StatutDuTicket::ESCALATED, 'name' => 'Escalated'],
-            ['id' => StatutDuTicket::PENDING_CUSTOMER_RESPONSE, 'name' => 'Pending Customer Response'],
-            ['id' => StatutDuTicket::RESOLVED, 'name' => 'Resolved'],
-            ['id' => StatutDuTicket::CLOSED, 'name' => 'Closed'],
+            ['id' => StatutDuTicket::OUVERT, 'name' => 'Ouvert'],
+            ['id' => StatutDuTicket::ASSIGNE, 'name' => 'Assigné(e)'],
+            ['id' => StatutDuTicket::EN_COURS, 'name' => 'En cours'],
+            ['id' => StatutDuTicket::EN_ATTENTE, 'name' => 'En attente'],
+            ['id' => StatutDuTicket::ESCALADE, 'name' => 'Escaladé'],
+            ['id' => StatutDuTicket::EN_ATTENTE_DE_LA_REPONSE_DU_CLIENT, 'name' => 'En attente de la réponse du client'],
+            ['id' => StatutDuTicket::RESOLU, 'name' => 'Résolu'],
+            ['id' => StatutDuTicket::FERME, 'name' => 'Fermé'],
         ]);
     }
 }
