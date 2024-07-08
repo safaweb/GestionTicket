@@ -1,0 +1,23 @@
+{
+    "Ticket": "Ticket",
+    "Tickets": "Tickets",
+    "Name": "Nom",
+    "Title": "Titre",
+    "Work Unit": "Unité de travail",
+    "Problem Category": "Catégories des problèmes",
+    "Description": "Description",
+    "Priority": "Priorité",
+    "Created at": "Créé à",
+    "Updated at": "Mis à jour à",
+    "Approved at": "Approuvé à",
+    "Solved at": "Résolu à",
+    "Status": "Statut",
+    "Ticket Status": "Statut du ticket",
+    "Responsible": "Responsable",
+    "Tickets Count": "Nombre de tickets",
+    "Ticket Statuses ": "Statuts des tickets",
+    "Owner": "Propriétaire",
+    "Login": "Connexion",
+    "Why Use Helpdesk?": "Pourquoi utiliser un helpdesk ?",
+    "Reasons": "Les helpdesks offrent un support efficace, centralisent la communication, rationalisent les workflows, offrent des options en libre-service, surveillent les performances et améliorent l'expérience client."
+}
