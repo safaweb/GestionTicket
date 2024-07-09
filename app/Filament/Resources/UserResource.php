@@ -29,27 +29,34 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('projet_id')
+                ->label('Projet')
                     ->options(Projet::all()
                         ->pluck('name', 'id'))
                     ->searchable(),
                 Forms\Components\TextInput::make('name')
+                    ->label('Nom')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                ->label('Email')
                     ->email()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
+                Forms\Components\DateTimePicker::make('email_verified_at')->label('Email_verifié_à'),
                 Forms\Components\TextInput::make('password')
+                ->label('Mot de passe')
                     ->password()
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('identity')
+                ->label('Pays')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
+                    ->label('Numéro de téléphone')
                     ->tel()
                     ->maxLength(255),
                 Forms\Components\Toggle::make('is_active')
+                    ->label('Actif')
                     ->required(),
             ])
         ;
@@ -59,10 +66,11 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('email'),
-                Tables\Columns\TagsColumn::make('roles.name'),
+                Tables\Columns\TextColumn::make('name')->label('Nom'),
+                Tables\Columns\TextColumn::make('email')->label('Email'),
+                Tables\Columns\TagsColumn::make('roles.name')->label('Role'),
                 Tables\Columns\IconColumn::make('is_active')
+                    ->label('Actif')
                     ->boolean(),
             ])
             ->filters([

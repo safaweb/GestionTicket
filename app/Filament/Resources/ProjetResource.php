@@ -27,6 +27,7 @@ class ProjetResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Nom')
                     ->required()
                     ->maxLength(255),
             ])
@@ -37,7 +38,7 @@ class ProjetResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')->label('Nom'),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
