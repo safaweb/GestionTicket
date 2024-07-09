@@ -26,5 +26,10 @@ class RoleSeeder extends Seeder
             'name' => 'Staff Projet',
             'guard_name' => 'web',
         ]);
+
+        Role::create([
+            'name' => 'Client',
+            'guard_name' => 'web',
+        ]);
     }
 }

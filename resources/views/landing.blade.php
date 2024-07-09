@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config('app.name') }} </title>
-    <link rel="icon" href="{{ asset('/simsoft-n.png') }}">
     <meta name="description" content="{{ env('APP_DESCRIPTION', 'Laravel description') }}">
     @vite(['resources/css/app.css'])
 </head>

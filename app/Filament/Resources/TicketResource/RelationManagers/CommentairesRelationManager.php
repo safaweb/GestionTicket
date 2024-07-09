@@ -75,7 +75,7 @@ class CommentairesRelationManager extends RelationManager
                     ->after(function (Livewire $livewire) {
                         $ticket = $livewire->ownerRecord;
 
-                        if (auth()->user()->hasAnyRole(['Admin Projet', 'Staff Projet'])) {
+                        if (auth()->user()->hasAnyRole(['Admin Projet', 'Staff Projet','Super Admin'])) {
                             $receiver = $ticket->owner;
                         } else {
                             $receiver = User::whereHas(
@@ -90,7 +90,7 @@ class CommentairesRelationManager extends RelationManager
                         Notification::make()
                             ->title('Il y a un nouveau commentaire sur votre ticket')
                             ->actions([
-                                Action::make('Lihat')
+                                Action::make('Voir')
                                     ->url(TicketResource::getUrl('view', ['record' => $ticket->id])),
                             ])
                             ->sendToDatabase($receiver);

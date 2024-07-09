@@ -256,11 +256,14 @@ return [
     |
     | This is the path to the favicon used for pages in the admin panel.
     |
+        <link rel="icon" href="{{ asset('/simsoft-n.png') }}">
+        asset('/simsoft-n.png')
     */
 
-    'favicon' => asset('/simsoft-n.png'),
+    'favicon' => null,
 
     /*
+
     |--------------------------------------------------------------------------
     | Default Avatar Provider
     |--------------------------------------------------------------------------
