@@ -19,7 +19,6 @@ class ProblemCategoriesRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                ->label('Catégories Des Problèmes')
                     ->required()
                     ->maxLength(255),
             ])
