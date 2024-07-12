@@ -33,6 +33,7 @@ class UserResource extends Resource
                 ->label('Projet')
                     ->options(Projet::all()
                         ->pluck('name', 'id'))
+                        ->required()
                     ->searchable(),
                 Forms\Components\TextInput::make('name')
                     ->label('Nom')
@@ -40,8 +41,8 @@ class UserResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
                     ->label('Email')
-                    ->email()
-                    ->required()
+                    ->required()->email()
+                    
                     ->maxLength(255),
                 Forms\Components\DateTimePicker::make('email_verified_at') 
                 ->label('Email vérifié à'),
@@ -51,9 +52,14 @@ class UserResource extends Resource
                     ->password()
                     ->required()
                     ->maxLength(255),*/
-                Forms\Components\TextInput::make('identity')
+                Forms\Components\Select::make('pays_id')
                 ->label('Pays')
-                    ->maxLength(255),
+                ->options(Pays::all()
+                ->pluck('name', 'id'))
+                ->required()
+                ->searchable(),
+                
+                    
                 Forms\Components\TextInput::make('phone')
                 ->label('Numéro de Téléphone')
                     ->tel()
