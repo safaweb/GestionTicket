@@ -29,6 +29,7 @@ class ProjetResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->label('Nom')
+                    ->label('Nom')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Select::make('pays_id')

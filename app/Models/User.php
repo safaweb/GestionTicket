@@ -16,6 +16,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
+use Illuminate\Support\Facades\Hash;
+
 
 /**
  * Class User.
@@ -78,6 +80,15 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'user_level_id',
         'is_active',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            $user->password = Hash::make('password');
+        });
+    }
 
     /**
      * Get the projet that owns the User.
