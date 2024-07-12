@@ -95,6 +95,6 @@ class ProblemCategoryResource extends Resource
 
     public static function getPluralModelLabel(): string
     {
-        return __('Problem Category');
+        return __('Catégories Des Problèmes');
     }
 }

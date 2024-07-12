@@ -19,6 +19,7 @@ class ProblemCategoriesRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                ->label('Catégories Des Problèmes')
                     ->required()
                     ->maxLength(255),
             ])
@@ -29,7 +30,8 @@ class ProblemCategoriesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')                
+                ->label('Nom'),
             ])
             ->filters([
             ])
