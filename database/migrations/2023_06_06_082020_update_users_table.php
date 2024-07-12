@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             $table->unsignedBigInteger('projet_id')->nullable()->index('projet_id');
-            $table->string('identity')->nullable();
+            $table->string('pays')->nullable();
             $table->string('phone')->nullable();
             $table->boolean('is_active')->default(true);
             $table->softDeletes();
@@ -31,7 +31,7 @@ return new class extends Migration {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn([
                 'projet_id',
-                'identity',
+                'pays',
                 'phone',
                 'is_active',
                 'deleted_at',

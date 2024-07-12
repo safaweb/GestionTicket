@@ -12,9 +12,8 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('projets', function (Blueprint $table) {
+        Schema::create('pays', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('pays')->nullable();
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();
@@ -28,6 +27,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('projets');
+        Schema::dropIfExists('pays');
     }
 };

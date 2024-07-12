@@ -31,6 +31,10 @@ class TicketsRelationManager extends RelationManager
                     ->searchable()
                     ->label(__('Problem Category'))
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('pays.name')
+                    ->searchable()
+                    ->label(__('Pays'))
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('statutDuTicket.name')
                     ->label('Statut')
                     ->sortable(),

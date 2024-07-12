@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $priority_id
  * @property int $projet_id
+ *  @property int $pays_id
  * @property int $owner_id
  * @property int $problem_category_id
  * @property string $title
@@ -30,6 +31,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property null|string $deleted_at
  * @property Priority $priority
  * @property Projet $projet
+ * @property Pays $pays
  * @property null|User $user
  * @property ProblemCategory $problem_category
  * @property StatutDuTicket $statut_du_ticket
@@ -43,6 +45,7 @@ class Ticket extends Model
     protected $casts = [
         'priority_id' => 'int',
         'projet_id' => 'int',
+        'pays_id' => 'int',
         'owner_id' => 'int',
         'problem_category_id' => 'int',
         'statuts_des_tickets_id' => 'int',
@@ -54,6 +57,7 @@ class Ticket extends Model
     protected $fillable = [
         'priority_id',
         'projet_id',
+        'pays_id' ,
         'owner_id',
         'problem_category_id',
         'title',
@@ -83,6 +87,16 @@ class Ticket extends Model
     {
         return $this->belongsTo(Projet::class);
     }
+     /**
+      * Get the pays that owns the Ticket.
+      *
+      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+      */
+     public function pays()
+     {
+         return $this->belongsTo(Pays::class);
+     }
+ 
 
     /**
      * Get the owner that owns the Ticket.
@@ -112,6 +126,15 @@ class Ticket extends Model
     public function problemCategory()
     {
         return $this->belongsTo(ProblemCategory::class);
+    }
+     /**
+     * Get the user that owns the Ticket.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     /**

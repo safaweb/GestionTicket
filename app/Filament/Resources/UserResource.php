@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\TicketsRelationManager;
 use App\Models\Projet;
+use App\Models\Pays;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -29,27 +30,37 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('projet_id')
+                    ->label('Id du projet')
                     ->options(Projet::all()
                         ->pluck('name', 'id'))
                     ->searchable(),
                 Forms\Components\TextInput::make('name')
+                    ->label('Nom')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                ->label('Eamil')
                     ->email()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
+                Forms\Components\DateTimePicker::make('email_verified_at')   ->label('Email vérifié à'),
                 Forms\Components\TextInput::make('password')
+                    ->label('Mot de passe')
                     ->password()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('identity')
-                    ->maxLength(255),
+                Forms\Components\Select::make('pays_id')
+                    ->label('Pays')
+                    ->required()
+                    ->options(Pays::all()
+                    ->pluck('name', 'id'))
+                ->searchable(),
                 Forms\Components\TextInput::make('phone')
+                    ->label('Téléphone')
                     ->tel()
                     ->maxLength(255),
                 Forms\Components\Toggle::make('is_active')
+                    ->label('Actif')
                     ->required(),
             ])
         ;

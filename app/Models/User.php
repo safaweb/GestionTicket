@@ -22,6 +22,7 @@ use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
  *
  * @property int $id
  * @property null|int $projet_id
+ * @property null|int $pays_id
  * @property string $name
  * @property string $email
  * @property null|Carbon $email_verified_at
@@ -32,12 +33,13 @@ use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
  * @property null|string $remember_token
  * @property null|Carbon $created_at
  * @property null|Carbon $updated_at
- * @property null|string $identity
+ * @property null|string $pays
  * @property null|string $phone
  * @property null|int $user_level_id
  * @property bool $is_active
  * @property null|string $deleted_at
  * @property null|Projet $projet
+ * @property null|Pays $pays
  * @property Collection|Commentaire[] $commentaires
  * @property Collection|Ticket[] $tickets
  */
@@ -62,6 +64,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     protected $fillable = [
         'projet_id',
+        'pays_id',
         'name',
         'email',
         'email_verified_at',
@@ -70,7 +73,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'two_factor_recovery_codes',
         'two_factor_confirmed_at',
         'remember_token',
-        'identity',
+        'pays',
         'phone',
         'user_level_id',
         'is_active',
@@ -85,7 +88,17 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     {
         return $this->belongsTo(Projet::class);
     }
-
+    
+         /**
+      * Get the pays that owns the Ticket.
+      *
+      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+      */
+      public function pays()
+      {
+          return $this->belongsTo(Pays::class, 'pays_id');
+      }
+  
     /**
      * Get all of the commentaires for the User.
      *

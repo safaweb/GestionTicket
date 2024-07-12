@@ -6,6 +6,7 @@ use App\Filament\Resources\TicketResource\Pages;
 use App\Filament\Resources\TicketResource\RelationManagers\CommentairesRelationManager;
 use App\Models\Priority;
 use App\Models\ProblemCategory;
+use App\Models\Pays;
 use App\Models\Ticket;
 use App\Models\StatutDuTicket;
 use App\Models\Projet;
@@ -158,11 +159,24 @@ class TicketResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->translateLabel()
-                    ->sortable()
+                    ->sortable() 
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('problemCategory.name')
+                Tables\Columns\TextColumn::make('projet.name')
                     ->searchable()
-                    ->label(__('Problem Category'))
+                    ->label(__('Projet'))
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('ProblemCategory.name')
+                    ->searchable()
+                    ->label(__('Catégorie des problèmes'))
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('owner.name') 
+                    ->label(__('User'))
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('projet.pays.name')
+                    ->searchable()
+                    ->label(__('Pays'))
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('statutDuTicket.name')
                     ->label(__('Statut'))
@@ -170,7 +184,14 @@ class TicketResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\SelectFilter::make('projet_id')
+        ->options(Projet::all()->pluck('name', 'id')->toArray())
+        ->label(__('Projet')),
+        Tables\Filters\SelectFilter::make('pays_id')
+        ->options(Pays::all()->pluck('name', 'id')->toArray())
+        ->label(__('Pays'))
             ])
+            
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),

@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property int $id
  * @property string $name
+ * @property null|int $pays_id
+ * @property null|Pays $pays
  * @property Collection|ProblemCategory[] $problem_categories
  * @property Collection|Ticket[] $tickets
  * @property Collection|User[] $Users
@@ -28,6 +30,8 @@ class Projet extends Model
 
     protected $fillable = [
         'name',
+        'pays_id',
+        'pays',
     ];
 
     /**
@@ -39,6 +43,16 @@ class Projet extends Model
     {
         return $this->hasMany(ProblemCategory::class);
     }
+
+         /**
+      * Get the pays that owns the Ticket.
+      *
+      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+      */
+      public function pays()
+      {
+          return $this->belongsTo(Pays::class, 'pays_id');
+      }
 
     /**
      * Get all of the tickets for the Projet
@@ -59,4 +73,6 @@ class Projet extends Model
     {
         return $this->hasMany(User::class);
     }
+
+
 }
