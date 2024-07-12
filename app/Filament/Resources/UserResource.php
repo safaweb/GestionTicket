@@ -30,6 +30,7 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('projet_id')
+                ->label('Projet')
                     ->options(Projet::all()
                         ->pluck('name', 'id'))
                     ->searchable(),
@@ -38,17 +39,23 @@ class UserResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label('Email')
                     ->email()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
+                Forms\Components\DateTimePicker::make('email_verified_at') 
+                ->label('Email vérifié à'),
+                
+               /* Forms\Components\TextInput::make('password')
+                
                     ->password()
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255),*/
                 Forms\Components\TextInput::make('identity')
+                ->label('Pays')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
+                ->label('Numéro de Téléphone')
                     ->tel()
                     ->maxLength(255),
                 Forms\Components\Toggle::make('is_active')
