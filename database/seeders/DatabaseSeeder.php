@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             StatutDuTicketSeeder::class,
             ProblemCategoryMigration::class,
             TicketSeeder::class,
+            PaysSeeder::class,
         ]);
     }
 }

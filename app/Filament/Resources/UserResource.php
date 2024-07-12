@@ -47,7 +47,7 @@ class UserResource extends Resource
                 Forms\Components\DateTimePicker::make('email_verified_at') 
                 ->label('Email vérifié à'),
                 
-               /* Forms\Components\TextInput::make('password')
+                /* Forms\Components\TextInput::make('password')
                 
                     ->password()
                     ->required()
