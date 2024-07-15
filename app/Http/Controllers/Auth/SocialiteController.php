@@ -78,4 +78,6 @@ class SocialiteController extends Controller
         // Redirection par défaut après la connexion
         return redirect()->intended($this->redirectPath());
 }
+
+
 }

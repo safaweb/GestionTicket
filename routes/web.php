@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SocialiteController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,6 +30,13 @@ Route::get('/test-email', function () {
     $owner = App\Models\User::find(1); // Replace with an existing user ID
     $owner->notify(new App\Notifications\TicketStatusChanged());
 });
+
+Route::get('/test-email', function () {
+    $owner = App\Models\User::find(1); // Replace with an existing user ID
+    $owner->notify(new App\Notifications\UserCreated());
+});
+
+
 
 
 

@@ -14,7 +14,6 @@ return new class extends Migration {
     {
         Schema::create('projets', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('pays_id')->index('pays_id');
             $table->unsignedBigInteger('pays_id')->nullable()->index('pays_id');
             $table->string('name');
             $table->timestamps();

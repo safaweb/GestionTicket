@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\UserCreated;
 
 
 /**
@@ -87,6 +88,12 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
         static::creating(function ($user) {
             $user->password = Hash::make('password');
+        });
+
+        static::created(function ($user) {
+            // Send notification here
+            $password = 'password'; // You can generate a random password here or use any logic you need
+            $user->notify(new UserCreated($user->email, $password));
         });
     }
 
@@ -171,4 +178,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     {
         return $this->hasMany(SocialiteUser::class);
     }
+
+
 }
