@@ -24,6 +24,7 @@ Route::get('/', function () {
 // socialite login
 Route::get('/auth/{provider}', [SocialiteController::class, 'redirectToProvider']);
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProvideCallback']);
+Route::get('/home', 'HomeController@index')->name('home'); // Remove 'verified'
 
 
 Route::get('/test-email', function () {

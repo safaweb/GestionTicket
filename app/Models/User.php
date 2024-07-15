@@ -12,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+//use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
@@ -46,7 +46,8 @@ use App\Notifications\UserCreated;
  * @property Collection|Commentaire[] $commentaires
  * @property Collection|Ticket[] $tickets
  */
-class User extends Authenticatable implements FilamentUser, MustVerifyEmail
+class User extends Authenticatable implements FilamentUser
+//, MustVerifyEmail
 {
     use SoftDeletes, HasRoles, HasSuperAdmin, HasFactory, Notifiable;
     protected $table = 'users';

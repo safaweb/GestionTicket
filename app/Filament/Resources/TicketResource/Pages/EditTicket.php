@@ -17,10 +17,6 @@ class EditTicket extends EditRecord
 
     protected function getActions(): array
     {
-<<<<<<< HEAD
-=======
-        
->>>>>>> 865ad8f3f674164c2c87147e641963bdc26c69a8
         return [
             Actions\ViewAction::make(),
             Actions\DeleteAction::make(),
