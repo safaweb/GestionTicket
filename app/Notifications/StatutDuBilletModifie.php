@@ -31,7 +31,7 @@ class StatutDuBilletModifie extends Notification implements ShouldQueue
         $loginUrl = 'http://127.0.0.1:8000/admin/login';
         return (new MailMessage)
                     ->line('Le statut de votre ticket a été modifié.')
-                    ->line(' ID du Ticket: ' . $this->ticket->id)
+                    ->line(' Nom du Ticket: ' . $this->ticket->name)
                     ->line('Nouveau Statut : ' . $this->newStatus)
                     ->action('Connectez-vous pour voir le billet',$loginUrl)
                     ->line('Merci de disposer de notre application !');
