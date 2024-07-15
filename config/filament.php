@@ -260,7 +260,7 @@ return [
         asset('/simsoft-n.png')
     */
 
-    'favicon' => null,
+    'favicon' => '/simsoft-n.png',
 
     /*
 

@@ -67,4 +67,15 @@ class SocialiteController extends Controller
         // return user
         return $user;
     }
+
+    protected function authenticated(Request $request, $user)
+    {
+        // Vérifier si le paramètre redirect_to est présent dans la requête
+        if ($request->has('redirect_to')) {
+            return redirect($request->input('redirect_to'));
+        }
+
+        // Redirection par défaut après la connexion
+        return redirect()->intended($this->redirectPath());
+}
 }

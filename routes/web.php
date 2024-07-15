@@ -22,3 +22,12 @@ Route::get('/', function () {
 // socialite login
 Route::get('/auth/{provider}', [SocialiteController::class, 'redirectToProvider']);
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProvideCallback']);
+
+
+Route::get('/test-email', function () {
+    $owner = App\Models\User::find(1); // Replace with an existing user ID
+    $owner->notify(new App\Notifications\TicketStatusChanged());
+});
+
+
+

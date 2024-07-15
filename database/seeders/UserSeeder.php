@@ -24,6 +24,7 @@ class UserSeeder extends Seeder
             'name' => 'Admin Projet',
             'email' => 'adminprojet@example.com',
             'projet_id' => 1,
+            'pays_id' => 1,
         ]);
         $adminProjet ->syncRoles('Admin Projet');
 
@@ -32,6 +33,7 @@ class UserSeeder extends Seeder
             'name' => 'Staff Projet',
             'email' => 'staffprojet@example.com',
             'projet_id' => 1,
+            'pays_id' => 1,
         ]);
         $staffProjet ->syncRoles('Staff Projet');
 
