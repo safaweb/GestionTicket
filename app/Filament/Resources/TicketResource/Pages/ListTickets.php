@@ -16,4 +16,8 @@ class ListTickets extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+    protected function getTitle(): string
+    {
+        return 'Liste des Tickets'; // Update this line
+    }
 }

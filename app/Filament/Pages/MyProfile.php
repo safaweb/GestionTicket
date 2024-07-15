@@ -10,6 +10,7 @@ class MyProfile extends BaseProfile
 {
 
     protected static ?int $navigationSort = 500;
+    protected static ?string $navigationLabel = 'Profile';  // Update the label here
 
     protected function getUpdateProfileFormSchema(): array
     {
@@ -19,4 +20,6 @@ class MyProfile extends BaseProfile
                 ->label(__('filament-breezy::default.fields.name')),
         ];
     }
+
+    
 }

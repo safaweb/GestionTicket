@@ -74,6 +74,7 @@ class ProjetResource extends Resource
             ProblemCategoriesRelationManager::class,
             UsersRelationManager::class,
         ];
+        
     }
 
     public static function getPages(): array

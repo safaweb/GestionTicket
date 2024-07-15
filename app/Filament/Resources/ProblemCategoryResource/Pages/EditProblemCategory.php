@@ -19,4 +19,8 @@ class EditProblemCategory extends EditRecord
             Actions\RestoreAction::make(),
         ];
     }
+    protected function getTitle(): string
+    {
+        return 'Modifier Catégorie de problème'; // Update this line
+    }
 }

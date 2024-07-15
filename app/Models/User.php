@@ -100,16 +100,16 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return $this->belongsTo(Projet::class);
     }
     
-         /**
+    /**
       * Get the pays that owns the Ticket.
       *
       * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
       */
-      public function pays()
-      {
-          return $this->belongsTo(Pays::class, 'pays_id');
-      }
-  
+    public function pays()
+    {
+        return $this->belongsTo(Pays::class, 'pays_id');
+    }
+
     /**
      * Get all of the commentaires for the User.
      *
