@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->unsignedBigInteger('priority_id')->index('priority_id');
             $table->unsignedBigInteger('projet_id')->index('projet_id');
             $table->unsignedBigInteger('owner_id')->index('owner_id');
-            $table->unsignedBigInteger('pays_id')->index('pays_id');
             $table->unsignedBigInteger('problem_category_id')->index('problem_category_id');
             $table->string('title');
             $table->text('description');
