@@ -47,8 +47,8 @@ class CreateTicket extends CreateRecord
                     ->orWhere('name', 'Super Admin')
                     ->orWhere('name', 'Client');
             })->where('projet_id', $currentUser->projet_id)
-              ->where('id', '!=', $currentUser->id)
-              ->get();
+            ->where('id', '!=', $currentUser->id)
+            ->get();
         }
 
         // Send the notification to appropriate recipients

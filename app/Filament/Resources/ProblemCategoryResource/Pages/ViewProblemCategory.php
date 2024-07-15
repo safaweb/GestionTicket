@@ -16,4 +16,8 @@ class ViewProblemCategory extends ViewRecord
             Actions\EditAction::make(),
         ];
     }
+    protected function getTitle(): string
+    {
+        return 'Afficher Catégorie de problème'; // Update this line
+    } 
 }

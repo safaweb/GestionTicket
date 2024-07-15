@@ -123,7 +123,10 @@ class TicketResource extends Resource
 
                     Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
-                        ->options(User::ByRole()
+                        //->options(User::ByRole()
+                        ->options(User::whereHas('roles', function($query) {
+                            $query->whereIn('name', ['Role1', 'Role2']); // Replace 'Role1' and 'Role2' with the roles you want to include
+                        })
                             ->pluck('name', 'id'))
                         ->searchable()
                         ->required()
