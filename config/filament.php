@@ -261,7 +261,7 @@ return [
         asset('/simsoft-n.ico')
     */
 
-    'favicon' => env('APP_URL') . '/simsoft-n.ico',
+    'favicon' => '/simsoft-n.png',
 
     /*
 

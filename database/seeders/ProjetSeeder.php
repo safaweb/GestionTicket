@@ -15,6 +15,7 @@ class ProjetSeeder extends Seeder
         Projet::insert([
             ['name' => 'Coprofa'],
             ['name' => 'SOTUFAB'],
+            'pays_id' => 1,
         ]);
     }
 }
