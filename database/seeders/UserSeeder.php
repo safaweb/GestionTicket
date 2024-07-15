@@ -24,7 +24,11 @@ class UserSeeder extends Seeder
             'name' => 'Admin Projet',
             'email' => 'adminprojet@example.com',
             'projet_id' => 1,
+<<<<<<< HEAD
+          'pays_id' => 1,
+=======
             'pays_id' => 1,
+>>>>>>> 865ad8f3f674164c2c87147e641963bdc26c69a8
         ]);
         $adminProjet ->syncRoles('Admin Projet');
 

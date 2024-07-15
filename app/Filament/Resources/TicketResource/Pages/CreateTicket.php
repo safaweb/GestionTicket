@@ -43,9 +43,7 @@ class CreateTicket extends CreateRecord
             // Send notification to users with specific roles, excluding current user
             $receiver = User::whereHas('roles', function ($q) {
                 $q->where('name', 'Admin Projet')
-                    ->orWhere('name', 'Staff Projet')
-                    ->orWhere('name', 'Super Admin')
-                    ->orWhere('name', 'Client');
+                ->orWhere('name', 'Super Admin');
             })->where('projet_id', $currentUser->projet_id)
             ->where('id', '!=', $currentUser->id)
             ->get();

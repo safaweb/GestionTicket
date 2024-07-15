@@ -101,38 +101,4 @@ class ProblemCategoryResource extends Resource
     {
         return __('Catégories Des Problèmes');
     }
-
-    public static function createTicket(array $data)
-    {
-        // Create the ticket
-        $ticket = Ticket::create($data);
-
-        // Get the current user
-        $currentUser = Auth::user();
-
-        if ($currentUser->hasAnyRole(['Admin Projet', 'Staff Projet', 'Super Admin', 'Client'])) {
-            $receiver = User::where('projet_id', $currentUser->projet_id)
-                            ->where('id', '!=', $currentUser->id)
-                            ->get();
-        } else {
-            // Send notification to users with specific roles, excluding current user
-            $receiver = User::whereHas('roles', function ($q) {
-                $q->where('name', 'Admin Projet')
-                    ->orWhere('name', 'Staff Projet')
-                    ->orWhere('name', 'Super Admin')
-                    ->orWhere('name', 'Client');
-            })->where('projet_id', $currentUser->projet_id)
-              ->where('id', '!=', $currentUser->id)
-              ->get();
-        }
-
-        // Send the notification to appropriate recipients
-        Notification::make()
-            ->title('Il y a un nouveau ticket créé ajouté')
-            ->actions([
-                Action::make('Voir')
-                    ->url(route('filament.resources.tickets.view', $ticket->id)),
-            ])
-            ->sendToDatabase($receiver);
-    }
 }
