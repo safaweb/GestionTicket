@@ -121,19 +121,20 @@ class TicketResource extends Resource
                                 ->hasAnyRole(['Super Admin', 'Admin Projet', 'Staff Projet']),
                         ),
 
-                    Forms\Components\Select::make('responsible_id')
+                        Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
-                        ->options(User::ByRole()
-                            ->pluck('name', 'id'))
+                        ->options(
+                            User::whereHas('roles', function($query) {
+                                $query->whereIn('name', ['Super Admin', 'Admin Projet','Staff Projet']);
+                            })->pluck('name', 'id')
+                        )
                         ->searchable()
                         ->required()
                         ->hiddenOn('create')
                         ->hidden(
-                            fn () => !auth()
-                                ->user()
-                                ->hasAnyRole(['Super Admin', 'Admin Projet']),
+                            fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Admin Projet'])
                         ),
-
+                    
                     Forms\Components\Placeholder::make('created_at')
                         ->translateLabel()
                         ->content(fn (
@@ -209,7 +210,7 @@ class TicketResource extends Resource
         return [
             CommentairesRelationManager::class,
         ];
-    }
+    } 
 
     public static function getPages(): array
     {
