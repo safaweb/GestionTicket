@@ -14,7 +14,7 @@ class TicketSeeder extends Seeder
     {
         Ticket::create([
             'priority_id' => 1,
-            'pays_id' => 1,
+         //   'pays_id' => 1,
             'projet_id'   => 1,
             'owner_id'  => 1,
             'problem_category_id' => 1,

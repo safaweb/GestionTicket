@@ -61,5 +61,5 @@ class CreateTicket extends CreateRecord
             ->sendToDatabase($receiver);
 
         return $ticket;
-    }
+    } 
 }
