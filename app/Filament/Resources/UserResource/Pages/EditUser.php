@@ -19,4 +19,5 @@ class EditUser extends EditRecord
             Actions\RestoreAction::make(),
         ];
     }
+
 }

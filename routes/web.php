@@ -14,6 +14,7 @@ use App\Http\Controllers\Auth\SocialiteController;
 |
 */
 
+
 Route::get('/', function () {
     return view('landing');
 });

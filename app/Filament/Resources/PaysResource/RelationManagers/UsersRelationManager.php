@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ProjetResource\RelationManagers;
+namespace App\Filament\Resources\PaysResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -8,13 +8,11 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 
-class ProblemCategoriesRelationManager extends RelationManager
+class UsersRelationManager extends RelationManager
 {
-    protected static string $relationship = 'problemCategories';
+    protected static string $relationship = 'users';
 
     protected static ?string $recordTitleAttribute = 'name';
-    protected static ?string $title = 'Catégories de Problèmes'; // Added label
-
 
     public static function form(Form $form): Form
     {
@@ -32,18 +30,18 @@ class ProblemCategoriesRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TagsColumn::make('roles.name'),
             ])
             ->filters([
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\AttachAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DetachBulkAction::make(),
             ])
         ;
     }

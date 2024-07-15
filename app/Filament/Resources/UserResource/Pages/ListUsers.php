@@ -16,4 +16,9 @@ class ListUsers extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    protected function getTitle(): string
+    {
+        return 'Liste des utilisateurs'; // Update this line
+    }
 }

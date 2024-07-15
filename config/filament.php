@@ -258,6 +258,7 @@ return [
     |
         <link rel="icon" href="{{ asset('/simsoft-n.png') }}">
         asset('/simsoft-n.png')
+        asset('/simsoft-n.ico')
     */
 
     'favicon' => '/simsoft-n.png',

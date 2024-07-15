@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ProjetResource\RelationManagers;
+namespace App\Filament\Resources\PaysResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -8,13 +8,11 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 
-class ProblemCategoriesRelationManager extends RelationManager
+class ProjectRelationManager extends RelationManager
 {
-    protected static string $relationship = 'problemCategories';
+    protected static string $relationship = 'project';
 
     protected static ?string $recordTitleAttribute = 'name';
-    protected static ?string $title = 'Catégories de Problèmes'; // Added label
-
 
     public static function form(Form $form): Form
     {
