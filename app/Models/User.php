@@ -28,7 +28,6 @@ use App\Notifications\UserCreated;
  * @property null|int $pays_id
  * @property string $name
  * @property string $email
- * @property null|Carbon $email_verified_at
  * @property null|string $password
  * @property null|string $two_factor_secret
  * @property null|string $two_factor_recovery_codes
