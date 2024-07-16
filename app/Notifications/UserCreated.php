@@ -30,12 +30,12 @@ class UserCreated extends Notification implements ShouldQueue
         $loginUrl = 'http://127.0.0.1:8000/admin/login';
 
         return (new MailMessage)
-                    ->subject('Your Account Has Been Created')
-                    ->line('Your account has been successfully created.')
-                    ->line('Email: ' . $this->email)
-                    ->line('Password: ' . $this->password)
-                    ->action('Login', $loginUrl)
-                    ->line('Thank you for using our application!');
+                    ->subject('Votre compte a été créé')
+                    ->line('Votre compte a été créé avec succès.')
+                    ->line('Email : ' . $this->email)
+                    ->line('Mot de passe : ' . $this->password)
+                    ->action('Se connecter', $loginUrl)
+                    ->line('Merci d\'utiliser notre application !');
     }
 
     public function toArray($notifiable)
