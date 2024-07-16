@@ -21,6 +21,7 @@ class CreateTicket extends CreateRecord
     {
         $data['owner_id'] = auth()->id();
         $data['statuts_des_tickets_id'] = 1;
+        $data['qualification_id'] = 1;
 
         return $data;
     }
@@ -35,14 +36,14 @@ class CreateTicket extends CreateRecord
         // Get the current user
         $currentUser = Auth::user();
 
-        if ($currentUser->hasAnyRole(['Admin Projet', 'Staff Projet', 'Super Admin', 'Client'])) {
+        if ($currentUser->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur', 'Client'])) {
             $receiver = User::where('projet_id', $currentUser->projet_id)
                             ->where('id', '!=', $currentUser->id)
                             ->get();
         } else {
             // Send notification to users with specific roles, excluding current user
             $receiver = User::whereHas('roles', function ($q) {
-                $q->where('name', 'Admin Projet')
+                $q->where('name', 'Chef Projet')
                 ->orWhere('name', 'Super Admin');
             })->where('projet_id', $currentUser->projet_id)
             ->where('id', '!=', $currentUser->id)

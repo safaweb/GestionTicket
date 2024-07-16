@@ -23,12 +23,12 @@ class TicketPolicy
     public function view(User $user, Ticket $ticket): bool
     {
         // The Admin Projet can view tickets that are assigned to their specific projet.
-        if ($user->hasRole('Admin Projet')) {
+        if ($user->hasRole('Chef Projet')) {
             return $user->id == $ticket->owner_id || $ticket->projet_id == $user->projet_id;
         }
 
         // The staff projet can view tickets that have been assigned to them.
-        if ($user->hasRole('Staff Projet')) {
+        if ($user->hasRole('Employeur')) {
             return $user->id == $ticket->owner_id ||  $ticket->responsible_id == $user->id;
         }
 

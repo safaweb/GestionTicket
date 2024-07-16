@@ -55,14 +55,14 @@ class EditTicket extends EditRecord
    
 
         // Send notification to other relevant users
-        if ($currentUser->hasAnyRole(['Admin Projet', 'Staff Projet', 'Super Admin', 'Client'])) {
+        if ($currentUser->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur', 'Client'])) {
             $receiver = User::where('projet_id', $currentUser->projet_id)
                             ->where('id', '!=', $currentUser->id)
                             ->get();
         } else {
             $receiver = User::whereHas('roles', function ($q) {
-                $q->where('name', 'Admin Projet')
-                    ->orWhere('name', 'Staff Projet')
+                $q->where('name', 'Chef Projet')
+                    ->orWhere('name', 'Employeur')
                     ->orWhere('name', 'Super Admin');
             })->where('projet_id', $currentUser->projet_id)
               ->where('id', '!=', $currentUser->id)

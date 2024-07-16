@@ -13,7 +13,7 @@ class ProblemCategoryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('Admin Projet');
+        return $user->hasRole('Chef Projet');
     }
 
     /**

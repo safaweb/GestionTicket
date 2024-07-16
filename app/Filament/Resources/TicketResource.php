@@ -11,6 +11,7 @@ use App\Models\Ticket;
 use App\Models\StatutDuTicket;
 use App\Models\Projet;
 use App\Models\User;
+use App\Models\Qualification;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Resources\Form;
@@ -35,6 +36,14 @@ class TicketResource extends Resource
         return $form
             ->schema([
                 Card::make()->schema([
+
+                    Forms\Components\Select::make('qualification_id')
+                        ->label(__('Qualifications'))
+                        ->options(Qualification::all()
+                        ->pluck('name', 'id'))
+                        ->searchable()
+                        ->required(),
+
                     Forms\Components\Select::make('projet_id')
                         ->label(__('Projets'))
                         ->options(Projet::all()
@@ -118,21 +127,21 @@ class TicketResource extends Resource
                         ->hidden(
                             fn () => !auth()
                                 ->user()
-                                ->hasAnyRole(['Super Admin', 'Admin Projet', 'Staff Projet']),
+                                ->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']),
                         ),
 
                         Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
                         ->options(
                             User::whereHas('roles', function($query) {
-                                $query->whereIn('name', ['Super Admin', 'Admin Projet','Staff Projet']);
+                                $query->whereIn('name', ['Super Admin', 'Chef Projet', 'Employeur']);
                             })->pluck('name', 'id')
                         )
                         ->searchable()
                         ->required()
                         ->hiddenOn('create')
                         ->hidden(
-                            fn () => !auth()->user()->hasAnyRole(['Super Admin', 'AdminProjet'])
+                            fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet'])
                         ),
                     
                     Forms\Components\Placeholder::make('created_at')
@@ -157,31 +166,31 @@ class TicketResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->translateLabel()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->translateLabel()
-                    ->sortable() 
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('projet.name')
+                    Tables\Columns\TextColumn::make('projet.name')
                     ->searchable()
                     ->label(__('Projet'))
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('ProblemCategory.name')
+                    Tables\Columns\TextColumn::make('ProblemCategory.name')
                     ->searchable()
                     ->label(__('Catégorie des problèmes'))
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('owner.name') 
+                    Tables\Columns\TextColumn::make('owner.name') 
                     ->label(__('User'))
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('projet.pays.name')
+                    Tables\Columns\TextColumn::make('projet.pays.name')
                     ->searchable()
                     ->label(__('Pays'))
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('statutDuTicket.name')
+                    Tables\Columns\TextColumn::make('statutDuTicket.name')
                     ->label(__('Statut'))
                     ->sortable(),
+                    Tables\Columns\TextColumn::make('created_at')
+                        ->dateTime()
+                        ->translateLabel()
+                        ->sortable()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                        ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -239,9 +248,9 @@ class TicketResource extends Resource
                     return;
                 }
 
-                if (auth()->user()->hasRole('Admin Projet')) {
+                if (auth()->user()->hasRole('Chef Projet')) {
                     $query->where('tickets.projet_id', auth()->user()->projet_id)->orWhere('tickets.owner_id', auth()->id());
-                } elseif (auth()->user()->hasRole('Staff Projet')) {
+                } elseif (auth()->user()->hasRole('Employeur')) {
                     $query->where('tickets.responsible_id', auth()->id())->orWhere('tickets.owner_id', auth()->id());
                 } else {
                     $query->where('tickets.owner_id', auth()->id());

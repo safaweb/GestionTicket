@@ -164,10 +164,11 @@ class User extends Authenticatable implements FilamentUser
      */
     public function scopeByRole($query)
     {
-        if (auth()->user()->hasRole('Admin Projet')) {
-        if (auth()->user()->hasRole('Admin Projet')) {
+        if (auth()->user()->hasRole('Chef Projet')) {
+        if (auth()->user()->hasRole('Chef Projet')) {
             return $query->where('users.projet_id', auth()->user()->projet_id);
         }
+    }
     }
 
     /**

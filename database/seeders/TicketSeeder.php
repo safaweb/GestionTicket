@@ -16,6 +16,7 @@ class TicketSeeder extends Seeder
             'priority_id' => 1,
             'projet_id'   => 1,
             'owner_id'  => 1,
+            'qualification_id'  => 1,
             'problem_category_id' => 1,
             'title' => 'This is a sample ticket',
             'description' => 'This is a descriptions',
