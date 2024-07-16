@@ -132,7 +132,7 @@ class TicketResource extends Resource
                         ->required()
                         ->hiddenOn('create')
                         ->hidden(
-                            fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Admin Projet'])
+                            fn () => !auth()->user()->hasAnyRole(['Super Admin', 'AdminProjet'])
                         ),
                     
                     Forms\Components\Placeholder::make('created_at')
