@@ -53,7 +53,7 @@ class User extends Authenticatable implements FilamentUser
 
     protected $casts = [
         'projet_id' => 'int',
-       // 'email_verified_at' => 'datetime',
+      //  'email_verified_at' => 'datetime',
         'two_factor_confirmed_at' => 'datetime',
         'user_level_id' => 'int',
         'is_active' => 'bool',
@@ -70,7 +70,7 @@ class User extends Authenticatable implements FilamentUser
         'pays_id',
         'name',
         'email',
-        //'email_verified_at',
+       // 'email_verified_at',
         'password',
         'two_factor_secret',
         'two_factor_recovery_codes',
@@ -164,6 +164,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function scopeByRole($query)
     {
+        if (auth()->user()->hasRole('Admin Projet')) {
         if (auth()->user()->hasRole('Admin Projet')) {
             return $query->where('users.projet_id', auth()->user()->projet_id);
         }

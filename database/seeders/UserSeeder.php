@@ -23,9 +23,10 @@ class UserSeeder extends Seeder
         // 2. create a Admin Projet
         $adminProjet = User::factory()->create([
             'name' => 'Admin Projet',
-            'email' => 'adminprojet@example.com',
+            'email' => 'chefprojet@example.com',
             'projet_id' => 1,
             'pays_id' => 1,
+
         ]);
         $adminProjet ->syncRoles('Admin Projet');
 
