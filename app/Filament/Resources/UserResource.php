@@ -56,7 +56,14 @@ class UserResource extends Resource
                     ->required()->email()
                     
                     ->maxLength(255),
-              
+                //Forms\Components\DateTimePicker::make('email_verified_at') 
+                //->label('Email vérifié à'),
+                
+                /* Forms\Components\TextInput::make('password')
+                
+                    ->password()
+                    ->required()
+                    ->maxLength(255),*/
                 Forms\Components\Select::make('pays_id')
                 ->label('Pays')
                 ->options(Pays::all()

@@ -89,12 +89,12 @@ return [
     |--------------------------------------------------------------------------
     | Path to email verification Livewire component.
     */
-    "email_verification_component_path" => \JeffGreco13\FilamentBreezy\Http\Livewire\Auth\Verify::class,
+    //"email_verification_component_path" => \JeffGreco13\FilamentBreezy\Http\Livewire\Auth\Verify::class,
     /*
     |--------------------------------------------------------------------------
     | Path to email verification Controller component.
     */
-    "email_verification_controller_path" => \JeffGreco13\FilamentBreezy\Http\Controllers\EmailVerificationController::class,
+    //"email_verification_controller_path" => \JeffGreco13\FilamentBreezy\Http\Controllers\EmailVerificationController::class,
     /*
     |--------------------------------------------------------------------------
     | Path to Profile page component.

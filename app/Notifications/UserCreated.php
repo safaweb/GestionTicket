@@ -34,6 +34,7 @@ class UserCreated extends Notification implements ShouldQueue
                     ->line('Votre compte a été créé avec succès.')
                     ->line('Email : ' . $this->email)
                     ->line('Mot de passe : ' . $this->password)
+                    ->line('Veuillez le modifier!')
                     ->action('Se connecter', $loginUrl)
                     ->line('Merci d\'utiliser notre application !');
     }

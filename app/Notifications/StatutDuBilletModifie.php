@@ -33,7 +33,7 @@ class StatutDuBilletModifie extends Notification implements ShouldQueue
                     ->line('Le statut de votre ticket a été modifié.')
                     ->line(' Nom du Ticket: ' . $this->ticket->name)
                     ->line('Nouveau Statut : ' . $this->newStatus)
-                    ->action('Connectez-vous pour voir le billet',$loginUrl)
+                    ->action('Connectez-vous pour voir le ticket',$loginUrl)
                     ->line('Merci de disposer de notre application !');
     }
 
