@@ -28,7 +28,7 @@ Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProv
 
 Route::get('/test-email', function () {
     $owner = App\Models\User::find(1); // Replace with an existing user ID
-    $owner->notify(new App\Notifications\TicketStatusChanged());
+    $owner->notify(new App\Notifications\StatutDuBilletModifie());
 });
 
 Route::get('/test-email', function () {
