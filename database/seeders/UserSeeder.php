@@ -16,6 +16,7 @@ class UserSeeder extends Seeder
         $superAdmin = User::factory()->create([
             'name' => 'Super Admin',
             'email' => 'superadmin@example.com',
+            'pays_id' => 1,
         ]);
         $superAdmin->syncRoles('Super Admin');
 
@@ -24,11 +25,7 @@ class UserSeeder extends Seeder
             'name' => 'Admin Projet',
             'email' => 'adminprojet@example.com',
             'projet_id' => 1,
-<<<<<<< HEAD
-          'pays_id' => 1,
-=======
             'pays_id' => 1,
->>>>>>> 865ad8f3f674164c2c87147e641963bdc26c69a8
         ]);
         $adminProjet ->syncRoles('Admin Projet');
 
@@ -45,6 +42,7 @@ class UserSeeder extends Seeder
         $userProjet  = User::factory()->create([
             'name' => 'Client',
             'email' => 'user@example.com',
+            'pays_id' => 1,
         ]);
         $userProjet ->syncRoles('Client');
     }

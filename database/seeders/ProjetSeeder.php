@@ -13,8 +13,8 @@ class ProjetSeeder extends Seeder
     public function run(): void
     {
         Projet::insert([
-            ['name' => 'Coprofa', 'pays_id' => 1],
             ['name' => 'SOTUFAB', 'pays_id' => 1],
+            ['name' => 'Coprofa', 'pays_id' => 1],
         ]);
     }
 }
