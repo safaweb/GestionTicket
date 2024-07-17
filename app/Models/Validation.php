@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Validation.
+ * Class Validation.
  *
  * @property int $id
  * @property string $name
@@ -19,14 +20,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Validation extends Model
 {
-    use SoftDeletes;
+    //use SoftDeletes;
 
     public const ACCEPTER = 1;
     public const REFUSER= 2;
     public const TERMINER = 3;
     public $timestamps = false;
     protected $table = 'validation';
-
     protected $fillable = [
         'name',
     ];
