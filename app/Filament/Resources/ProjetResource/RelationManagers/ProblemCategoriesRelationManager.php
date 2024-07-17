@@ -37,6 +37,8 @@ class ProblemCategoriesRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
+                Tables\Actions\AttachAction::make()
+                ->label('Attacher'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

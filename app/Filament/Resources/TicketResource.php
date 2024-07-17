@@ -9,6 +9,7 @@ use App\Models\Pays;
 use App\Models\Ticket;
 use App\Models\StatutDuTicket;
 use App\Models\Projet;
+use App\Models\Societe;
 use App\Models\User;
 use App\Models\Qualification;
 use Filament\Forms;
@@ -45,31 +46,37 @@ class TicketResource extends Resource
 
                     Forms\Components\Select::make('projet_id')
                         ->label(__('Projets'))
-                        ->options(Projet::all()
-                            ->pluck('name', 'id'))
+                        //->options(Projet::all()
+                         //   ->pluck('name', 'id'))
+                         ->options(function (callable $get) {
+                            $user = auth()->user();
+                            $societeId = $user->societe_id; // Assuming the user model has a societe_id attribute
+                            return Projet::where('societe_id', $societeId)->pluck('name', 'id');
+                        })
+
                         ->searchable()
                         ->required()
                         ->afterStateUpdated(function ($state, callable $get, callable $set) {
                             $projet = Projet::find($state);
-                            if ($projet) {
+                        /*  if ($projet) {
                                 $problemCategoryId = (int) $get('problem_category_id');
                                 if ($problemCategoryId && $problemCategory = ProblemCategory::find($problemCategoryId)) {
                                     if ($problemCategory->projet_id !== $projet->id) {
                                         $set('problem_category_id', null);
                                     }
                                 }
-                            }
+                            }*/
                         })
                         ->reactive(),
 
                     Forms\Components\Select::make('problem_category_id')
                         ->label(__('Problem Category'))
                         ->options(function (callable $get, callable $set) {
-                            $projet = Projet::find($get('projet_id'));
+                            /*$projet = Projet::find($get('projet_id'));
                             if ($projet) {
                                 return $projet->problemCategories->pluck('name', 'id');
                             }
-
+*/
                             return ProblemCategory::all()->pluck('name', 'id');
                         })
                         ->searchable()

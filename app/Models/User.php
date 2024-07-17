@@ -91,12 +91,12 @@ class User extends Authenticatable implements FilamentUser
         parent::boot();
 
         static::creating(function ($user) {
-            $user->password = Hash::make('password');
+            $user->password = Hash::make('12345678'); 
         });
 
         static::created(function ($user) {
             // Send notification here
-            $password = 'password'; // You can generate a random password here or use any logic you need
+            $password = '12345678'; // You can generate a random password here or use any logic you need
             $user->notify(new UserCreated($user->email, $password));
         });
     }
