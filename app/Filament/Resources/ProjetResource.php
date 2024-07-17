@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjetResource\Pages;
-use App\Filament\Resources\ProjetResource\RelationManagers\ProblemCategoriesRelationManager;
+//use App\Filament\Resources\ProjetResource\RelationManagers\ProblemCategoriesRelationManager;
 use App\Filament\Resources\ProjetResource\RelationManagers\UsersRelationManager;
 use App\Models\Projet;
 use App\Models\Pays;
@@ -79,7 +79,7 @@ class ProjetResource extends Resource
     public static function getRelations(): array
     {
         return [
-            ProblemCategoriesRelationManager::class,
+           // ProblemCategoriesRelationManager::class,
             UsersRelationManager::class,
         ];
         
