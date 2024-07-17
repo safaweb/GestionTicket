@@ -170,7 +170,7 @@ class User extends Authenticatable implements FilamentUser
             return $query->where('users.projet_id', auth()->user()->projet_id);
         }
     }
-
+    }
     /**
      * Get all of the socialiteUsers for the User
      *
