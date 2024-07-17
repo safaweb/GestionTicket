@@ -12,7 +12,7 @@ class SocieteSeeder extends Seeder
      */
     public function run(): void
     {
-        Projet::insert([
+        Societe::insert([
             ['name' => 'SOTUFAB'],
             ['name' => 'Coprofa'],
         ]);

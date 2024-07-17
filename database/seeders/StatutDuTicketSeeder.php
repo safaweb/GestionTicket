@@ -16,7 +16,7 @@ class StatutDuTicketSeeder extends Seeder
             ['id' => StatutDuTicket::OUVERT, 'name' => 'Ouvert'],
             ['id' => StatutDuTicket::EN_COURS, 'name' => 'En cours'],
             ['id' => StatutDuTicket::RESOLU, 'name' => 'Résolu'],
-            ['id' => StatutDuTicket::FERME, 'name' => 'Non Résolu'],
+            ['id' => StatutDuTicket::NONRESOLU, 'name' => 'Non Résolu'],
         ]);
     }
 }
