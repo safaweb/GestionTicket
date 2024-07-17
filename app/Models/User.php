@@ -185,10 +185,7 @@ class User extends Authenticatable implements FilamentUser
         }
     }
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> 9064a0ea620fea9cafb094f2505ef170e0e60c58
     /**
      * Get all of the socialiteUsers for the User
      *
