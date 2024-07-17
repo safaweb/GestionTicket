@@ -80,6 +80,6 @@ class StatutDuTicketResource extends Resource
 
     public static function getPluralModelLabel(): string
     {
-        return __('Statuts Des Tickets ');
+        return __('Statuts Des Tickets');
     }
 }

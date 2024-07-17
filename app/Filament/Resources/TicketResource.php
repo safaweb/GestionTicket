@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TicketResource\Pages;
@@ -91,21 +90,33 @@ class TicketResource extends Resource
                         ->columnSpan([
                             'sm' => 2,
                         ]),
-                        
+                    
+                    Forms\Components\Toggle::make('accepter')
+                        ->label('Accepter')
+                        ->reactive()
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
+
+
+                    Forms\Components\Toggle::make('refuser')
+                        ->label('Refuser')
+                        ->reactive()
+                        ->afterStateUpdated(fn ($state, callable $set) => $state ? $set('accepter', false) : null)
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
+
+
+                    Forms\Components\Textarea::make('commentaire')
+                        ->label('Commentaire')
+                        ->visible(fn (callable $get) => $get('refuser')),
 
                     Forms\Components\Placeholder::make('approved_at')
                         ->translateLabel()
                         ->hiddenOn('create')
-                        ->content(fn (
-                            ?Ticket $record,
-                        ): string => $record->approved_at ? $record->approved_at->diffForHumans() : '-'),
+                        ->content(fn (?Ticket $record): string => $record->approved_at ? $record->approved_at->diffForHumans() : '-'),
 
                     Forms\Components\Placeholder::make('solved_at')
                         ->translateLabel()
                         ->hiddenOn('create')
-                        ->content(fn (
-                            ?Ticket $record,
-                        ): string => $record->solved_at ? $record->solved_at->diffForHumans() : '-'),
+                        ->content(fn (?Ticket $record): string => $record->solved_at ? $record->solved_at->diffForHumans() : '-'),
                 ])->columns([
                     'sm' => 2,
                 ])->columnSpan(2),
@@ -113,25 +124,19 @@ class TicketResource extends Resource
                 Card::make()->schema([
                     Forms\Components\Select::make('priority_id')
                         ->label(__('Priority'))
-                        ->options(Priority::all()
-                            ->pluck('name', 'id'))
+                        ->options(Priority::all()->pluck('name', 'id'))
                         ->searchable()
                         ->required(),
 
-                    Forms\Components\Select::make('statuts_des_tickets_id')
+                    /*Forms\Components\Select::make('statuts_des_tickets_id')
                         ->label(__('Statut'))
-                        ->options(StatutDuTicket::all()
-                            ->pluck('name', 'id'))
+                        ->options(StatutDuTicket::all()->pluck('name', 'id'))
                         ->searchable()
                         ->required()
                         ->hiddenOn('create')
-                        ->hidden(
-                            fn () => !auth()
-                                ->user()
-                                ->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']),
-                        ),
-
-                        Forms\Components\Select::make('responsible_id')
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
+*/
+                    Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
                         ->options(
                             User::whereHas('roles', function($query) {
@@ -141,21 +146,15 @@ class TicketResource extends Resource
                         ->searchable()
                         ->required()
                         ->hiddenOn('create')
-                        ->hidden(
-                            fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet'])
-                        ),
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet'])),
                     
                     Forms\Components\Placeholder::make('created_at')
                         ->translateLabel()
-                        ->content(fn (
-                            ?Ticket $record,
-                        ): string => $record ? $record->created_at->diffForHumans() : '-'),
+                        ->content(fn (?Ticket $record): string => $record ? $record->created_at->diffForHumans() : '-'),
 
                     Forms\Components\Placeholder::make('updated_at')
                         ->translateLabel()
-                        ->content(fn (
-                            ?Ticket $record,
-                        ): string => $record ? $record->updated_at->diffForHumans() : '-'),
+                        ->content(fn (?Ticket $record): string => $record ? $record->updated_at->diffForHumans() : '-'),
                 ])->columnSpan(1),
             ])->columns(3);
     }
@@ -167,42 +166,41 @@ class TicketResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->translateLabel()
                     ->searchable(),
-                    Tables\Columns\TextColumn::make('projet.name')
+                Tables\Columns\TextColumn::make('projet.name')
                     ->searchable()
                     ->label(__('Projet'))
                     ->toggleable(),
-                    Tables\Columns\TextColumn::make('ProblemCategory.name')
+                Tables\Columns\TextColumn::make('ProblemCategory.name')
                     ->searchable()
                     ->label(__('Catégorie des problèmes'))
                     ->toggleable(),
-                    Tables\Columns\TextColumn::make('owner.name') 
+                Tables\Columns\TextColumn::make('owner.name') 
                     ->label(__('User'))
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
-                    Tables\Columns\TextColumn::make('projet.pays.name')
+                Tables\Columns\TextColumn::make('projet.pays.name')
                     ->searchable()
                     ->label(__('Pays'))
                     ->toggleable(),
-                    Tables\Columns\TextColumn::make('statutDuTicket.name')
+                Tables\Columns\TextColumn::make('statutDuTicket.name')
                     ->label(__('Statut'))
                     ->sortable(),
-                    Tables\Columns\TextColumn::make('created_at')
-                        ->dateTime()
-                        ->translateLabel()
-                        ->sortable()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-                        ->toggleable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->translateLabel()
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\SelectFilter::make('projet_id')
-        ->options(Projet::all()->pluck('name', 'id')->toArray())
-        ->label(__('Projet')),
-        Tables\Filters\SelectFilter::make('pays_id')
-        ->options(Pays::all()->pluck('name', 'id')->toArray())
-        ->label(__('Pays'))
+                    ->options(Projet::all()->pluck('name', 'id')->toArray())
+                    ->label(__('Projet')),
+                Tables\Filters\SelectFilter::make('pays_id')
+                    ->options(Pays::all()->pluck('name', 'id')->toArray())
+                    ->label(__('Pays'))
             ])
-            
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
@@ -267,3 +265,4 @@ class TicketResource extends Resource
         return __('Tickets');
     }
 }
+

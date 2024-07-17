@@ -22,13 +22,9 @@ class StatutDuTicket extends Model
     use SoftDeletes;
 
     public const OUVERT = 1;
-    public const ASSIGNE= 2;
-    public const EN_COURS = 3;
-    public const EN_ATTENTE = 4;
-    public const ESCALADE = 5;
-    public const EN_ATTENTE_DE_LA_REPONSE_DU_CLIENT = 6;
-    public const RESOLU = 7;
-    public const FERME = 8;
+    public const EN_COURS = 2;
+    public const RESOLU = 3;
+    public const NONRESOLU = 4;
     public $timestamps = false;
     protected $table = 'statuts_des_tickets';
 
