@@ -12,7 +12,6 @@ use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
-//use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
@@ -40,23 +39,18 @@ use App\Notifications\UserCreated;
  * @property null|int $user_level_id
  * @property bool $is_active
  * @property null|string $deleted_at
- * @property null|Projet $projet
  * @property null|Societe $societe
  * @property null|Pays $pays
  * @property Collection|Commentaire[] $commentaires
  * @property Collection|Ticket[] $tickets
  */
-// @property null|int $projet_id
 class User extends Authenticatable implements FilamentUser
-//, MustVerifyEmail
 {
     use SoftDeletes, HasRoles, HasSuperAdmin, HasFactory, Notifiable;
     protected $table = 'users';
 
     protected $casts = [
-       // 'projet_id' => 'int',
         'societe_id'=>'int',
-      //  'email_verified_at' => 'datetime',
         'two_factor_confirmed_at' => 'datetime',
         'user_level_id' => 'int',
         'is_active' => 'bool',
@@ -69,12 +63,10 @@ class User extends Authenticatable implements FilamentUser
     ];
 
     protected $fillable = [
-        //'projet_id',
         'societe_id',
         'pays_id',
         'name',
         'email',
-       // 'email_verified_at',
         'password',
         'two_factor_secret',
         'two_factor_recovery_codes',
@@ -115,11 +107,11 @@ class User extends Authenticatable implements FilamentUser
      * Get the projet that owns the User.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function projet()
-    {
-        return $this->belongsTo(Projet::class);
-    }
+    * public function projet()
+    * {
+    *    return $this->belongsTo(Projet::class);
+    *}
+    */
     
     /**
       * Get the pays that owns the Ticket.

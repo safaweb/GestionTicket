@@ -17,8 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $name
  * @property Collection|Ticket[] $tickets
  */
-//@property Projet $projet
-// @property int $projet_id
+
 class ProblemCategory extends Model
 {
     use SoftDeletes;
@@ -26,20 +25,10 @@ class ProblemCategory extends Model
 
     protected $table = 'problem_categories';
 
-    //protected $casts = [
-      //  'projet_id' => 'int',
-    //];
-
     protected $fillable = [
-        //'projet_id',
         'name',
     ];
-/*
-    public function projet()
-    {
-        return $this->belongsTo(Projet::class);
-    }
-*/
+
     public function tickets()
     {
         return $this->hasMany(Ticket::class);

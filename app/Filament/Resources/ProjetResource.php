@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjetResource\Pages;
 //use App\Filament\Resources\ProjetResource\RelationManagers\ProblemCategoriesRelationManager;
-use App\Filament\Resources\ProjetResource\RelationManagers\UsersRelationManager;
+//use App\Filament\Resources\ProjetResource\RelationManagers\UsersRelationManager;
 use App\Models\Projet;
 use App\Models\Pays;
 use App\Models\Societe;
@@ -80,7 +80,7 @@ class ProjetResource extends Resource
     {
         return [
            // ProblemCategoriesRelationManager::class,
-            UsersRelationManager::class,
+           // UsersRelationManager::class,
         ];
         
     }
