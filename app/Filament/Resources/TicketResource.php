@@ -97,6 +97,20 @@ class TicketResource extends Resource
                         ->columnSpan([
                             'sm' => 2,
                         ]),
+                        Forms\Components\Radio::make('validation')
+                        ->label('Validation')
+                        ->options([
+                            'accepter' => 'Accepter',
+                            'refuser' => 'Refuser',
+                        ])
+                        ->required()
+                        ->inline()
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']))
+                        ->reactive(),
+                        Forms\Components\Textarea::make('commentaire')
+                        ->label('Commentaire')
+                        ->visible(fn (callable $get) => $get('refuser')),
+
                 /*    
                     Forms\Components\Toggle::make('accepter')
                         ->label('Accepter')
@@ -111,14 +125,15 @@ class TicketResource extends Resource
                         ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
 
 
-                    Forms\Components\Textarea::make('commentaire')
-                        ->label('Commentaire')
-                        ->visible(fn (callable $get) => $get('refuser')),
-*/
-                    Forms\Components\Placeholder::make('approved_at')
-                        ->translateLabel()
-                        ->hiddenOn('create')
-                        ->content(fn (?Ticket $record): string => $record->approved_at ? $record->approved_at->diffForHumans() : '-'),
+                   
+*/ 
+Forms\Components\Placeholder::make('approved_at')
+->label('Validée le:')
+->hiddenOn('create')
+->content(fn (?Ticket $record): string => $record && $record->approved_at ? $record->approved_at->format('Y-m-d') : '-'),
+
+
+
 
                     Forms\Components\Placeholder::make('solved_at')
                         ->translateLabel()
@@ -135,14 +150,13 @@ class TicketResource extends Resource
                         ->searchable()
                         ->required(),
 
-                    /*Forms\Components\Select::make('statuts_des_tickets_id')
+                        Forms\Components\Placeholder::make('statuts_des_tickets_id')
                         ->label(__('Statut'))
-                        ->options(StatutDuTicket::all()->pluck('name', 'id'))
-                        ->searchable()
-                        ->required()
                         ->hiddenOn('create')
-                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
-*/
+                        ->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : '-')
+                        
+                       ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
+
                     Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
                         ->options(
@@ -157,11 +171,11 @@ class TicketResource extends Resource
                     
                     Forms\Components\Placeholder::make('created_at')
                         ->translateLabel()
-                        ->content(fn (?Ticket $record): string => $record ? $record->created_at->diffForHumans() : '-'),
+                        ->content(fn (?Ticket $record): string => $record ? $record->created_at->format('Y-m-d ')  : '-'),
 
                     Forms\Components\Placeholder::make('updated_at')
                         ->translateLabel()
-                        ->content(fn (?Ticket $record): string => $record ? $record->updated_at->diffForHumans() : '-'),
+                        ->content(fn (?Ticket $record): string => $record ? $record->updated_at->format('Y-m-d '): '-'),
                 ])->columnSpan(1),
             ])->columns(3);
     }
@@ -218,6 +232,7 @@ class TicketResource extends Resource
                 Tables\Actions\RestoreBulkAction::make(),
             ])
             ->defaultSort('created_at', 'desc');
+           
     }
 
     public static function getRelations(): array
@@ -255,7 +270,7 @@ class TicketResource extends Resource
                 }
 
                 if (auth()->user()->hasRole('Chef Projet')) {
-                    $query->where('tickets.projet_id', auth()->user()->projet_id)->orWhere('tickets.owner_id', auth()->id());
+                    $query->where('tickets.projet_id', auth()->user()->societe_id)->orWhere('tickets.owner_id', auth()->id());
                 } elseif (auth()->user()->hasRole('Employeur')) {
                     $query->where('tickets.responsible_id', auth()->id())->orWhere('tickets.owner_id', auth()->id());
                 } else {
