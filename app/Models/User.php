@@ -24,6 +24,7 @@ use App\Notifications\UserCreated;
  * Class User.
  *
  * @property int $id
+ * @property null|int $societe_id
  * @property null|int $projet_id
  * @property null|int $pays_id
  * @property string $name
@@ -41,6 +42,7 @@ use App\Notifications\UserCreated;
  * @property bool $is_active
  * @property null|string $deleted_at
  * @property null|Projet $projet
+ * @property null|Societe $societe
  * @property null|Pays $pays
  * @property Collection|Commentaire[] $commentaires
  * @property Collection|Ticket[] $tickets
@@ -53,6 +55,7 @@ class User extends Authenticatable implements FilamentUser
 
     protected $casts = [
         'projet_id' => 'int',
+        'societe_id'=>'int',
       //  'email_verified_at' => 'datetime',
         'two_factor_confirmed_at' => 'datetime',
         'user_level_id' => 'int',
@@ -67,6 +70,7 @@ class User extends Authenticatable implements FilamentUser
 
     protected $fillable = [
         'projet_id',
+        'societe_id',
         'pays_id',
         'name',
         'email',
@@ -95,6 +99,16 @@ class User extends Authenticatable implements FilamentUser
             $password = 'password'; // You can generate a random password here or use any logic you need
             $user->notify(new UserCreated($user->email, $password));
         });
+    }
+
+        /**
+     * Get the societe that owns the User.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function societe()
+    {
+        return $this->belongsTo(Societe::class);
     }
 
     /**
@@ -167,6 +181,7 @@ class User extends Authenticatable implements FilamentUser
         if (auth()->user()->hasRole('Chef Projet')) {
         if (auth()->user()->hasRole('Chef Projet')) {
             return $query->where('users.projet_id', auth()->user()->projet_id);
+            return $query->where('users.societe_id', auth()->user()->societe_id);
         }
     }
     }

@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\TicketsRelationManager;
-use App\Models\Projet;
+use App\Models\Societe;
 use App\Models\Pays;
 use App\Models\User;
 use Filament\Forms;
@@ -41,9 +41,9 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('projet_id')
-                ->label('Projet')
-                    ->options(Projet::all()
+                Forms\Components\Select::make('societe_id')
+                ->label('Societe')
+                    ->options(Societe::all()
                         ->pluck('name', 'id'))
                         ->required()
                     ->searchable(),

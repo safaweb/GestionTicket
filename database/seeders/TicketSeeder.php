@@ -21,6 +21,7 @@ class TicketSeeder extends Seeder
             'title' => 'This is a sample ticket',
             'description' => 'This is a descriptions',
             'statuts_des_tickets_id' => '1',
+            'validation_id' => '1',
         ]);
     }
 }

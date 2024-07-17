@@ -54,6 +54,7 @@ class Ticket extends Model
         'responsible_id' => 'int',
         'approved_at' => 'datetime',
         'solved_at' => 'datetime',
+        'accepted' => 'boolean',
     ];
 
     protected $fillable = [
@@ -69,6 +70,7 @@ class Ticket extends Model
         'responsible_id',
         'approved_at',
         'solved_at',
+        'accepted',
     ];
 
     /**

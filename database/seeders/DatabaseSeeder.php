@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             TicketSeeder::class,
             PaysSeeder::class,
             QualificationSeeder::class,
+            SocieteSeeder::class,
+            ValidationSeeder::class,
         ]);
     }
 }

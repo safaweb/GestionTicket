@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->string('title');
             $table->text('description');
             $table->unsignedBigInteger('statuts_des_tickets_id')->index('statuts_des_tickets_id');
+            $table->unsignedBigInteger('validation_id')->index('validation_id');
             $table->unsignedBigInteger('responsible_id')->nullable()->index('responsible_id');
             $table->timestamps();
             $table->timestamp('approved_at')->nullable();
