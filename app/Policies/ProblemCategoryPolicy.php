@@ -18,12 +18,12 @@ class ProblemCategoryPolicy
 
     /**
      * Determine whether the user can view the model.
-     *public function view(User $user, ProblemCategory $problemcategory): bool
-     *{
-     *   return $user->projet_id == $problemcategory->projet_id;
-    *}
-    */
-
+     */
+    public function view(User $user, ProblemCategory $problemcategory): bool
+    {
+        return true;
+    }
+    
     /**
      * Determine whether the user can create models.
      */
