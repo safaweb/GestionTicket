@@ -11,34 +11,33 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class StatutDuTicket.
+ * Class Validation.
+ * Class Validation.
  *
  * @property int $id
  * @property string $name
  * @property Collection|Ticket[] $tickets
  */
-class StatutDuTicket extends Model
+class Validation extends Model
 {
-    use SoftDeletes;
+    //use SoftDeletes;
 
-    public const OUVERT = 1;
-    public const EN_COURS = 2;
-    public const RESOLU = 3;
-    public const NONRESOLU = 4;
+    public const ACCEPTER = 1;
+    public const REFUSER= 2;
+    public const TERMINER = 3;
     public $timestamps = false;
-    protected $table = 'statuts_des_tickets';
-
+    protected $table = 'validation';
     protected $fillable = [
         'name',
     ];
 
     /**
-     * Get all of the tickets for the StatutDuTicket.
+     * Get all of the tickets for the Validation.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function tickets()
     {
-        return $this->hasMany(Ticket::class, 'statuts_des_tickets_id');
+        return $this->hasMany(Ticket::class, 'validation_id');
     }
 }

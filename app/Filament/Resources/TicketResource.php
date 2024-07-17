@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TicketResource\Pages;
@@ -11,6 +10,7 @@ use App\Models\Ticket;
 use App\Models\StatutDuTicket;
 use App\Models\Projet;
 use App\Models\User;
+use App\Models\Qualification;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Resources\Form;
@@ -35,6 +35,14 @@ class TicketResource extends Resource
         return $form
             ->schema([
                 Card::make()->schema([
+
+                    Forms\Components\Select::make('qualification_id')
+                        ->label(__('Qualifications'))
+                        ->options(Qualification::all()
+                        ->pluck('name', 'id'))
+                        ->searchable()
+                        ->required(),
+
                     Forms\Components\Select::make('projet_id')
                         ->label(__('Projets'))
                         ->options(Projet::all()
@@ -82,20 +90,33 @@ class TicketResource extends Resource
                         ->columnSpan([
                             'sm' => 2,
                         ]),
+                    
+                    Forms\Components\Toggle::make('accepter')
+                        ->label('Accepter')
+                        ->reactive()
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
+
+
+                    Forms\Components\Toggle::make('refuser')
+                        ->label('Refuser')
+                        ->reactive()
+                        ->afterStateUpdated(fn ($state, callable $set) => $state ? $set('accepter', false) : null)
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
+
+
+                    Forms\Components\Textarea::make('commentaire')
+                        ->label('Commentaire')
+                        ->visible(fn (callable $get) => $get('refuser')),
 
                     Forms\Components\Placeholder::make('approved_at')
                         ->translateLabel()
                         ->hiddenOn('create')
-                        ->content(fn (
-                            ?Ticket $record,
-                        ): string => $record->approved_at ? $record->approved_at->diffForHumans() : '-'),
+                        ->content(fn (?Ticket $record): string => $record->approved_at ? $record->approved_at->diffForHumans() : '-'),
 
                     Forms\Components\Placeholder::make('solved_at')
                         ->translateLabel()
                         ->hiddenOn('create')
-                        ->content(fn (
-                            ?Ticket $record,
-                        ): string => $record->solved_at ? $record->solved_at->diffForHumans() : '-'),
+                        ->content(fn (?Ticket $record): string => $record->solved_at ? $record->solved_at->diffForHumans() : '-'),
                 ])->columns([
                     'sm' => 2,
                 ])->columnSpan(2),
@@ -103,49 +124,37 @@ class TicketResource extends Resource
                 Card::make()->schema([
                     Forms\Components\Select::make('priority_id')
                         ->label(__('Priority'))
-                        ->options(Priority::all()
-                            ->pluck('name', 'id'))
+                        ->options(Priority::all()->pluck('name', 'id'))
                         ->searchable()
                         ->required(),
 
-                    Forms\Components\Select::make('statuts_des_tickets_id')
+                    /*Forms\Components\Select::make('statuts_des_tickets_id')
                         ->label(__('Statut'))
-                        ->options(StatutDuTicket::all()
-                            ->pluck('name', 'id'))
+                        ->options(StatutDuTicket::all()->pluck('name', 'id'))
                         ->searchable()
                         ->required()
                         ->hiddenOn('create')
-                        ->hidden(
-                            fn () => !auth()
-                                ->user()
-                                ->hasAnyRole(['Super Admin', 'Admin Projet', 'Staff Projet']),
-                        ),
-
-                        Forms\Components\Select::make('responsible_id')
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
+*/
+                    Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
                         ->options(
                             User::whereHas('roles', function($query) {
-                                $query->whereIn('name', ['Super Admin', 'Admin Projet','Staff Projet']);
+                                $query->whereIn('name', ['Super Admin', 'Chef Projet', 'Employeur']);
                             })->pluck('name', 'id')
                         )
                         ->searchable()
                         ->required()
                         ->hiddenOn('create')
-                        ->hidden(
-                            fn () => !auth()->user()->hasAnyRole(['Super Admin', 'AdminProjet'])
-                        ),
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet'])),
                     
                     Forms\Components\Placeholder::make('created_at')
                         ->translateLabel()
-                        ->content(fn (
-                            ?Ticket $record,
-                        ): string => $record ? $record->created_at->diffForHumans() : '-'),
+                        ->content(fn (?Ticket $record): string => $record ? $record->created_at->diffForHumans() : '-'),
 
                     Forms\Components\Placeholder::make('updated_at')
                         ->translateLabel()
-                        ->content(fn (
-                            ?Ticket $record,
-                        ): string => $record ? $record->updated_at->diffForHumans() : '-'),
+                        ->content(fn (?Ticket $record): string => $record ? $record->updated_at->diffForHumans() : '-'),
                 ])->columnSpan(1),
             ])->columns(3);
     }
@@ -157,11 +166,6 @@ class TicketResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->translateLabel()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->translateLabel()
-                    ->sortable() 
-                    ->toggleable(),
                 Tables\Columns\TextColumn::make('projet.name')
                     ->searchable()
                     ->label(__('Projet'))
@@ -182,17 +186,21 @@ class TicketResource extends Resource
                 Tables\Columns\TextColumn::make('statutDuTicket.name')
                     ->label(__('Statut'))
                     ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->translateLabel()
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\SelectFilter::make('projet_id')
-        ->options(Projet::all()->pluck('name', 'id')->toArray())
-        ->label(__('Projet')),
-        Tables\Filters\SelectFilter::make('pays_id')
-        ->options(Pays::all()->pluck('name', 'id')->toArray())
-        ->label(__('Pays'))
+                    ->options(Projet::all()->pluck('name', 'id')->toArray())
+                    ->label(__('Projet')),
+                Tables\Filters\SelectFilter::make('pays_id')
+                    ->options(Pays::all()->pluck('name', 'id')->toArray())
+                    ->label(__('Pays'))
             ])
-            
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
@@ -239,9 +247,9 @@ class TicketResource extends Resource
                     return;
                 }
 
-                if (auth()->user()->hasRole('Admin Projet')) {
+                if (auth()->user()->hasRole('Chef Projet')) {
                     $query->where('tickets.projet_id', auth()->user()->projet_id)->orWhere('tickets.owner_id', auth()->id());
-                } elseif (auth()->user()->hasRole('Staff Projet')) {
+                } elseif (auth()->user()->hasRole('Employeur')) {
                     $query->where('tickets.responsible_id', auth()->id())->orWhere('tickets.owner_id', auth()->id());
                 } else {
                     $query->where('tickets.owner_id', auth()->id());
@@ -257,3 +265,4 @@ class TicketResource extends Resource
         return __('Tickets');
     }
 }
+

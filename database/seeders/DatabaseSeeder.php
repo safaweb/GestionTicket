@@ -22,6 +22,9 @@ class DatabaseSeeder extends Seeder
             ProblemCategoryMigration::class,
             TicketSeeder::class,
             PaysSeeder::class,
+            QualificationSeeder::class,
+            SocieteSeeder::class,
+            ValidationSeeder::class,
         ]);
     }
 }

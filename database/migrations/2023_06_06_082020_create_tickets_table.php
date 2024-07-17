@@ -17,10 +17,12 @@ return new class extends Migration {
             $table->unsignedBigInteger('priority_id')->index('priority_id');
             $table->unsignedBigInteger('projet_id')->index('projet_id');
             $table->unsignedBigInteger('owner_id')->index('owner_id');
+            $table->unsignedBigInteger('qualification_id')->index('qualification_id');
             $table->unsignedBigInteger('problem_category_id')->index('problem_category_id');
             $table->string('title');
             $table->text('description');
             $table->unsignedBigInteger('statuts_des_tickets_id')->index('statuts_des_tickets_id');
+            $table->unsignedBigInteger('validation_id')->index('validation_id');
             $table->unsignedBigInteger('responsible_id')->nullable()->index('responsible_id');
             $table->timestamps();
             $table->timestamp('approved_at')->nullable();

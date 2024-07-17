@@ -91,7 +91,7 @@ class ProblemCategoryResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ])->where(function ($query) {
-                if (auth()->user()->hasRole('Admin Projet')) {
+                if (auth()->user()->hasRole('Chef Projet')) {
                     $query->where('problem_categories.projet_id', auth()->user()->projet_id);
                 }
             });

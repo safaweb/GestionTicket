@@ -13,7 +13,7 @@ return new class extends Migration {
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('projet_id')->nullable()->index('projet_id');
+            $table->unsignedBigInteger('societe_id')->nullable()->index('societe_id');
             $table->unsignedBigInteger('pays_id')->nullable()->index('pays_id');
             $table->string('phone')->nullable();
             $table->boolean('is_active')->default(true);
@@ -30,7 +30,7 @@ return new class extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn([
-                'projet_id',
+                'societe_id',
                 'pays',
                 'phone',
                 'is_active',

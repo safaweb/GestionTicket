@@ -16,33 +16,34 @@ class UserSeeder extends Seeder
         $superAdmin = User::factory()->create([
             'name' => 'Super Admin',
             'email' => 'superadmin@example.com',
+            //'societe_id' => 1,
             'pays_id' => 1,
         ]);
         $superAdmin->syncRoles('Super Admin');
 
         // 2. create a Admin Projet
         $adminProjet = User::factory()->create([
-            'name' => 'Admin Projet',
+            'name' => 'Chef Projet',
             'email' => 'chefprojet@example.com',
-            'projet_id' => 1,
+           // 'societe_id' => 1,
             'pays_id' => 1,
-
         ]);
-        $adminProjet ->syncRoles('Admin Projet');
+        $adminProjet ->syncRoles('Chef Projet');
 
         // 3. create a staff du Projet
         $staffProjet = User::factory()->create([
-            'name' => 'Staff Projet',
+            'name' => 'Employeur',
             'email' => 'staffprojet@example.com',
-            'projet_id' => 1,
+            //'societe_id' => 1,
             'pays_id' => 1,
         ]);
-        $staffProjet ->syncRoles('Staff Projet');
+        $staffProjet ->syncRoles('Employeur');
 
         // 4. create a user
         $userProjet  = User::factory()->create([
             'name' => 'Client',
             'email' => 'user@example.com',
+            //'societe_id' => 1,
             'pays_id' => 1,
         ]);
         $userProjet ->syncRoles('Client');

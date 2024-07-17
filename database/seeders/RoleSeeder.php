@@ -18,12 +18,12 @@ class RoleSeeder extends Seeder
         ]);
 
         Role::create([
-            'name' => 'Admin Projet',
+            'name' => 'Chef Projet',
             'guard_name' => 'web',
         ]);
 
         Role::create([
-            'name' => 'Staff Projet',
+            'name' => 'Employeur',
             'guard_name' => 'web',
         ]);
 

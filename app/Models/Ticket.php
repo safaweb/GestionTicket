@@ -48,11 +48,13 @@ class Ticket extends Model
         'projet_id' => 'int',
         'pays_id' => 'int',
         'owner_id' => 'int',
+        'qualification_id' => 'int',
         'problem_category_id' => 'int',
         'statuts_des_tickets_id' => 'int',
         'responsible_id' => 'int',
         'approved_at' => 'datetime',
         'solved_at' => 'datetime',
+        'accepted' => 'boolean',
     ];
 
     protected $fillable = [
@@ -60,6 +62,7 @@ class Ticket extends Model
         'projet_id',
         'pays_id' ,
         'owner_id',
+        'qualification_id',
         'problem_category_id',
         'title',
         'description',
@@ -67,6 +70,7 @@ class Ticket extends Model
         'responsible_id',
         'approved_at',
         'solved_at',
+        'accepted',
     ];
 
     /**
@@ -163,7 +167,7 @@ class Ticket extends Model
         parent::boot();
 
         static::updated(function ($ticket) {
-            if ($ticket->isDirty('statuts_des_tickets_id') && in_array($ticket->statuts_des_tickets_id, [StatutDuTicket::EN_COURS, StatutDuTicket::FERME])) {
+            if ($ticket->isDirty('statuts_des_tickets_id') && in_array($ticket->statuts_des_tickets_id, [StatutDuTicket::EN_COURS, StatutDuTicket::NONRESOLUE, StatutDuTicket::RESOLUE])) {
                 \Log::info('Status changed for ticket ID: ' . $ticket->id);
                 if ($ticket->owner) {
                     \Log::info('Sending notification to user ID: ' . $ticket->owner->id);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\SocialiteUser;
 use App\Models\User;
+use App\Models\Projet;
 use Carbon\Carbon;
 use Laravel\Socialite\Facades\Socialite;
 
