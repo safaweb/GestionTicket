@@ -67,11 +67,11 @@ class EditTicket extends EditRecord
         } else {
             return User::whereHas('roles', function ($q) {
                 $q->where('name', 'Chef Projet')
-                  ->orWhere('name', 'Employeur')
-                  ->orWhere('name', 'Super Admin');
+                ->orWhere('name', 'Employeur')
+                ->orWhere('name', 'Super Admin');
             })->where('projet_id', $currentUser->projet_id)
-              ->where('id', '!=', $currentUser->id)
-              ->get();
+            ->where('id', '!=', $currentUser->id)
+            ->get();
         }
     }
 }
