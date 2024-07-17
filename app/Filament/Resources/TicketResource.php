@@ -97,7 +97,7 @@ class TicketResource extends Resource
                         ->columnSpan([
                             'sm' => 2,
                         ]),
-                    
+                /*    
                     Forms\Components\Toggle::make('accepter')
                         ->label('Accepter')
                         ->reactive()
@@ -114,7 +114,7 @@ class TicketResource extends Resource
                     Forms\Components\Textarea::make('commentaire')
                         ->label('Commentaire')
                         ->visible(fn (callable $get) => $get('refuser')),
-
+*/
                     Forms\Components\Placeholder::make('approved_at')
                         ->translateLabel()
                         ->hiddenOn('create')

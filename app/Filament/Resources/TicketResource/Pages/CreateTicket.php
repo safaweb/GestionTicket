@@ -37,7 +37,7 @@ class CreateTicket extends CreateRecord
         $currentUser = Auth::user();
 
         if ($currentUser->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur', 'Client'])) {
-            $receiver = User::where('projet_id', $currentUser->projet_id)
+            $receiver = User::where('societe_id', $currentUser->societe_id)
                             ->where('id', '!=', $currentUser->id)
                             ->get();
         } else {
@@ -45,7 +45,7 @@ class CreateTicket extends CreateRecord
             $receiver = User::whereHas('roles', function ($q) {
                 $q->where('name', 'Chef Projet')
                 ->orWhere('name', 'Super Admin');
-            })->where('projet_id', $currentUser->projet_id)
+            })->where('societe_id', $currentUser->societe_id)
             ->where('id', '!=', $currentUser->id)
             ->get();
         }
