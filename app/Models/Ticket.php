@@ -52,7 +52,7 @@ class Ticket extends Model
         'problem_category_id' => 'int',
         'statuts_des_tickets_id' => 'int',
         'responsible_id' => 'int',
-        'approved_at' => 'datetime',
+      'approved_at' => 'datetime',
         'solved_at' => 'datetime',
         'accepted' => 'boolean',
     ];
@@ -68,7 +68,7 @@ class Ticket extends Model
         'description',
         'statuts_des_tickets_id',
         'responsible_id',
-        'approved_at',
+    'approved_at',
         'solved_at',
         'accepted',
     ];
@@ -167,7 +167,7 @@ class Ticket extends Model
         parent::boot();
 
         static::updated(function ($ticket) {
-            if ($ticket->isDirty('statuts_des_tickets_id') && in_array($ticket->statuts_des_tickets_id, [StatutDuTicket::EN_COURS, StatutDuTicket::NONRESOLUE, StatutDuTicket::RESOLUE])) {
+            if ($ticket->isDirty('statuts_des_tickets_id') && in_array($ticket->statuts_des_tickets_id, [ StatutDuTicket::OUVERT, StatutDuTicket::EN_COURS, StatutDuTicket::RESOLU   , StatutDuTicket::NONRESOLU])) {
                 \Log::info('Status changed for ticket ID: ' . $ticket->id);
                 if ($ticket->owner) {
                     \Log::info('Sending notification to user ID: ' . $ticket->owner->id);
