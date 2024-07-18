@@ -49,6 +49,10 @@ class CreateTicket extends CreateRecord
                     ->url(route('filament.resources.tickets.view', $ticket->id)),
             ])
             ->sendToDatabase($receiver);
+        // send email for ticket creation
+            foreach ($receiver as $user) {
+                $user->notify(new TicketCreatedNotification($ticket));
+            }
         return $ticket;
     }
 }
