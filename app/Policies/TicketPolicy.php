@@ -41,8 +41,19 @@ class TicketPolicy
     /**Determine whether the user can update the model. */
     public function update(User $user, Ticket $ticket): bool
     {
-        return $this->view($user, $ticket);
+            // Only allow specific roles to update tickets
+            if ($ticket->statut_des_tickets_id != StatutDuTicket::OUVERT ) {
+                return $user->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']);
+                return $this->view($user, $ticket);
+            }
+            return false;
     }
+         // Check if the ticket status is 'OUVERT' for editing permissions
+    /*if ($ticket->statut_des_tickets_id != StatutDuTicket::OUVERT || $user->hasRole('Client') ) {
+        return false;
+    }
+    */
+
 
     /** Determine whether the user can delete the model. */
     public function delete(User $user, Ticket $ticket): bool

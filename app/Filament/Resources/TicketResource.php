@@ -12,6 +12,8 @@ use App\Models\Projet;
 use App\Models\Societe;
 use App\Models\User;
 use App\Models\Qualification;
+use App\Http\Middleware\Authenticate;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Resources\Form;
@@ -38,7 +40,7 @@ class TicketResource extends Resource
                         ->options(Qualification::all()
                         ->pluck('name', 'id'))
                         ->searchable()
-                        ->required(),
+                        ->disabled(fn ($record) => $record !== null ),
                     Forms\Components\Select::make('projet_id')
                         ->label(__('Projets'))
                         //->options(Projet::all()
@@ -56,7 +58,8 @@ class TicketResource extends Resource
                                 if ($problemCategoryId && $problemCategory = ProblemCategory::find($problemCategoryId)) {
                                     if ($problemCategory->projet_id !== $projet->id) {$set('problem_category_id', null);}}}*/
                         })
-                        ->reactive(),
+                        ->reactive()
+                        ->disabled(fn ($record) => $record !== null),
                     Forms\Components\Select::make('problem_category_id')
                         ->label(__('Problem Category'))
                         ->options(function (callable $get, callable $set) {
@@ -65,30 +68,32 @@ class TicketResource extends Resource
                         return ProblemCategory::all()->pluck('name', 'id');
                         })
                         ->searchable()
-                        ->required(),
+                        ->required()
+                        ->disabled(fn ($record) => $record !== null),
                     Forms\Components\TextInput::make('title')
                         ->label(__('Title'))
                         ->required()
                         ->maxLength(255)
                         ->columnSpan([
-                            'sm' => 2,
-                        ]),
+                            'sm' => 2,])
+                        ->disabled(fn ($record) => $record !== null),
                     Forms\Components\RichEditor::make('description')
                         ->label(__('Description'))
                         ->required()
                         ->maxLength(65535)
                         ->columnSpan([
-                            'sm' => 2,
-                        ]),
-                  
+                            'sm' => 2,])
+                        ->disabled(fn ($record) => $record !== null),
                     Forms\Components\Placeholder::make('approved_at')
                         ->label('Validée le:')
                         ->hiddenOn('create')
-                        ->content(fn (?Ticket $record): string => $record && $record->approved_at ? $record->approved_at->format('Y-m-d') : '-'),
+                        ->content(fn (?Ticket $record): string => $record && $record->approved_at ? $record->approved_at->format('Y-m-d') : '-')
+                        ->disabled(fn ($record) => $record !== null),
                     Forms\Components\Placeholder::make('solved_at')
                         ->translateLabel()
                         ->hiddenOn('create')
-                        ->content(fn (?Ticket $record): string => $record->solved_at ? $record->solved_at->diffForHumans() : '-'),
+                        ->content(fn (?Ticket $record): string => $record->solved_at ? $record->solved_at->diffForHumans() : '-')
+                        ->disabled(fn ($record) => $record !== null),
                         ])->columns([
                         'sm' => 2,
                         ])->columnSpan(2),
@@ -97,11 +102,12 @@ class TicketResource extends Resource
                         ->label(__('Priority'))
                         ->options(Priority::all()->pluck('name', 'id'))
                         ->searchable()
-                        ->required(),
+                        ->required()
+                        ->disabled(fn ($record) => $record !== null),
                     Forms\Components\Placeholder::make('statuts_des_tickets_id')
                         ->label(__('Statut'))
                         ->hiddenOn('create')
-                  ->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : 'ouvert')
+                        ->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : 'ouvert')
                         ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
                     Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
@@ -115,10 +121,12 @@ class TicketResource extends Resource
                         ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet'])),
                     Forms\Components\Placeholder::make('created_at')
                         ->translateLabel()
-                        ->content(fn (?Ticket $record): string => $record ? $record->created_at->format('Y-m-d ')  : '-'),
+                        ->content(fn (?Ticket $record): string => $record ? $record->created_at->format('Y-m-d ')  : '-')
+                        ->disabled(fn ($record) => $record !== null),
                     Forms\Components\Placeholder::make('updated_at')
                         ->translateLabel()
-                        ->content(fn (?Ticket $record): string => $record ? $record->updated_at->format('Y-m-d '): '-'),
+                        ->content(fn (?Ticket $record): string => $record ? $record->updated_at->format('Y-m-d '): '-')
+                        ->disabled(fn ($record) => $record !== null),
                 ])->columnSpan(1),
             ])->columns(3);
     }
@@ -134,6 +142,9 @@ class TicketResource extends Resource
                     ->searchable()
                     ->label(__('Projet'))
                     ->toggleable(),
+                    Tables\Columns\TextColumn::make('validation.name')
+                    ->label(__('Validation'))
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('ProblemCategory.name')
                     ->searchable()
                     ->label(__('Catégorie des problèmes'))
@@ -167,8 +178,12 @@ class TicketResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-            ])
+                //Tables\Actions\EditAction::make(),
+                // Conditionally add the Edit action based on user roles
+                Tables\Actions\EditAction::make()
+                //->visible(fn () => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']))
+                ->visible(fn ($record) => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']) && $record->validation_id === 1)
+        ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
                 Tables\Actions\ForceDeleteBulkAction::make(),

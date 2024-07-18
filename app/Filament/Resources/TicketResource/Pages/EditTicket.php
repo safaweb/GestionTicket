@@ -12,6 +12,8 @@ use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Carbon\Carbon;
+
 
 class EditTicket extends EditRecord
 {
@@ -19,12 +21,19 @@ class EditTicket extends EditRecord
 
     protected function getActions(): array
     {
-        return [
+        $actions = [
             Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
-            Actions\ForceDeleteAction::make(),
-            Actions\RestoreAction::make(),
-            Actions\Action::make('Validation')
+        ];
+
+        $ticketStatus = $this->record->statutDuTicket ? $this->record->statutDuTicket->name : null;
+        if ($ticketStatus !== 'Non Résolu') {
+            $actions[] = Actions\DeleteAction::make();
+            $actions[] = Actions\ForceDeleteAction::make();
+            $actions[] = Actions\RestoreAction::make();
+        }
+
+        if (Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])) {
+            $actions[] = Actions\Action::make('Validation')
                 ->label('Validation')
                 ->form([
                     Forms\Components\Radio::make('validation')
@@ -44,12 +53,10 @@ class EditTicket extends EditRecord
                 ])
                 ->action(function ($data) {
                     $ticketId = $this->record->id;
-
                     if (!isset($data['validation'])) {
                         // Handle validation error, if needed
                         return;
                     }
-
                     if ($data['validation'] === 'accepter') {
                         $this->changeTicketStatus($ticketId, 'ouvert');
                     } elseif ($data['validation'] === 'refuser') {
@@ -57,31 +64,90 @@ class EditTicket extends EditRecord
                             $this->addError('commentaire', 'Vous devez spécifier un commentaire pour refuser le ticket.');
                             return; // Exit the method if commentaire is empty
                         }
-
                         $this->changeTicketStatus($ticketId, 'Non Résolu', $data['commentaire']);
                         $this->notifyAssignedUser($ticketId);
                     }
+                    // Redirect back to the ticket view
+                    return redirect()->route('filament.resources.tickets.view', $ticketId);
+                });
+                
+                $actions[] = Actions\Action::make('Terminer')
+                ->label('Terminer')
+                ->visible(fn () => $this->record->validation_id === 1) // Show only if validation_id is 1
+                ->form([
+                    Forms\Components\Radio::make('status')
+                        ->options([
+                            'resolu' => 'Résolu',
+                            'non_resolu' => 'Non Résolu',
+                        ])
+                        ->reactive()
+                        ->required()
+                        ->afterStateUpdated(function (callable $set, $state) {
+                            $set('showCommentaire', $state === 'non_resolu');
+                        }),
+                    Forms\Components\Textarea::make('commentaire')
+                        ->label('Commentaire')
+                        ->visible(fn (callable $get) => $get('showCommentaire'))
+                        ->required(fn (callable $get) => $get('showCommentaire')),
+                    Forms\Components\DatePicker::make('date_debut')
+                        ->label('Date de Début')
+                        ->required()
+                        ->default(fn () => Carbon::now()), // Optional: Default to current date
+                    Forms\Components\DatePicker::make('date_fin')
+                        ->label('Date de Fin')
+                        ->required()
+                        ->default(fn () => Carbon::now()->addDays(1)), // Optional: Default to 1 day after current date
+                    Forms\Components\TextInput::make('nombre_heures')
+                        ->label('Nombre d\'Heures')
+                        ->numeric()
+                        ->required(),
+                ])
+                ->action(function ($data) {
+                    $ticketId = $this->record->id;
+                    if (!isset($data['status'])) {
+                        // Handle status error, if needed
+                        return;
+                    }
+                    $commentaire = $data['commentaire'] ?? '';
+                    if ($data['status'] === 'resolu') {
+                        $this->changeTicketStatus($ticketId, 'Résolu', $commentaire, $data);
+                        $this->saveValidation($ticketId, 3); // Set validation_id to 3
+                    } elseif ($data['status'] === 'non_resolu') {
+                        if (empty($commentaire)) {
+                            $this->addError('commentaire', 'Vous devez spécifier un commentaire pour marquer le ticket comme non résolu.');
+                            return; // Exit the method if commentaire is empty
+                        }
 
-                    // Optionally, perform other operations or save changes
-                    // $this->editTicket($data, $ticketId); // You may choose to include this if needed
-                }),
-        ];
+                        $this->changeTicketStatus($ticketId, 'Non Résolu', $commentaire, $data);
+                        $this->saveValidation($ticketId, 3); // Set validation_id to 3
+                    }
+                });
+        }
+        return $actions;    
     }
 
-    protected function changeTicketStatus($ticketId, $newStatus, $commentaire = null)
+    protected function changeTicketStatus($ticketId, $newStatus, $commentaire = null, $data = null )
     {
         $ticket = Ticket::findOrFail($ticketId);
         $ticket->statutDuTicket()->associate(StatutDuTicket::where('name', $newStatus)->first());
-        
+
         if ($commentaire !== null) {
             // Add comment to the ticket
+            $formattedCommentaire = $commentaire . "\nLa date de début est: " . ($data['date_debut'] ?? 'Non spécifiée');
+            $formattedCommentaire .= "\nDate de fin est: " . ($data['date_fin'] ?? 'Non spécifiée');
+            $formattedCommentaire .= "\nNombre d'heures est: " . ($data['nombre_heures'] ?? 'Non spécifié');
             Commentaire::create([
                 'ticket_id' => $ticketId,
                 'user_id' => Auth::id(),
-                'commentaire' => $commentaire,
+                'commentaire' => $formattedCommentaire,
             ]);
         }
+        $ticket->save();
+    }
 
+    private function saveValidation($ticketId, $validationId) {
+        $ticket = Ticket::findOrFail($ticketId);
+        $ticket->validation_id = $validationId;
         $ticket->save();
     }
 
@@ -116,4 +182,6 @@ class EditTicket extends EditRecord
             ->get();
         }
     }
+
+
 }
