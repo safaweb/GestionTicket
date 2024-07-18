@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TicketResource\Pages;
@@ -10,6 +9,7 @@ use App\Models\Pays;
 use App\Models\Ticket;
 use App\Models\StatutDuTicket;
 use App\Models\Projet;
+use App\Models\Societe;
 use App\Models\User;
 use App\Models\Qualification;
 use Filament\Forms;
@@ -24,11 +24,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class TicketResource extends Resource
 {
     protected static ?string $model = Ticket::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-ticket';
-
     protected static ?int $navigationSort = 3;
-
     protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Form $form): Form
@@ -36,46 +33,39 @@ class TicketResource extends Resource
         return $form
             ->schema([
                 Card::make()->schema([
-
                     Forms\Components\Select::make('qualification_id')
                         ->label(__('Qualifications'))
                         ->options(Qualification::all()
                         ->pluck('name', 'id'))
                         ->searchable()
                         ->required(),
-
                     Forms\Components\Select::make('projet_id')
                         ->label(__('Projets'))
-                        ->options(Projet::all()
-                            ->pluck('name', 'id'))
+                        //->options(Projet::all()
+                        //->pluck('name', 'id'))
+                        ->options(function (callable $get) {
+                            $user = auth()->user();
+                            $societeId = $user->societe_id; // Assuming the user model has a societe_id attribute
+                            return Projet::where('societe_id', $societeId)->pluck('name', 'id');
+                        })
                         ->searchable()
                         ->required()
                         ->afterStateUpdated(function ($state, callable $get, callable $set) {
                             $projet = Projet::find($state);
-                            if ($projet) {
-                                $problemCategoryId = (int) $get('problem_category_id');
+                        /*if ($projet) {$problemCategoryId = (int) $get('problem_category_id');
                                 if ($problemCategoryId && $problemCategory = ProblemCategory::find($problemCategoryId)) {
-                                    if ($problemCategory->projet_id !== $projet->id) {
-                                        $set('problem_category_id', null);
-                                    }
-                                }
-                            }
+                                    if ($problemCategory->projet_id !== $projet->id) {$set('problem_category_id', null);}}}*/
                         })
                         ->reactive(),
-
                     Forms\Components\Select::make('problem_category_id')
                         ->label(__('Problem Category'))
                         ->options(function (callable $get, callable $set) {
-                            $projet = Projet::find($get('projet_id'));
-                            if ($projet) {
-                                return $projet->problemCategories->pluck('name', 'id');
-                            }
-
-                            return ProblemCategory::all()->pluck('name', 'id');
+                            /*$projet = Projet::find($get('projet_id'));
+                            if ($projet) {return $projet->problemCategories->pluck('name', 'id');}*/
+                        return ProblemCategory::all()->pluck('name', 'id');
                         })
                         ->searchable()
                         ->required(),
-
                     Forms\Components\TextInput::make('title')
                         ->label(__('Title'))
                         ->required()
@@ -83,7 +73,6 @@ class TicketResource extends Resource
                         ->columnSpan([
                             'sm' => 2,
                         ]),
-
                     Forms\Components\RichEditor::make('description')
                         ->label(__('Description'))
                         ->required()
@@ -91,71 +80,45 @@ class TicketResource extends Resource
                         ->columnSpan([
                             'sm' => 2,
                         ]),
-                        
-
+                  
                     Forms\Components\Placeholder::make('approved_at')
-                        ->translateLabel()
+                        ->label('Validée le:')
                         ->hiddenOn('create')
-                        ->content(fn (
-                            ?Ticket $record,
-                        ): string => $record->approved_at ? $record->approved_at->diffForHumans() : '-'),
-
+                        ->content(fn (?Ticket $record): string => $record && $record->approved_at ? $record->approved_at->format('Y-m-d') : '-'),
                     Forms\Components\Placeholder::make('solved_at')
                         ->translateLabel()
                         ->hiddenOn('create')
-                        ->content(fn (
-                            ?Ticket $record,
-                        ): string => $record->solved_at ? $record->solved_at->diffForHumans() : '-'),
-                ])->columns([
-                    'sm' => 2,
-                ])->columnSpan(2),
-
-                Card::make()->schema([
+                        ->content(fn (?Ticket $record): string => $record->solved_at ? $record->solved_at->diffForHumans() : '-'),
+                        ])->columns([
+                        'sm' => 2,
+                        ])->columnSpan(2),
+                        Card::make()->schema([
                     Forms\Components\Select::make('priority_id')
                         ->label(__('Priority'))
-                        ->options(Priority::all()
-                            ->pluck('name', 'id'))
+                        ->options(Priority::all()->pluck('name', 'id'))
                         ->searchable()
                         ->required(),
-
-                    Forms\Components\Select::make('statuts_des_tickets_id')
+                    Forms\Components\Placeholder::make('statuts_des_tickets_id')
                         ->label(__('Statut'))
-                        ->options(StatutDuTicket::all()
-                            ->pluck('name', 'id'))
-                        ->searchable()
-                        ->required()
                         ->hiddenOn('create')
-                        ->hidden(
-                            fn () => !auth()
-                                ->user()
-                                ->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']),
-                        ),
-
-                        Forms\Components\Select::make('responsible_id')
+                  ->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : 'ouvert')
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
+                    Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
                         ->options(
                             User::whereHas('roles', function($query) {
                                 $query->whereIn('name', ['Super Admin', 'Chef Projet', 'Employeur']);
-                            })->pluck('name', 'id')
-                        )
+                            })->pluck('name', 'id') )
                         ->searchable()
                         ->required()
                         ->hiddenOn('create')
-                        ->hidden(
-                            fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet'])
-                        ),
-                    
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet'])),
                     Forms\Components\Placeholder::make('created_at')
                         ->translateLabel()
-                        ->content(fn (
-                            ?Ticket $record,
-                        ): string => $record ? $record->created_at->diffForHumans() : '-'),
-
+                        ->content(fn (?Ticket $record): string => $record ? $record->created_at->format('Y-m-d ')  : '-'),
                     Forms\Components\Placeholder::make('updated_at')
                         ->translateLabel()
-                        ->content(fn (
-                            ?Ticket $record,
-                        ): string => $record ? $record->updated_at->diffForHumans() : '-'),
+                        ->content(fn (?Ticket $record): string => $record ? $record->updated_at->format('Y-m-d '): '-'),
                 ])->columnSpan(1),
             ])->columns(3);
     }
@@ -167,42 +130,41 @@ class TicketResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->translateLabel()
                     ->searchable(),
-                    Tables\Columns\TextColumn::make('projet.name')
+                Tables\Columns\TextColumn::make('projet.name')
                     ->searchable()
                     ->label(__('Projet'))
                     ->toggleable(),
-                    Tables\Columns\TextColumn::make('ProblemCategory.name')
+                Tables\Columns\TextColumn::make('ProblemCategory.name')
                     ->searchable()
                     ->label(__('Catégorie des problèmes'))
                     ->toggleable(),
-                    Tables\Columns\TextColumn::make('owner.name') 
+                Tables\Columns\TextColumn::make('owner.name') 
                     ->label(__('User'))
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
-                    Tables\Columns\TextColumn::make('projet.pays.name')
+                Tables\Columns\TextColumn::make('projet.pays.name')
                     ->searchable()
                     ->label(__('Pays'))
                     ->toggleable(),
-                    Tables\Columns\TextColumn::make('statutDuTicket.name')
+                Tables\Columns\TextColumn::make('statutDuTicket.name')
                     ->label(__('Statut'))
                     ->sortable(),
-                    Tables\Columns\TextColumn::make('created_at')
-                        ->dateTime()
-                        ->translateLabel()
-                        ->sortable()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-                        ->toggleable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->translateLabel()
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\SelectFilter::make('projet_id')
-        ->options(Projet::all()->pluck('name', 'id')->toArray())
-        ->label(__('Projet')),
-        Tables\Filters\SelectFilter::make('pays_id')
-        ->options(Pays::all()->pluck('name', 'id')->toArray())
-        ->label(__('Pays'))
+                    ->options(Projet::all()->pluck('name', 'id')->toArray())
+                    ->label(__('Projet')),
+                Tables\Filters\SelectFilter::make('pays_id')
+                    ->options(Pays::all()->pluck('name', 'id')->toArray())
+                    ->label(__('Pays'))
             ])
-            
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
@@ -232,14 +194,11 @@ class TicketResource extends Resource
         ];
     }
 
-    /**
-     * Display tickets based on each role.
-     *
+    /**Display tickets based on each role.
      * If it is a Super Admin, then display all tickets.
      * If it is a Admin Projet, then display tickets based on the tickets they have created and their Projet id.
      * If it is a Staff Projet, then display tickets based on the tickets they have created and the tickets assigned to them.
-     * If it is a Regular User, then display tickets based on the tickets they have created.
-     */
+     * If it is a Regular User, then display tickets based on the tickets they have created.*/
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
@@ -248,9 +207,8 @@ class TicketResource extends Resource
                 if (auth()->user()->hasRole('Super Admin')) {
                     return;
                 }
-
                 if (auth()->user()->hasRole('Chef Projet')) {
-                    $query->where('tickets.projet_id', auth()->user()->projet_id)->orWhere('tickets.owner_id', auth()->id());
+                    $query->where('tickets.projet_id', auth()->user()->societe_id)->orWhere('tickets.owner_id', auth()->id());
                 } elseif (auth()->user()->hasRole('Employeur')) {
                     $query->where('tickets.responsible_id', auth()->id())->orWhere('tickets.owner_id', auth()->id());
                 } else {
@@ -267,3 +225,4 @@ class TicketResource extends Resource
         return __('Tickets');
     }
 }
+

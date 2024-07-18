@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::table('commentaires', function (Blueprint $table) {
             $table->foreign(['user_id'], 'commentaires_ibfk_2')->references(['id'])->on('users')->onUpdate('NO ACTION');
-            $table->foreign(['tiket_id'], 'commentaires_ibfk_3')->references(['id'])->on('tickets')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            $table->foreign(['ticket_id'], 'commentaires_ibfk_3')->references(['id'])->on('tickets')->onUpdate('NO ACTION')->onDelete('NO ACTION');
             $table->foreign(['user_id'], 'commentaires_ibfk_4')->references(['id'])->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
         });
     }

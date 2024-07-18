@@ -9,7 +9,6 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewPays extends ViewRecord
 {
     protected static string $resource = PaysResource::class;
-
     protected function getActions(): array
     {
         return [

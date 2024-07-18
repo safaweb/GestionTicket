@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProblemCategoryResource\Pages;
 use App\Filament\Resources\ProblemCategoryResource\RelationManagers\TicketsRelationManager;
 use App\Models\ProblemCategory;
-use App\Models\Projet;
+
 use App\Models\User;
 use App\Models\Ticket;
 use Filament\Forms;
@@ -31,11 +31,6 @@ class ProblemCategoryResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('projet_id')
-                    ->label(__('Projets'))
-                    ->options(Projet::all()->pluck('name', 'id'))
-                    ->searchable()
-                    ->required(),
                 Forms\Components\TextInput::make('name')
                     ->translateLabel()
                     ->required()
@@ -50,9 +45,6 @@ class ProblemCategoryResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->translateLabel()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('projet.name')
-                    ->searchable()
-                    ->label(__('Projets')),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -90,11 +82,7 @@ class ProblemCategoryResource extends Resource
         return parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
-            ])->where(function ($query) {
-                if (auth()->user()->hasRole('Chef Projet')) {
-                    $query->where('problem_categories.projet_id', auth()->user()->projet_id);
-                }
-            });
+            ]);
     }
 
     public static function getPluralModelLabel(): string
@@ -102,3 +90,10 @@ class ProblemCategoryResource extends Resource
         return __('Catégories Des Problèmes');
     }
 }
+
+    /*public static function getEloquentQuery(): Builder in return parent::getEloquentQuery()
+    ->where(function ($query) {
+        if (auth()->user()->hasRole('Chef Projet')) {
+            $query->where('problem_categories.projet_id', auth()->user()->projet_id);
+        }
+    });*/

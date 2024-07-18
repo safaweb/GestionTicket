@@ -9,7 +9,6 @@ use Filament\Resources\Pages\ListRecords;
 class ListPays extends ListRecords
 {
     protected static string $resource = PaysResource::class;
-
     protected function getActions(): array
     {
         return [

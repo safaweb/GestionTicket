@@ -9,7 +9,6 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewProjet extends ViewRecord
 {
     protected static string $resource = ProjetResource::class;
-
     protected function getActions(): array
     {
         return [

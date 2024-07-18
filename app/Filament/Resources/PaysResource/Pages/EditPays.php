@@ -9,7 +9,6 @@ use Filament\Resources\Pages\EditRecord;
 class EditPays extends EditRecord
 {
     protected static string $resource = PaysResource::class;
-
     protected function getActions(): array
     {
         return [

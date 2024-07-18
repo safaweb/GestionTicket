@@ -12,7 +12,6 @@ use Filament\Tables;
 class TicketsRelationManager extends RelationManager
 {
     protected static string $relationship = 'tickets';
-
     protected static ?string $recordTitleAttribute = 'title';
 
     public static function table(Table $table): Table

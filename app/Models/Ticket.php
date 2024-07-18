@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -14,7 +10,6 @@ use App\Notifications\StatutDuTicketModifie;
 
 /**
  * Class Ticket.
- *
  * @property int $id
  * @property int $priority_id
  * @property int $projet_id
@@ -73,101 +68,74 @@ class Ticket extends Model
         'accepted',
     ];
 
-    /**
-     * Get the priority that owns the Ticket.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    /** Get the priority that owns the Ticket.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function priority()
     {
         return $this->belongsTo(Priority::class);
     }
 
-    /**
-     * Get the projet that owns the Ticket.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    /**Get the projet that owns the Ticket.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function projet()
     {
         return $this->belongsTo(Projet::class);
     }
-     /**
-      * Get the pays that owns the Ticket.
-      *
-      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-      */
-     public function pays()
-     {
-         return $this->belongsTo(Pays::class);
-     }
- 
 
-    /**
-     * Get the owner that owns the Ticket.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    /** Get the pays that owns the Ticket.
+      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
+    public function pays()
+    {
+        return $this->belongsTo(Pays::class);
+    }
+
+    /**Get the owner that owns the Ticket.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo */
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    /**
-     * Get the responsible that owns the Ticket.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    /** Get the responsible that owns the Ticket.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function responsible()
     {
         return $this->belongsTo(User::class, 'responsible_id');
     }
 
-    /**
-     * Get the problemCategory that owns the Ticket.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    /**Get the problemCategory that owns the Ticket.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function problemCategory()
     {
         return $this->belongsTo(ProblemCategory::class);
     }
-     /**
-     * Get the user that owns the Ticket.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+
+    /** Get the user that owns the Ticket.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the statutDuTicket that owns the Ticket.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    /**Get the statutDuTicket that owns the Ticket.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function statutDuTicket()
     {
         return $this->belongsTo(StatutDuTicket::class, 'statuts_des_tickets_id');
     }
 
-    /**
-     * Get all of the commentaires for the Ticket.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+    /** Get all of the commentaires for the Ticket.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany */
     public function commentaires()
     {
-        return $this->hasMany(Commentaire::class, 'tiket_id');
+        return $this->hasMany(Commentaire::class, 'ticket_id');
     }
-    
+
     protected static function boot()
     {
         parent::boot();
-
         static::updated(function ($ticket) {
-            if ($ticket->isDirty('statuts_des_tickets_id') && in_array($ticket->statuts_des_tickets_id, [StatutDuTicket::EN_COURS, StatutDuTicket::RESOLU , StatutDuTicket:: NONRESOLU])) {
+            if ($ticket->isDirty('statuts_des_tickets_id') && in_array($ticket->statuts_des_tickets_id, [ StatutDuTicket::OUVERT, StatutDuTicket::EN_COURS, StatutDuTicket::RESOLU   , StatutDuTicket::NONRESOLU])) {
                 \Log::info('Status changed for ticket ID: ' . $ticket->id);
                 if ($ticket->owner) {
                     \Log::info('Sending notification to user ID: ' . $ticket->owner->id);

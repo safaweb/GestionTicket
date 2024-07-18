@@ -9,7 +9,6 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewProblemCategory extends ViewRecord
 {
     protected static string $resource = ProblemCategoryResource::class;
-
     protected function getActions(): array
     {
         return [

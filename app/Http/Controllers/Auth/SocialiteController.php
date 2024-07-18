@@ -25,10 +25,8 @@ class SocialiteController extends Controller
         }
         // find or create user and send params user get from socialite and provider
         $authUser = $this->findOrCreateUser($user, $provider);
-
         // login user
         Auth()->login($authUser, true);
-
         // setelah login redirect ke dashboard
         return redirect()->route('filament.pages.dashboard');
     }
@@ -39,16 +37,13 @@ class SocialiteController extends Controller
         $socialAccount = SocialiteUser::where('provider_id', $socialUser->id)
             ->where('provider', $provider)
             ->first();
-
         // If it already exists.
         if ($socialAccount) {
             // return user
             return $socialAccount->user;
             // If there isn't yet.
         }
-
         $user = User::where('email', $socialUser->getEmail())->first();
-
         // If there are no users.
         if (!$user) {
             // Create a new user
@@ -58,13 +53,11 @@ class SocialiteController extends Controller
              //   'email_verified_at' => Carbon::now()->timestamp,
             ]);
         }
-
         // Buat a new socialite user
         $user->socialiteUsers()->create([
             'provider_id' => $socialUser->getId(),
             'provider' => $provider,
         ]);
-
         // return user
         return $user;
     }
@@ -75,10 +68,7 @@ class SocialiteController extends Controller
         if ($request->has('redirect_to')) {
             return redirect($request->input('redirect_to'));
         }
-
         // Redirection par défaut après la connexion
         return redirect()->intended($this->redirectPath());
 }
-
-
 }

@@ -24,7 +24,6 @@
                         class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                         {{ __('Login') }}</a>
                 </div>
-
             </div>
         </nav>
     </header>
@@ -57,7 +56,6 @@
         </div>
     </section>
 
-
     <footer class="p-4 bg-gray-50 sm:p-6 dark:bg-gray-800">
         <div class="mx-auto max-w-screen-xl">
             <!--<hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />-->
@@ -71,7 +69,6 @@
             </div>
         </div>
     </footer>
-
 </body>
 
 </html>

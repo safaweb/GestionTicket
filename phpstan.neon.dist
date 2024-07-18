@@ -1,5 +1,5 @@
 includes:
-    - ./vendor/nunomaduro/larastan/extension.neon
+     - ./vendor/nunomaduro/larastan/extension.neon
 
 parameters:
 
@@ -10,10 +10,10 @@ parameters:
     level: 5
 
     ignoreErrors:
-#        - '#PHPDoc tag @var#'
+#       - '#PHPDoc tag @var#'
         - '#^Access to an undefined property Livewire\\Component\:\:\$ownerRecord\.#'
 #
 #    excludePaths:
-#        - ./*/*/FileToBeExcluded.php
+#       - ./*/*/FileToBeExcluded.php
 #
 #    checkMissingIterableValueType: false

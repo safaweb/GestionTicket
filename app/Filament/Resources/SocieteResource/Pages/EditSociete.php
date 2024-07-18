@@ -9,7 +9,6 @@ use Filament\Resources\Pages\EditRecord;
 class EditSociete extends EditRecord
 {
     protected static string $resource = SocieteResource::class;
-
     protected function getActions(): array
     {
         return [

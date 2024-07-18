@@ -2,12 +2,10 @@
 
 namespace App\Filament\Resources;
 use App\Filament\Resources\PaysResource\RelationManagers\ProjectRelationManager;
-
 use App\Filament\Resources\PaysResource\RelationManagers\UsersRelationManager;
 use App\Filament\Resources\PaysResource\Pages;
 use App\Models\Pays;
 use Filament\Forms;
-
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -18,9 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class PaysResource extends Resource
 {
     protected static ?string $model = Pays::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-flag';
-
     protected static ?string $navigationGroup = 'Données de base';
 
     public static function form(Form $form): Form
@@ -40,12 +36,10 @@ class PaysResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name') ->label('Nom'),
-             
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
-          
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
@@ -58,13 +52,11 @@ class PaysResource extends Resource
         ;
     }
     
-    /*public static function getRelations(): array
-    {
+    /*public static function getRelations(): array{
         return [
             ProjectRelationManager::class,
             UsersRelationManager::class,
-        ];
-    }*/
+        ];}*/
 
     public static function getPages(): array
     {

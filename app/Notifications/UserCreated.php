@@ -28,7 +28,6 @@ class UserCreated extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         $loginUrl = 'http://127.0.0.1:8000/admin/login';
-
         return (new MailMessage)
                     ->subject('Votre compte a été créé')
                     ->line('Votre compte a été créé avec succès.')
@@ -42,10 +41,8 @@ class UserCreated extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-
                 'email' => $this->email,
                 'password' => $this->password,
-
         ];
     }
 }

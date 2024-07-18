@@ -9,7 +9,6 @@ use Filament\Resources\Pages\EditRecord;
 class EditStatutDuTicket extends EditRecord
 {
     protected static string $resource = StatutDuTicketResource::class;
-
     protected function getActions(): array
     {
         return [

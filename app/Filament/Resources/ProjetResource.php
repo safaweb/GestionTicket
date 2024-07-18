@@ -3,8 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjetResource\Pages;
-use App\Filament\Resources\ProjetResource\RelationManagers\ProblemCategoriesRelationManager;
-use App\Filament\Resources\ProjetResource\RelationManagers\UsersRelationManager;
+//use App\Filament\Resources\ProjetResource\RelationManagers\ProblemCategoriesRelationManager;
+//use App\Filament\Resources\ProjetResource\RelationManagers\UsersRelationManager;
 use App\Models\Projet;
 use App\Models\Pays;
 use App\Models\Societe;
@@ -19,9 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ProjetResource extends Resource
 {
     protected static ?string $model = Projet::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
-
     protected static ?string $navigationGroup = 'Données de base';
 
     public static function form(Form $form): Form
@@ -79,8 +77,8 @@ class ProjetResource extends Resource
     public static function getRelations(): array
     {
         return [
-            ProblemCategoriesRelationManager::class,
-            UsersRelationManager::class,
+           // ProblemCategoriesRelationManager::class,
+           // UsersRelationManager::class,
         ];
         
     }

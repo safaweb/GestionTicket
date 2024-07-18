@@ -13,48 +13,42 @@ class CreateTicket extends CreateRecord
 {
     protected static string $resource = TicketResource::class;
 
-    /**
-     * Préparer les données avant de les enregistrer dans la base de données.
-     */
+    /**Préparer les données avant de les enregistrer dans la base de données. */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['owner_id'] = auth()->id();
         $data['statuts_des_tickets_id'] = 1;
         $data['qualification_id'] = 1;
-      
-
         return $data;
     }
 
-    /**
-     * Gérer la création du ticket et envoyer une notification après la création.
-     */
+    /**Gérer la création du ticket et envoyer une notification après la création.*/
     protected function handleRecordCreation(array $data): Ticket
     {
         $ticket = parent::handleRecordCreation($data);
-
         // Get the current user
         $currentUser = Auth::user();
-
         if ($currentUser->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur', 'Client'])) {
-            $receiver = User::where('projet_id', $currentUser->societe_id)
+            $receiver = User::where('societe_id', $currentUser->societe_id)
                             ->where('id', '!=', $currentUser->id)
                             ->get();
         } else {
             // Send notification to users with specific roles, excluding current user
             $receiver = User::whereHas('roles', function ($q) {
                 $q->where('name', 'Chef Projet')
-                  ->orWhere('name', 'Super Admin');
+                ->orWhere('name', 'Super Admin');
             })->where('societe_id', $currentUser->societe_id)
-              ->where('id', '!=', $currentUser->id)
-              ->get();
+            ->where('id', '!=', $currentUser->id)
+            ->get();
         }
-
         // Send the notification to appropriate recipients
-        foreach ($receiver as $user) {
-            $user->notify(new TicketCreatedNotification($ticket));
-        }
-
+        Notification::make()
+            ->title('Il y a un nouveau ticket créé')
+            ->actions([
+                Action::make('Voir')
+                    ->url(route('filament.resources.tickets.view', $ticket->id)),
+            ])
+            ->sendToDatabase($receiver);
         return $ticket;
     }
 }

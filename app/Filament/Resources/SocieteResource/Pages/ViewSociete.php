@@ -9,7 +9,6 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewSociete extends ViewRecord
 {
     protected static string $resource = SocieteResource::class;
-
     protected function getActions(): array
     {
         return [

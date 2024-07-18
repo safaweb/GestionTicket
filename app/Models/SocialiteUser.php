@@ -15,11 +15,8 @@ class SocialiteUser extends Model
         'provider_id',
     ];
 
-    /**
-     * Get the User that owns the SocialiteUser
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    /** Get the User that owns the SocialiteUser
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function User()
     {
         return $this->belongsTo(User::class);
