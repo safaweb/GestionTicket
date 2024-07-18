@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Notifications\StatutDuBilletModifie;
+use App\Notifications\StatutDuTicketModifie;
 
 /**
  * Class Ticket.
@@ -167,11 +167,11 @@ class Ticket extends Model
         parent::boot();
 
         static::updated(function ($ticket) {
-            if ($ticket->isDirty('statuts_des_tickets_id') && in_array($ticket->statuts_des_tickets_id, [StatutDuTicket::EN_COURS, StatutDuTicket::FERME])) {
+            if ($ticket->isDirty('statuts_des_tickets_id') && in_array($ticket->statuts_des_tickets_id, [StatutDuTicket::EN_COURS, StatutDuTicket::RESOLU , StatutDuTicket:: NONRESOLU])) {
                 \Log::info('Status changed for ticket ID: ' . $ticket->id);
                 if ($ticket->owner) {
                     \Log::info('Sending notification to user ID: ' . $ticket->owner->id);
-                    $ticket->owner->notify(new StatutDuBilletModifie($ticket, $ticket->StatutDuTicket->name));
+                    $ticket->owner->notify(new StatutDuTicketModifie($ticket, $ticket->StatutDuTicket->name));
                 } else {
                     \Log::warning('No user associated with ticket ID: ' . $ticket->id);
                 }

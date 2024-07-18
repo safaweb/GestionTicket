@@ -6,9 +6,8 @@ use App\Filament\Resources\TicketResource;
 use Filament\Resources\Pages\CreateRecord;
 use App\Models\Ticket;
 use App\Models\User;
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\TicketCreatedNotification;
 
 class CreateTicket extends CreateRecord
 {
@@ -22,6 +21,7 @@ class CreateTicket extends CreateRecord
         $data['owner_id'] = auth()->id();
         $data['statuts_des_tickets_id'] = 1;
         $data['qualification_id'] = 1;
+      
 
         return $data;
     }
@@ -37,28 +37,24 @@ class CreateTicket extends CreateRecord
         $currentUser = Auth::user();
 
         if ($currentUser->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur', 'Client'])) {
-            $receiver = User::where('projet_id', $currentUser->projet_id)
+            $receiver = User::where('projet_id', $currentUser->societe_id)
                             ->where('id', '!=', $currentUser->id)
                             ->get();
         } else {
             // Send notification to users with specific roles, excluding current user
             $receiver = User::whereHas('roles', function ($q) {
                 $q->where('name', 'Chef Projet')
-                ->orWhere('name', 'Super Admin');
-            })->where('projet_id', $currentUser->projet_id)
-            ->where('id', '!=', $currentUser->id)
-            ->get();
+                  ->orWhere('name', 'Super Admin');
+            })->where('societe_id', $currentUser->societe_id)
+              ->where('id', '!=', $currentUser->id)
+              ->get();
         }
 
         // Send the notification to appropriate recipients
-        Notification::make()
-            ->title('Il y a un nouveau ticket créé')
-            ->actions([
-                Action::make('Voir')
-                    ->url(route('filament.resources.tickets.view', $ticket->id)),
-            ])
-            ->sendToDatabase($receiver);
+        foreach ($receiver as $user) {
+            $user->notify(new TicketCreatedNotification($ticket));
+        }
 
         return $ticket;
-    } 
+    }
 }

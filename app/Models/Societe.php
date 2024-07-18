@@ -31,7 +31,7 @@ class Societe extends Model
     ];
 
     /**
-     * Get all of the projet for the Societe
+     * Get all of the  for the Societe
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
