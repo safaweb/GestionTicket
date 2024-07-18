@@ -23,8 +23,11 @@ class Societe extends Model
         'name',
     ];
 
-    /**Get all of the projet for the Societe
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
+   /**
+     * Get all of the  for the Societe
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function projet()
     {
         return $this->hasMany(Projet::class);

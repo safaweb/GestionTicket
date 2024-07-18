@@ -42,7 +42,7 @@ class UserResource extends Resource
                 ->label('Societe')
                     ->options(Societe::all()
                         ->pluck('name', 'id'))
-                        ->required()
+                       
                     ->searchable(),
                 Forms\Components\TextInput::make('name')
                     ->label('Nom')

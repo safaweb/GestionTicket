@@ -27,6 +27,7 @@ class Projet extends Model
     protected $casts = [
         'pays_id' => 'int',
         'societe_id'=>'int',
+        'user_id'=>'int',
     ];
 
     protected $fillable = [
@@ -35,6 +36,9 @@ class Projet extends Model
         'pays',
         'societe_id',
         'societe',
+        'user_id',
+        'user',
+   
     ];
 
     public function societe()

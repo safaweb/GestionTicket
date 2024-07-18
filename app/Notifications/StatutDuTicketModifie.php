@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Models\Ticket;
 
-class StatutDuBilletModifie extends Notification implements ShouldQueue
+class StatutDuTicketModifie extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -30,6 +30,7 @@ class StatutDuBilletModifie extends Notification implements ShouldQueue
     {
         $loginUrl = 'http://127.0.0.1:8000/admin/login';
         return (new MailMessage)
+                    ->subject('Statut du Ticket Modifié')
                     ->line('Le statut de votre ticket a été modifié.')
                     ->line(' Nom du Ticket: ' . $this->ticket->name)
                     ->line('Nouveau Statut : ' . $this->newStatus)

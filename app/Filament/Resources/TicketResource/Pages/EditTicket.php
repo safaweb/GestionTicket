@@ -174,13 +174,16 @@ class EditTicket extends EditRecord
                         ->get();
         } else {
             return User::whereHas('roles', function ($q) {
-                $q->where('name', 'Chef Projet')
-                    ->orWhere('name', 'Employeur')
-                    ->orWhere('name', 'Super Admin');
+                $q->where('name', 'Employeur');              
             })->where('societe_id', $currentUser->societe_id)
             ->where('id', '!=', $currentUser->id)
             ->get();
         }
+
+        // Send the notification to appropriate recipients
+ foreach ($receiver as $user) {
+    $user->notify(new TicketAssignedNotification($ticket));
+}
     }
 
 

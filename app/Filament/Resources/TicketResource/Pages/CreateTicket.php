@@ -6,9 +6,8 @@ use App\Filament\Resources\TicketResource;
 use Filament\Resources\Pages\CreateRecord;
 use App\Models\Ticket;
 use App\Models\User;
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\TicketCreatedNotification;
 
 class CreateTicket extends CreateRecord
 {
@@ -50,6 +49,10 @@ class CreateTicket extends CreateRecord
                     ->url(route('filament.resources.tickets.view', $ticket->id)),
             ])
             ->sendToDatabase($receiver);
+        // send email for ticket creation
+            foreach ($receiver as $user) {
+                $user->notify(new TicketCreatedNotification($ticket));
+            }
         return $ticket;
-    } 
+    }
 }
