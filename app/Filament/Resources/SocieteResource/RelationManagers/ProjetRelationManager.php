@@ -13,10 +13,8 @@ use App\Models\Pays;
 class ProjetRelationManager extends RelationManager
 {
     protected static string $relationship = 'Projet';
-
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?string $title = 'Projets'; // Added label
-
 
     public static function form(Form $form): Form
     {
@@ -43,7 +41,6 @@ class ProjetRelationManager extends RelationManager
                 ->searchable()
                 ->label(__('Pays'))
                 ->toggleable(),
-
             ])
             ->filters([
             ])

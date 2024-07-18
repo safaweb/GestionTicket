@@ -9,7 +9,6 @@ use Filament\Resources\Pages\ListRecords;
 class ListSocietes extends ListRecords
 {
     protected static string $resource = SocieteResource::class;
-
     protected function getActions(): array
     {
         return [

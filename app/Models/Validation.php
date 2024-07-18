@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
@@ -12,8 +8,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Validation.
- * Class Validation.
- *
  * @property int $id
  * @property string $name
  * @property Collection|Ticket[] $tickets
@@ -21,7 +15,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Validation extends Model
 {
     //use SoftDeletes;
-
     public const ACCEPTER = 1;
     public const REFUSER= 2;
     public const TERMINER = 3;
@@ -31,11 +24,8 @@ class Validation extends Model
         'name',
     ];
 
-    /**
-     * Get all of the tickets for the Validation.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+    /**Get all of the tickets for the Validation.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany */
     public function tickets()
     {
         return $this->hasMany(Ticket::class, 'validation_id');

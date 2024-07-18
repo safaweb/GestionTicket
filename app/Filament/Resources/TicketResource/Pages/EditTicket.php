@@ -25,27 +25,24 @@ class EditTicket extends EditRecord
             Actions\DeleteAction::make(),
             Actions\ForceDeleteAction::make(),
             Actions\RestoreAction::make(),
-    ];
-    }
+    ];}
+
     protected function afterSave(): void
     {
         $data = $this->form->getState();
         $ticketId = $this->record->id;
-        
         // Vérifier si l'action est accepter ou refuser
         if (isset($data['validation']) && $data['validation'] === 'accepter') {
             $this->changeTicketStatus($ticketId, 'ouvert');
         } elseif (isset($data['validation']) && $data['validation'] === 'refuser') {
-            // Vérifier si un commentaire est présent
-         /*   if (!isset($data['commentaire']) || empty($data['commentaire'])) {
-                throw new \Exception('Vous devez spécifier un commentaire pour refuser le ticket.');
-            }*/
-            $this->changeTicketStatus($ticketId, 'Non Résolu');
+        // Vérifier si un commentaire est présent
+        /*  if (!isset($data['commentaire']) || empty($data['commentaire'])) {
+                throw new \Exception('Vous devez spécifier un commentaire pour refuser le ticket.'); }*/
+        $this->changeTicketStatus($ticketId, 'Non Résolu');
         }
-    
         $this->editTicket($data, $ticketId);
     }
-    
+
     protected function changeTicketStatus($ticketId, $newStatus)
     {
         $ticket = Ticket::findOrFail($ticketId);
@@ -57,12 +54,9 @@ class EditTicket extends EditRecord
     protected function editTicket(array $data, $ticketId)
     {
         $ticket = Ticket::findOrFail($ticketId);
-
         $ticket->save();
-
         $currentUser = Auth::user();
         $receiver = $this->getNotificationRecipients($currentUser);
-
         Notification::make()
             ->title('Vous avez été assigné comme responsable d\'un ticket')
             ->actions([

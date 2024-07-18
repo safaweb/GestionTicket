@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
@@ -12,7 +8,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Projet.
- *
  * @property int $id
  * @property string $name
  * @property null|int $pays_id
@@ -27,7 +22,6 @@ class Projet extends Model
 {
     use SoftDeletes;
     public $timestamps = false;
-
     protected $table = 'projets';
 
     protected $casts = [
@@ -48,45 +42,31 @@ class Projet extends Model
         return $this->belongsTo(Societe::class);
     }
 
-    /**
-     * Get all of the problemCategories for the Projet
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+    /** Get all of the problemCategories for the Projet
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany */
     public function problemCategories()
     {
         return $this->hasMany(ProblemCategory::class);
     }
 
-        /**
-      * Get the pays that owns the Ticket.
-      *
-      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-      */
+    /** Get the pays that owns the Ticket.
+      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function pays()
     {
         return $this->belongsTo(Pays::class, 'pays_id');
     }
 
-    /**
-     * Get all of the tickets for the Projet
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+    /**Get all of the tickets for the Projet
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
     }
 
-    /**
-     * Get all of the users for the Projet
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+    /**Get all of the users for the Projet
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
     public function users()
     {
         return $this->hasMany(User::class);
     }
-
-
 }

@@ -38,6 +38,7 @@ $rules = [
     'ordered_interfaces' => true,
     'self_static_accessor' => true,
     'single_trait_insert_per_statement' => false,
+    
     // Control Structure
     'control_structure_continuation_position' => [
         'position' => 'same_line',

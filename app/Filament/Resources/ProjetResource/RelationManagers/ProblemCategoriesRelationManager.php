@@ -11,10 +11,8 @@ use Filament\Tables;
 class ProblemCategoriesRelationManager extends RelationManager
 {
     protected static string $relationship = 'problemCategories';
-
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?string $title = 'Catégories de Problèmes'; // Added label
-
 
     public static function form(Form $form): Form
     {

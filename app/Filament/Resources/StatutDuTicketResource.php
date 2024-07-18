@@ -16,9 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class StatutDuTicketResource extends Resource
 {
     protected static ?string $model = StatutDuTicket::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-collection';
-
     protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
@@ -38,11 +36,9 @@ class StatutDuTicketResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('#'),
-
                 Tables\Columns\TextColumn::make('name')
                     ->translateLabel()
                     ->searchable(),
-
                 Tables\Columns\TextColumn::make('tickets_count')
                     ->counts('tickets')
                     ->label(__('Tickets Count'))

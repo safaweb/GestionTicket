@@ -10,7 +10,6 @@ use Filament\Resources\Pages\ListRecords;
 class ListStatutsDesTickets extends ListRecords
 {
     protected static string $resource = StatutDuTicketResource::class;
-
     protected function getActions(): array
     {
         return [

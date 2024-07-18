@@ -11,10 +11,8 @@ use Filament\Tables;
 class UsersRelationManager extends RelationManager
 {
     protected static string $relationship = 'users';
-
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?string $title = 'Utilisateurs'; // Added label
-
 
     public static function form(Form $form): Form
     {

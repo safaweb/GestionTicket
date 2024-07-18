@@ -24,11 +24,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class TicketResource extends Resource
 {
     protected static ?string $model = Ticket::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-ticket';
-
     protected static ?int $navigationSort = 3;
-
     protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Form $form): Form
@@ -36,24 +33,21 @@ class TicketResource extends Resource
         return $form
             ->schema([
                 Card::make()->schema([
-
                     Forms\Components\Select::make('qualification_id')
                         ->label(__('Qualifications'))
                         ->options(Qualification::all()
                         ->pluck('name', 'id'))
                         ->searchable()
                         ->required(),
-
                     Forms\Components\Select::make('projet_id')
                         ->label(__('Projets'))
                         //->options(Projet::all()
                          //   ->pluck('name', 'id'))
-                         ->options(function (callable $get) {
+                        ->options(function (callable $get) {
                             $user = auth()->user();
                             $societeId = $user->societe_id; // Assuming the user model has a societe_id attribute
                             return Projet::where('societe_id', $societeId)->pluck('name', 'id');
                         })
-
                         ->searchable()
                         ->required()
                         ->afterStateUpdated(function ($state, callable $get, callable $set) {
@@ -68,20 +62,17 @@ class TicketResource extends Resource
                             }*/
                         })
                         ->reactive(),
-
                     Forms\Components\Select::make('problem_category_id')
                         ->label(__('Problem Category'))
                         ->options(function (callable $get, callable $set) {
                             /*$projet = Projet::find($get('projet_id'));
                             if ($projet) {
                                 return $projet->problemCategories->pluck('name', 'id');
-                            }
-*/
+                            }*/
                             return ProblemCategory::all()->pluck('name', 'id');
                         })
                         ->searchable()
                         ->required(),
-
                     Forms\Components\TextInput::make('title')
                         ->label(__('Title'))
                         ->required()
@@ -89,7 +80,6 @@ class TicketResource extends Resource
                         ->columnSpan([
                             'sm' => 2,
                         ]),
-
                     Forms\Components\RichEditor::make('description')
                         ->label(__('Description'))
                         ->required()
@@ -110,31 +100,19 @@ class TicketResource extends Resource
                         Forms\Components\Textarea::make('commentaire')
                         ->label('Commentaire')
                         ->visible(fn (callable $get) => $get('refuser')),
-
-                /*    
-                    Forms\Components\Toggle::make('accepter')
+                /*  Forms\Components\Toggle::make('accepter')
                         ->label('Accepter')
                         ->reactive()
                         ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
-
-
                     Forms\Components\Toggle::make('refuser')
                         ->label('Refuser')
                         ->reactive()
                         ->afterStateUpdated(fn ($state, callable $set) => $state ? $set('accepter', false) : null)
-                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
-
-
-                   
-*/ 
-Forms\Components\Placeholder::make('approved_at')
-->label('Validée le:')
-->hiddenOn('create')
-->content(fn (?Ticket $record): string => $record && $record->approved_at ? $record->approved_at->format('Y-m-d') : '-'),
-
-
-
-
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),               */ 
+                    Forms\Components\Placeholder::make('approved_at')
+                        ->label('Validée le:')
+                        ->hiddenOn('create')
+                        ->content(fn (?Ticket $record): string => $record && $record->approved_at ? $record->approved_at->format('Y-m-d') : '-'),
                     Forms\Components\Placeholder::make('solved_at')
                         ->translateLabel()
                         ->hiddenOn('create')
@@ -142,21 +120,17 @@ Forms\Components\Placeholder::make('approved_at')
                 ])->columns([
                     'sm' => 2,
                 ])->columnSpan(2),
-
                 Card::make()->schema([
                     Forms\Components\Select::make('priority_id')
                         ->label(__('Priority'))
                         ->options(Priority::all()->pluck('name', 'id'))
                         ->searchable()
                         ->required(),
-
                         Forms\Components\Placeholder::make('statuts_des_tickets_id')
                         ->label(__('Statut'))
                         ->hiddenOn('create')
                         ->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : '-')
-                        
-                       ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
-
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
                     Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
                         ->options(
@@ -168,11 +142,9 @@ Forms\Components\Placeholder::make('approved_at')
                         ->required()
                         ->hiddenOn('create')
                         ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet'])),
-                    
                     Forms\Components\Placeholder::make('created_at')
                         ->translateLabel()
                         ->content(fn (?Ticket $record): string => $record ? $record->created_at->format('Y-m-d ')  : '-'),
-
                     Forms\Components\Placeholder::make('updated_at')
                         ->translateLabel()
                         ->content(fn (?Ticket $record): string => $record ? $record->updated_at->format('Y-m-d '): '-'),
@@ -232,7 +204,6 @@ Forms\Components\Placeholder::make('approved_at')
                 Tables\Actions\RestoreBulkAction::make(),
             ])
             ->defaultSort('created_at', 'desc');
-           
     }
 
     public static function getRelations(): array
@@ -252,14 +223,11 @@ Forms\Components\Placeholder::make('approved_at')
         ];
     }
 
-    /**
-     * Display tickets based on each role.
-     *
+    /**Display tickets based on each role.
      * If it is a Super Admin, then display all tickets.
      * If it is a Admin Projet, then display tickets based on the tickets they have created and their Projet id.
      * If it is a Staff Projet, then display tickets based on the tickets they have created and the tickets assigned to them.
-     * If it is a Regular User, then display tickets based on the tickets they have created.
-     */
+     * If it is a Regular User, then display tickets based on the tickets they have created.*/
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
@@ -268,7 +236,6 @@ Forms\Components\Placeholder::make('approved_at')
                 if (auth()->user()->hasRole('Super Admin')) {
                     return;
                 }
-
                 if (auth()->user()->hasRole('Chef Projet')) {
                     $query->where('tickets.projet_id', auth()->user()->societe_id)->orWhere('tickets.owner_id', auth()->id());
                 } elseif (auth()->user()->hasRole('Employeur')) {

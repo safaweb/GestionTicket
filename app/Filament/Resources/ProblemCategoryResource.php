@@ -91,7 +91,7 @@ class ProblemCategoryResource extends Resource
     }
 }
 
-  /*public static function getEloquentQuery(): Builder in return parent::getEloquentQuery()
+    /*public static function getEloquentQuery(): Builder in return parent::getEloquentQuery()
     ->where(function ($query) {
         if (auth()->user()->hasRole('Chef Projet')) {
             $query->where('problem_categories.projet_id', auth()->user()->projet_id);

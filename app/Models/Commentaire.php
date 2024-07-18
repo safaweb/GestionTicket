@@ -1,9 +1,5 @@
 <?php
-
-/**
- * Created by Reliese Model.
- */
-
+/*** Created by Reliese Model.*/
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -12,7 +8,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Commentaire.
- *
  * @property int $id
  * @property int $tiket_id
  * @property int $user_id
@@ -21,8 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property null|Carbon $updated_at
  * @property null|string $deleted_at
  * @property User $user
- * @property Ticket $ticket
- */
+ * @property Ticket $ticket */
 class Commentaire extends Model
 {
     use SoftDeletes;

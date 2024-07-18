@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -21,7 +17,6 @@ use App\Notifications\UserCreated;
 
 /**
  * Class User.
- *
  * @property int $id
  * @property null|int $societe_id
  * @property null|int $pays_id
@@ -93,81 +88,55 @@ class User extends Authenticatable implements FilamentUser
         });
     }
 
-        /**
-     * Get the societe that owns the User.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    /**Get the societe that owns the User.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function societe()
     {
         return $this->belongsTo(Societe::class);
     }
 
-    /**
-     * Get the projet that owns the User.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+    /**Get the projet that owns the User.
     * public function projet()
-    * {
-    *    return $this->belongsTo(Projet::class);
-    *}
+    * {  return $this->belongsTo(Projet::class);}
     */
     
-    /**
-      * Get the pays that owns the Ticket.
-      *
-      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-      */
+    /** Get the pays that owns the Ticket.
+      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function pays()
     {
         return $this->belongsTo(Pays::class, 'pays_id');
     }
 
-    /**
-     * Get all of the commentaires for the User.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+    /** Get all of the commentaires for the User.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
     public function commentaires()
     {
         return $this->hasMany(Commentaire::class);
     }
 
-    /**
-     * Get all of the tickets for the User.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+    /**Get all of the tickets for the User.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
     public function tickets()
     {
         return $this->hasMany(Ticket::class, 'owner_id');
     }
 
-    /**
-     * Get all of the ticekt responsibility for the User.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+    /** Get all of the ticekt responsibility for the User.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
     public function ticektResponsibility()
     {
         return $this->hasMany(Ticket::class, 'responsible_id');
     }
 
-    /**
-     * Determine who has access.
-     *
-     * Only active users can access the filament
-     */
+    /** Determine who has access.
+     * Only active users can access the filament*/
     public function canAccessFilament(): bool
     {
         return auth()->user()->is_active;
     }
 
-    /**
-     * Add scope to display users based on their role.
-     *
-     * If the role is as an admin projet, then display the user based on their projet ID.
-     */
+    /** Add scope to display users based on their role.
+     * If the role is as an admin projet, then display the user based on their projet ID.*/
     public function scopeByRole($query)
     {
         if (auth()->user()->hasRole('Chef Projet')) {
@@ -178,15 +147,10 @@ class User extends Authenticatable implements FilamentUser
     }
     }
 
-    /**
-     * Get all of the socialiteUsers for the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+    /**Get all of the socialiteUsers for the User
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
     public function socialiteUsers()
     {
         return $this->hasMany(SocialiteUser::class);
     }
-
-
 }

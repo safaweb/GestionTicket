@@ -7,26 +7,17 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class StatutsDesTicketsChart extends ApexChartWidget
 {
-    /**
-     * Chart Id
-     *
-     * @var string
-     */
+    /** Chart Id
+     * @var string*/
     protected static string $chartId = 'statutsDesTicketsChart';
 
-    /**
-     * Widget Title
-     *
-     * @var string|null
-     */
+    /** Widget Title
+     * @var string|null*/
     protected static ?string $heading = 'Statuts Des Tickets';
 
-    /**
-     * Chart options (series, labels, types, size, animations...)
+    /**Chart options (series, labels, types, size, animations...)
      * https://apexcharts.com/docs/options
-     *
-     * @return array
-     */
+     * @return array */
     protected function getOptions(): array
     {
         $statutsDesTickets = StatutDuTicket::select('id', 'name')->withCount(['tickets'])->get();

@@ -11,9 +11,7 @@ use Filament\Tables;
 class RolesRelationManager extends RelationManager
 {
     protected static string $relationship = 'roles';
-
     protected static ?string $recordTitleAttribute = 'name';
-
     public static function form(Form $form): Form
     {
         return $form

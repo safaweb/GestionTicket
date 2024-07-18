@@ -8,7 +8,6 @@ use JeffGreco13\FilamentBreezy\Pages\MyProfile as BaseProfile;
 
 class MyProfile extends BaseProfile
 {
-
     protected static ?int $navigationSort = 500;
     protected static ?string $navigationLabel = 'Profile';  // Update the label here
 
@@ -19,7 +18,5 @@ class MyProfile extends BaseProfile
                 ->required()
                 ->label(__('filament-breezy::default.fields.name')),
         ];
-    }
-
-    
+    } 
 }

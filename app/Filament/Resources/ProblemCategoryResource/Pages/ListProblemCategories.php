@@ -9,7 +9,6 @@ use Filament\Resources\Pages\ListRecords;
 class ListProblemCategories extends ListRecords
 {
     protected static string $resource = ProblemCategoryResource::class;
-
     protected function getActions(): array
     {
         return [

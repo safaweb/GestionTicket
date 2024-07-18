@@ -9,7 +9,6 @@ use Filament\Resources\Pages\EditRecord;
 class EditProblemCategory extends EditRecord
 {
     protected static string $resource = ProblemCategoryResource::class;
-
     protected function getActions(): array
     {
         return [
@@ -19,6 +18,7 @@ class EditProblemCategory extends EditRecord
             Actions\RestoreAction::make(),
         ];
     }
+
     protected function getTitle(): string
     {
         return 'Modifier Catégorie de problème'; // Update this line

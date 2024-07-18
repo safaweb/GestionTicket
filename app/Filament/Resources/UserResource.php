@@ -20,11 +20,8 @@ use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-users';
-
     protected static ?string $navigationLabel = 'Utilisateurs';
-
     protected static ?string $navigationGroup = 'Données de base';
     
     public static function getLabel(): string
@@ -62,8 +59,6 @@ class UserResource extends Resource
                 ->pluck('name', 'id'))
                 ->required()
                 ->searchable(),
-                
-                    
                 Forms\Components\TextInput::make('phone')
                 ->label('Numéro de Téléphone')
                     ->tel()
