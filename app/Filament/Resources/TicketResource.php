@@ -42,7 +42,7 @@ class TicketResource extends Resource
                     Forms\Components\Select::make('projet_id')
                         ->label(__('Projets'))
                         //->options(Projet::all()
-                         //   ->pluck('name', 'id'))
+                        //->pluck('name', 'id'))
                         ->options(function (callable $get) {
                             $user = auth()->user();
                             $societeId = $user->societe_id; // Assuming the user model has a societe_id attribute
@@ -52,24 +52,17 @@ class TicketResource extends Resource
                         ->required()
                         ->afterStateUpdated(function ($state, callable $get, callable $set) {
                             $projet = Projet::find($state);
-                        /*  if ($projet) {
-                                $problemCategoryId = (int) $get('problem_category_id');
+                        /*if ($projet) {$problemCategoryId = (int) $get('problem_category_id');
                                 if ($problemCategoryId && $problemCategory = ProblemCategory::find($problemCategoryId)) {
-                                    if ($problemCategory->projet_id !== $projet->id) {
-                                        $set('problem_category_id', null);
-                                    }
-                                }
-                            }*/
+                                    if ($problemCategory->projet_id !== $projet->id) {$set('problem_category_id', null);}}}*/
                         })
                         ->reactive(),
                     Forms\Components\Select::make('problem_category_id')
                         ->label(__('Problem Category'))
                         ->options(function (callable $get, callable $set) {
                             /*$projet = Projet::find($get('projet_id'));
-                            if ($projet) {
-                                return $projet->problemCategories->pluck('name', 'id');
-                            }*/
-                            return ProblemCategory::all()->pluck('name', 'id');
+                            if ($projet) {return $projet->problemCategories->pluck('name', 'id');}*/
+                        return ProblemCategory::all()->pluck('name', 'id');
                         })
                         ->searchable()
                         ->required(),
@@ -87,20 +80,17 @@ class TicketResource extends Resource
                         ->columnSpan([
                             'sm' => 2,
                         ]),
-                        Forms\Components\Radio::make('validation')
+                    Forms\Components\Radio::make('validation')
                         ->label('Validation')
                         ->options([
                             'accepter' => 'Accepter',
-                            'refuser' => 'Refuser',
-                        ])
+                            'refuser' => 'Refuser',])
                         ->required()
                         ->inline()
                         ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']))
                         ->reactive(),
-                        Forms\Components\Textarea::make('commentaire')
-                        ->label('Commentaire')
-                        ->visible(fn (callable $get) => $get('refuser')),
-                /*  Forms\Components\Toggle::make('accepter')
+                    /*
+                    Forms\Components\Toggle::make('accepter')
                         ->label('Accepter')
                         ->reactive()
                         ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
@@ -108,7 +98,10 @@ class TicketResource extends Resource
                         ->label('Refuser')
                         ->reactive()
                         ->afterStateUpdated(fn ($state, callable $set) => $state ? $set('accepter', false) : null)
-                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),               */ 
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),               
+                    Forms\Components\Textarea::make('comment')
+                        ->label('Commentaire')
+                        ->visible(fn (callable $get) => $get('validation') === 'refuser'),*/
                     Forms\Components\Placeholder::make('approved_at')
                         ->label('Validée le:')
                         ->hiddenOn('create')
@@ -117,16 +110,16 @@ class TicketResource extends Resource
                         ->translateLabel()
                         ->hiddenOn('create')
                         ->content(fn (?Ticket $record): string => $record->solved_at ? $record->solved_at->diffForHumans() : '-'),
-                ])->columns([
-                    'sm' => 2,
-                ])->columnSpan(2),
-                Card::make()->schema([
+                        ])->columns([
+                        'sm' => 2,
+                        ])->columnSpan(2),
+                        Card::make()->schema([
                     Forms\Components\Select::make('priority_id')
                         ->label(__('Priority'))
                         ->options(Priority::all()->pluck('name', 'id'))
                         ->searchable()
                         ->required(),
-                        Forms\Components\Placeholder::make('statuts_des_tickets_id')
+                    Forms\Components\Placeholder::make('statuts_des_tickets_id')
                         ->label(__('Statut'))
                         ->hiddenOn('create')
                         ->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : '-')
@@ -136,8 +129,7 @@ class TicketResource extends Resource
                         ->options(
                             User::whereHas('roles', function($query) {
                                 $query->whereIn('name', ['Super Admin', 'Chef Projet', 'Employeur']);
-                            })->pluck('name', 'id')
-                        )
+                            })->pluck('name', 'id') )
                         ->searchable()
                         ->required()
                         ->hiddenOn('create')
