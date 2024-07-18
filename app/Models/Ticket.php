@@ -128,7 +128,7 @@ class Ticket extends Model
      * @return \Illuminate\Database\Eloquent\Relations\HasMany */
     public function commentaires()
     {
-        return $this->hasMany(Commentaire::class, 'tiket_id');
+        return $this->hasMany(Commentaire::class, 'ticket_id');
     }
 
     protected static function boot()

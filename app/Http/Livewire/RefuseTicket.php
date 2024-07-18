@@ -6,10 +6,10 @@ use Livewire\Component;
 class RefuseTicket extends Component
 {
     public $ticketId;
-    public $comment;
+    public $commentaire;
 
     protected $rules = [
-        'comment' => 'required|string|max:255',
+        'commentaire' => 'required|string|max:255',
     ];
 
     public function submit()
@@ -24,7 +24,7 @@ class RefuseTicket extends Component
         // $ticket->save();
 
         $this->emit('ticketRefused'); // Emit an event to notify the parent component
-        $this->reset('comment');
+        $this->reset('commentaire');
         $this->dispatchBrowserEvent('close-popup');
     }
 

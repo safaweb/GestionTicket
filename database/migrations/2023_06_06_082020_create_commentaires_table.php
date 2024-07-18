@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('commentaires', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('tiket_id')->index('tiket_id');
+            $table->unsignedBigInteger('ticket_id')->index('ticket_id');
             $table->unsignedBigInteger('user_id')->index('user_id');
             $table->text('commentaire');
             $table->timestamps();

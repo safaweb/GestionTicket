@@ -80,28 +80,7 @@ class TicketResource extends Resource
                         ->columnSpan([
                             'sm' => 2,
                         ]),
-                    Forms\Components\Radio::make('validation')
-                        ->label('Validation')
-                        ->options([
-                            'accepter' => 'Accepter',
-                            'refuser' => 'Refuser',])
-                        ->required()
-                        ->inline()
-                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']))
-                        ->reactive(),
-                    /*
-                    Forms\Components\Toggle::make('accepter')
-                        ->label('Accepter')
-                        ->reactive()
-                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
-                    Forms\Components\Toggle::make('refuser')
-                        ->label('Refuser')
-                        ->reactive()
-                        ->afterStateUpdated(fn ($state, callable $set) => $state ? $set('accepter', false) : null)
-                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),               
-                    Forms\Components\Textarea::make('comment')
-                        ->label('Commentaire')
-                        ->visible(fn (callable $get) => $get('validation') === 'refuser'),*/
+                  
                     Forms\Components\Placeholder::make('approved_at')
                         ->label('Validée le:')
                         ->hiddenOn('create')
@@ -122,7 +101,7 @@ class TicketResource extends Resource
                     Forms\Components\Placeholder::make('statuts_des_tickets_id')
                         ->label(__('Statut'))
                         ->hiddenOn('create')
-                        ->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : '-')
+                  ->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : 'ouvert')
                         ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
                     Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
