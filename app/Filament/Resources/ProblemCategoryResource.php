@@ -22,9 +22,7 @@ use Illuminate\Support\Facades\Auth;
 class ProblemCategoryResource extends Resource
 {
     protected static ?string $model = ProblemCategory::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-link';
-
     protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form

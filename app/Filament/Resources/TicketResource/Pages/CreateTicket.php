@@ -20,7 +20,7 @@ class CreateTicket extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['owner_id'] = auth()->id();
-        $data['statuts_des_tickets_id'] = 1;
+        $data['statuts_des_tickets_id'] = 5;
         $data['qualification_id'] = 1;
         return $data;
     }
