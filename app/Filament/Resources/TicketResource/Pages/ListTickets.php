@@ -5,6 +5,8 @@ namespace App\Filament\Resources\TicketResource\Pages;
 use App\Filament\Resources\TicketResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Auth;
+
 
 class ListTickets extends ListRecords
 {
@@ -12,7 +14,8 @@ class ListTickets extends ListRecords
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+            ->visible(fn ($record) => !Auth::user()->hasRole('Super Admin') && !Auth::user()->hasRole(['Chef Projet', 'Employeur']))
         ];
     }
     protected function getTitle(): string

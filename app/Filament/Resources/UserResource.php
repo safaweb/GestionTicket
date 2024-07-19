@@ -42,7 +42,6 @@ class UserResource extends Resource
                 ->label('Societe')
                     ->options(Societe::all()
                         ->pluck('name', 'id'))
-                       
                     ->searchable(),
                 Forms\Components\TextInput::make('name')
                     ->label('Nom')
@@ -51,7 +50,6 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('email')
                     ->label('Email')
                     ->required()->email()
-                    
                     ->maxLength(255),
                 Forms\Components\Select::make('pays_id')
                 ->label('Pays')

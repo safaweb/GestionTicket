@@ -51,7 +51,7 @@ class PaysResource extends Resource
             ])
         ;
     }
-    
+
     /*public static function getRelations(): array{
         return [
             ProjectRelationManager::class,
