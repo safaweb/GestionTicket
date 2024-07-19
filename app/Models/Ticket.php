@@ -44,6 +44,7 @@ class Ticket extends Model
         'pays_id' => 'int',
         'owner_id' => 'int',
         'qualification_id' => 'int',
+        'validation_id' => 'int',
         'problem_category_id' => 'int',
         'statuts_des_tickets_id' => 'int',
         'responsible_id' => 'int',
@@ -58,6 +59,7 @@ class Ticket extends Model
         'pays_id' ,
         'owner_id',
         'qualification_id',
+        'validation_id',
         'problem_category_id',
         'title',
         'description',
@@ -67,6 +69,23 @@ class Ticket extends Model
         'solved_at',
         'accepted',
     ];
+
+    public function validation()
+    {
+        return $this->belongsTo(Validation::class, 'validation_id');
+    }
+
+    public function approve()
+{
+    $this->approved_at = Carbon::now();
+    $this->save();
+}
+
+public function solve()
+{
+    $this->solved_at = Carbon::now();
+    $this->save();
+}
 
     /** Get the priority that owns the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/

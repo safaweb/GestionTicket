@@ -80,7 +80,7 @@ class CommentairesRelationManager extends RelationManager
                             ->get();
 
                         // Filtrer les utilisateurs qui travaillent sur le même projet
-                     /*   $usersWithSameProject = $usersInSameSociete->filter(function ($user) use ($ticket) {
+                        /*   $usersWithSameProject = $usersInSameSociete->filter(function ($user) use ($ticket) {
                             return $user->projets->contains($ticket->projet_id);
                         });*/
 
@@ -88,7 +88,7 @@ class CommentairesRelationManager extends RelationManager
                         $ticketOwner = $ticket->owner;
 
                         // Fusionner les destinataires en un tableau unique sans doublons
-                       $receiver = $usersInSameSociete->push($ticketOwner)->unique();
+                        $receiver = $usersInSameSociete->push($ticketOwner)->unique();
 
                         // Envoyer la notification aux destinataires appropriés
                         Notification::make()
