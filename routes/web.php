@@ -27,6 +27,12 @@ Route::get('/test-email', function () {
     $owner->notify(new App\Notifications\UserCreated());
 });
 
+Route::get('/test-email', function() {
+    $user = User::find(1); // Remplacez par un utilisateur existant
+    $ticket = Ticket::find(1); // Remplacez par un ticket existant
+    $user->notify(new App\Notifications\TicketAssignedNotification($ticket));
+    return 'E-mail envoyé!';
+});
 
 
 

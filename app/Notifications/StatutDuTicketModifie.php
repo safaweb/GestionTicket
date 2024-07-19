@@ -32,10 +32,10 @@ class StatutDuTicketModifie extends Notification implements ShouldQueue
         return (new MailMessage)
                     ->subject('Statut du Ticket Modifié')
                     ->line('Le statut de votre ticket a été modifié.')
-                    ->line(' Nom du Ticket: ' . $this->ticket->name)
+                    ->line(' Nom du Ticket: ' . $this->ticket->title)
                     ->line('Nouveau Statut : ' . $this->newStatus)
-                    ->action('Connectez-vous pour voir le ticket',$loginUrl)
-                    ->line('Merci de disposer de notre application !');
+                    ->action('Connectez-vous pour voir le ticket',$loginUrl);
+                    
     }
 
     public function toArray($notifiable)

@@ -13,6 +13,8 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Notifications\TicketAssignedNotification;
+use App\Notifications\TicketValidationNotification;
+
 class EditTicket extends EditRecord
 {
     protected static string $resource = TicketResource::class;
@@ -33,7 +35,7 @@ class EditTicket extends EditRecord
                             'refuser' => 'Refuser',
                         ])
                         ->reactive()
-                        ->required()
+                       // ->required()
                         ->afterStateUpdated(function (callable $set, $state) {
                             $set('showCommentaire', $state === 'refuser');
                         }),
@@ -57,16 +59,29 @@ class EditTicket extends EditRecord
                             $this->addError('commentaire', 'Vous devez spécifier un commentaire pour refuser le ticket.');
                             return; // Exit the method if commentaire is empty
                         }
-
+                      
                         $this->changeTicketStatus($ticketId, 'Non Résolu', $data['commentaire']);
                         $this->notifyAssignedUser($ticketId);
                     }
+
+                     // Notify the ticket creator about the validation status
+                     $ticket = Ticket::findOrFail($ticketId);
+                     $ticketOwner = $ticket->owner; // Assumes there is a 'user' relationship
+                     $ticketOwner->notify(new TicketValidationNotification($ticket, $data['validation'], $data['commentaire'] ?? null));
+ 
 
                     // Optionally, perform other operations or save changes
                     // $this->editTicket($data, $ticketId); // You may choose to include this if needed
                 }),
         ];
     }
+     /**
+     * Change the status of the ticket and optionally add a comment.
+     *
+     * @param int $ticketId
+     * @param string $newStatus
+     * @param string|null $commentaire
+     */
 
     protected function changeTicketStatus($ticketId, $newStatus, $commentaire = null)
     {
@@ -85,20 +100,14 @@ class EditTicket extends EditRecord
         $ticket->save();
     }
 
-    protected function notifyAssignedUser($ticketId)
-    {
-        $ticket = Ticket::findOrFail($ticketId);
-        $currentUser = Auth::user();
-        $receiver = $this->getNotificationRecipients($currentUser);
+    
+ /**
+     * Get the list of users who should receive the notification based on roles and project.
+     *
+     * @param User $currentUser
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
 
-        Notification::make()
-            ->title('Vous avez été assigné comme responsable d\'un ticket')
-            ->actions([
-                NotificationAction::make('Voir')
-                    ->url(route('filament.resources.tickets.view', $ticket->id)),
-            ])
-            ->sendToDatabase($receiver);
-    }
 
     private function getNotificationRecipients($currentUser)
     {
@@ -113,10 +122,34 @@ class EditTicket extends EditRecord
             ->where('id', '!=', $currentUser->id)
             ->get();
         }
+       
+    }
+         /**
+     * Notify the assigned user about the ticket assignment.
+     *
+     * @param int $ticketId
+     */
+    
+      protected function notifyAssignedUser($ticketId)
+    {
+        $ticket = Ticket::findOrFail($ticketId);
+        $currentUser = Auth::user();
+        $receiver = $this->getNotificationRecipients($currentUser);
 
-        // Send the notification to appropriate recipients
+        Notification::make()
+            ->title('Vous avez été assigné comme responsable d\'un ticket')
+            ->actions([
+                NotificationAction::make('Voir')
+                    ->url(route('filament.resources.tickets.view', $ticket->id)),
+            ])
+            ->sendToDatabase($receiver);
+             // Send the notification to appropriate recipients
  foreach ($receiver as $user) {
     $user->notify(new TicketAssignedNotification($ticket));
 }
     }
+       
 }
+    
+
+

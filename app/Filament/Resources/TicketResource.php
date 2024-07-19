@@ -101,7 +101,7 @@ class TicketResource extends Resource
                     Forms\Components\Placeholder::make('statuts_des_tickets_id')
                         ->label(__('Statut'))
                         ->hiddenOn('create')
-                  ->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : 'ouvert')
+              //    ->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : 'ouvert')
                         ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
                     Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))

@@ -2,28 +2,29 @@
 
 namespace App\Notifications;
 
-use App\Models\Ticket;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
-class TicketAssignedNotification extends Notification implements ShouldQueue
+class TicketValidationNotification extends Notification
 {
     use Queueable;
 
-    protected $ticket;
+    private $ticket;
+    private $validation;
+    private $commentaire;
 
     /**
      * Create a new notification instance.
      *
-     * @param Ticket $ticket
      * @return void
      */
-    public function __construct(Ticket $ticket)
+    public function __construct($ticket, $validation, $commentaire = null)
     {
         $this->ticket = $ticket;
+        $this->validation = $validation;
+        $this->commentaire = $commentaire;
     }
 
     /**
@@ -45,12 +46,21 @@ class TicketAssignedNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-                    ->subject('Nouveau ticket assigné')
-                    ->line('Vous avez été assigné comme responsable du ticket : '  . $this->ticket->title)
-                    ->line('Le client: ' . $this->ticket->owner->name)
-                   ->line('Le projet: ' . $this->ticket->projet->name)
-                    ->action('Voir le ticket', route('filament.resources.tickets.view', $this->ticket->id));
+        $mailMessage = new MailMessage();
+
+        if ($this->validation === 'accepter') {
+            $mailMessage->subject('Validation de votre ticket')
+                        ->line('Votre ticket : ' . $this->ticket->title . '  a été accepté.' );
+        } elseif ($this->validation === 'refuser') {
+            $mailMessage->subject('Validation de votre ticket')
+                        ->line('Votre ticket : ' . $this->ticket->title . ' a été refusé.');
+        }
+
+        if ($this->commentaire) {
+            $mailMessage->line("Commentaire: {$this->commentaire}");
+        }
+
+        return $mailMessage;
     }
 
     /**
@@ -63,8 +73,8 @@ class TicketAssignedNotification extends Notification implements ShouldQueue
     {
         return [
             'ticket_id' => $this->ticket->id,
-            'ticket_title' => $this->ticket->title,
-            'url' => route('filament.resources.tickets.view', $this->ticket->id),
+            'validation' => $this->validation,
+            'commentaire' => $this->commentaire,
         ];
     }
 }
