@@ -7,6 +7,9 @@ use Filament\Resources\Pages\CreateRecord;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Filament\Notifications\Notification;
+use Filament\Pages\Actions;
+use Filament\Notifications\Actions\Action;
 use App\Notifications\TicketCreatedNotification;
 
 class CreateTicket extends CreateRecord

@@ -70,8 +70,13 @@ class EditTicket extends EditRecord
                         $ticket->approved_at = Carbon::now();
                         $ticket->validation_id = 2;// Enregistrer la date actuelle dans approved_at
                         $ticket->save();
+                        Commentaire::create([
+                            'ticket_id' => $ticket->id,
+                            'user_id' => Auth::id(),
+                            'commentaire' => "\nVotre ticket est refusé car " . $data['commentaire'],
+                        ]);
                         // Logique pour envoyer une notification à l'utilisateur assigné
-                      //  $ticket->owner->notify(new StatutDuBilletModifie($ticket, $ticket->statutDuTicket->name));
+                        //$ticket->owner->notify(new StatutDuBilletModifie($ticket, $ticket->statutDuTicket->name));
                     }
                 });
                 
@@ -155,9 +160,7 @@ class EditTicket extends EditRecord
             $formattedCommentaire .= "La date de début est: " . ($data['date_debut'] ?? 'Non spécifiée'). "<br>";
             $formattedCommentaire .= "La date de fin est: " . ($data['date_fin'] ?? 'Non spécifiée'). "<br>";
             $formattedCommentaire .= "Le nombre d'heures est: " . ($data['nombre_heures'] ?? 'Non spécifié'). "<br>";
-        } elseif ($ticket->validation_id === 2 && $commentaire !== null) {
-            $formattedCommentaire = "\nVotre ticket est refusé car $commentaire";
-        }
+        } 
 
         if (isset($formattedCommentaire)) {
             Commentaire::create([
