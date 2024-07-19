@@ -13,7 +13,8 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Carbon\Carbon;
-
+use App\Notifications\TicketAssignedNotification;
+use App\Notifications\TicketValidationNotification;
 
 class EditTicket extends EditRecord
 {
@@ -42,7 +43,7 @@ class EditTicket extends EditRecord
                             'refuser' => 'Refuser',
                         ])
                         ->reactive()
-                        ->required()
+                       // ->required()
                         ->afterStateUpdated(function (callable $set, $state) {
                             $set('showCommentaire', $state === 'refuser');
                         }),
@@ -70,11 +71,17 @@ class EditTicket extends EditRecord
                         $ticket->approved_at = Carbon::now();
                         $ticket->validation_id = 2;// Enregistrer la date actuelle dans approved_at
                         $ticket->save();
+
                         Commentaire::create([
                             'ticket_id' => $ticket->id,
                             'user_id' => Auth::id(),
                             'commentaire' => "\nVotre ticket est refusé car " . $data['commentaire'],
                         ]);
+                     // Notify the ticket creator about the validation status
+                    $ticket = Ticket::findOrFail($ticketId);
+                    $ticketOwner = $ticket->owner; // Assumes there is a 'user' relationship
+                    $ticketOwner->notify(new TicketValidationNotification($ticket, $data['validation'], $data['commentaire'] ?? null));
+
                         // Logique pour envoyer une notification à l'utilisateur assigné
                         //$ticket->owner->notify(new StatutDuBilletModifie($ticket, $ticket->statutDuTicket->name));
                     }
@@ -142,6 +149,15 @@ class EditTicket extends EditRecord
         }
         return $actions;    
     }
+     /**
+     * Change the status of the ticket and optionally add a comment.
+     *
+     * @param int $ticketId
+     * @param string $newStatus
+     * @param string|null $commentaire
+     */
+
+     
 
     protected function changeTicketStatus($ticketId, $newStatus, $commentaire = null, $data = null)
     {
@@ -173,6 +189,15 @@ class EditTicket extends EditRecord
         $ticket->save();
     }
 
+    
+ /**
+     * Get the list of users who should receive the notification based on roles and project.
+     *
+     * @param User $currentUser
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+
+
     private function saveValidation($ticketId, $validationId) {
         $ticket = Ticket::findOrFail($ticketId);
         $ticket->validation_id = $validationId;
@@ -192,6 +217,9 @@ class EditTicket extends EditRecord
                     ->url(route('filament.resources.tickets.view', $ticket->id)),
             ])
             ->sendToDatabase($receiver);
+            foreach ($receiver as $user) {
+                $user->notify(new TicketAssignedNotification($ticket));
+            }
     }
 
     private function getNotificationRecipients($currentUser)
@@ -216,3 +244,6 @@ class EditTicket extends EditRecord
 
 
 }
+    
+
+
