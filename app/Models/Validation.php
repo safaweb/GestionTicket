@@ -18,6 +18,7 @@ class Validation extends Model
     public const ACCEPTER = 1;
     public const REFUSER= 2;
     public const TERMINER = 3;
+    public const RIEN = 4;
     public $timestamps = false;
     protected $table = 'validation';
     protected $fillable = [

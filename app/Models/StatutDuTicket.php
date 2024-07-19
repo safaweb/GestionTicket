@@ -20,6 +20,7 @@ class StatutDuTicket extends Model
     public const EN_COURS = 2;
     public const RESOLU = 3;
     public const NONRESOLU = 4;
+    public const RIEN = 5;
     public $timestamps = false;
     protected $table = 'statuts_des_tickets';
 

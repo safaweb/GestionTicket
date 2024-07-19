@@ -23,7 +23,7 @@ class Societe extends Model
         'name',
     ];
 
-   /**
+    /**
      * Get all of the  for the Societe
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

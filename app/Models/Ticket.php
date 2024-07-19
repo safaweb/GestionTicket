@@ -154,7 +154,7 @@ public function solve()
     {
         parent::boot();
         static::updated(function ($ticket) {
-            if ($ticket->isDirty('statuts_des_tickets_id') && in_array($ticket->statuts_des_tickets_id, [ StatutDuTicket::OUVERT, StatutDuTicket::EN_COURS, StatutDuTicket::RESOLU   , StatutDuTicket::NONRESOLU])) {
+            if ($ticket->isDirty('statuts_des_tickets_id') && in_array($ticket->statuts_des_tickets_id, [ StatutDuTicket::OUVERT, StatutDuTicket::EN_COURS, StatutDuTicket::RESOLU   , StatutDuTicket::NONRESOLU, StatutDuTicket::RIEN])) {
                 \Log::info('Status changed for ticket ID: ' . $ticket->id);
                 if ($ticket->owner) {
                     \Log::info('Sending notification to user ID: ' . $ticket->owner->id);

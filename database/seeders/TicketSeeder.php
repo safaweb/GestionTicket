@@ -18,10 +18,10 @@ class TicketSeeder extends Seeder
             'owner_id'  => 1,
             'qualification_id'  => 1,
             'problem_category_id' => 1,
+            'statuts_des_tickets_id' => '5',
+            'validation_id' => '4',
             'title' => 'This is a sample ticket',
             'description' => 'This is a descriptions',
-            'statuts_des_tickets_id' => '1',
-            'validation_id' => '1',
         ]);
     }
 }

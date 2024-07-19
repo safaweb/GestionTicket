@@ -14,6 +14,7 @@ return new class extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             $table->foreign(['societe_id'], 'users_ibfk_1')->references(['id'])->on('societes')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            $table->foreign(['pays_id'], 'users_ibfk_2')->references(['id'])->on('pays')->onUpdate('NO ACTION')->onDelete('NO ACTION');
         });
     }
 

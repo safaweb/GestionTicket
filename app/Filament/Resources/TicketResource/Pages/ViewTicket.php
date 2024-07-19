@@ -15,7 +15,8 @@ class ViewTicket extends ViewRecord
         return [
             Actions\EditAction::make()    
             //->visible(fn ($record) => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])
-            //&& $record->validation_id === 1) // Only visible if validation_id is 1
+            //&& $record->validation_id === (4 && 1)) // Only visible if validation_id is 4
+            ->visible(fn ($record) => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']) && in_array($record->validation_id, [4, 1]))
         ];
     }
 }

@@ -16,6 +16,7 @@ class ValidationSeeder extends Seeder
             ['id' => Validation::ACCEPTER, 'name' => 'Accepter'],
             ['id' => Validation::REFUSER, 'name' => 'Refuser'],
             ['id' => Validation::TERMINER, 'name' => 'Terminer'],
+            ['id' => Validation::RIEN, 'name' => '-'],
         ]);
     }
 }

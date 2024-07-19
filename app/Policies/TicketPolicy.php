@@ -22,12 +22,10 @@ class TicketPolicy
         if ($user->hasRole('Chef Projet')) {
             return $user->id == $ticket->owner_id || $ticket->projet_id == $user->projet_id;
         }
-
         // The staff projet can view tickets that have been assigned to them.
         if ($user->hasRole('Employeur')) {
             return $user->id == $ticket->owner_id ||  $ticket->responsible_id == $user->id;
         }
-
         // The user can view their own ticket
         return $user->id == $ticket->owner_id;
     }
@@ -49,10 +47,7 @@ class TicketPolicy
             return false;
     }
          // Check if the ticket status is 'OUVERT' for editing permissions
-    /*if ($ticket->statut_des_tickets_id != StatutDuTicket::OUVERT || $user->hasRole('Client') ) {
-        return false;
-    }
-    */
+    /*if ($ticket->statut_des_tickets_id != StatutDuTicket::OUVERT || $user->hasRole('Client') ) { return false; } */
 
 
     /** Determine whether the user can delete the model. */
@@ -61,7 +56,6 @@ class TicketPolicy
         if ($ticket->statut_des_tickets_id != StatutDuTicket::OUVERT) {
             return false;
         }
-
         return $user->id == $ticket->owner_id;
     }
 
@@ -70,7 +64,6 @@ class TicketPolicy
     {
         return $user->id == $ticket->owner_id;
     }
-
     /**Determine whether the user can permanently delete the model. */
     public function forceDelete(User $user, Ticket $ticket): bool
     {

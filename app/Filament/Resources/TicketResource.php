@@ -107,7 +107,7 @@ class TicketResource extends Resource
                     Forms\Components\Placeholder::make('statuts_des_tickets_id')
                         ->label(__('Statut'))
                         ->hiddenOn('create')
-                        //->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : 'Ouvert')
+                        ->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : '-')
                         ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
                     Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
@@ -182,7 +182,7 @@ class TicketResource extends Resource
                 // Conditionally add the Edit action based on user roles
                 Tables\Actions\EditAction::make()
                 //->visible(fn () => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']))
-                ->visible(fn ($record) => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']) && $record->validation_id === 1)
+                ->visible(fn ($record) => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']) && in_array($record->validation_id, [4, 1]))
         ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

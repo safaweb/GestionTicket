@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Carbon\Carbon;
 use App\Notifications\TicketAssignedNotification;
+use App\Notifications\StatutDuTicketModifie;
 use App\Notifications\TicketValidationNotification;
 
 class EditTicket extends EditRecord
@@ -62,6 +63,12 @@ class EditTicket extends EditRecord
                         $ticket->approved_at = Carbon::now();
                         $ticket->validation_id = 1;// Enregistrer la date actuelle dans approved_at
                         $ticket->save();
+
+
+                        $ticketOwner = $ticket->owner; // Assumes there is a 'user' relationship
+                        $ticketOwner->notify(new TicketValidationNotification($ticket, $data['validation']));
+                            // Logique pour envoyer une notification à l'utilisateur assigné
+                            $ticket->owner->notify(new StatutDuTicketModifie($ticket, $ticket->statutDuTicket->name));
                     } elseif ($data['validation'] === 'refuser') {
                         if (empty($data['commentaire'])) {
                             $this->addError('commentaire', 'Vous devez spécifier un commentaire pour refuser le ticket.');
@@ -78,12 +85,14 @@ class EditTicket extends EditRecord
                             'commentaire' => "\nVotre ticket est refusé car " . $data['commentaire'],
                         ]);
                      // Notify the ticket creator about the validation status
-                    $ticket = Ticket::findOrFail($ticketId);
-                    $ticketOwner = $ticket->owner; // Assumes there is a 'user' relationship
+                    
+                // $ticket = Ticket::findOrFail($ticketId);
+                  //  $ticketOwner = $ticket->owner; // Assumes there is a 'user' relationship
+                   // $ticketOwner->notify(new TicketValidationNotification($ticket, $data['validation'], $data['commentaire'] ?? null));
+                   $ticketOwner = $ticket->owner; // Assumes there is a 'user' relationship
                     $ticketOwner->notify(new TicketValidationNotification($ticket, $data['validation'], $data['commentaire'] ?? null));
-
                         // Logique pour envoyer une notification à l'utilisateur assigné
-                        //$ticket->owner->notify(new StatutDuBilletModifie($ticket, $ticket->statutDuTicket->name));
+                        $ticket->owner->notify(new StatutDuTicketModifie($ticket, $ticket->statutDuTicket->name));
                     }
                 });
                 
