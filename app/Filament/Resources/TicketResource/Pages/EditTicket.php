@@ -78,7 +78,7 @@ class EditTicket extends EditRecord
                             'commentaire' => "\nVotre ticket est refusé car " . $data['commentaire'],
                         ]);
                      // Notify the ticket creator about the validation status
-                    $ticket = Ticket::findOrFail($ticketId);
+                  //  $ticket = Ticket::findOrFail($ticketId);
                     $ticketOwner = $ticket->owner; // Assumes there is a 'user' relationship
                     $ticketOwner->notify(new TicketValidationNotification($ticket, $data['validation'], $data['commentaire'] ?? null));
 
@@ -230,7 +230,8 @@ class EditTicket extends EditRecord
                         ->get();
         } else {
             return User::whereHas('roles', function ($q) {
-                $q->where('name', 'Employeur');              
+                $q->where('name', 'Employeur'); 
+                $q->orwhere('name', 'Chef Projet');                
             })->where('societe_id', $currentUser->societe_id)
             ->where('id', '!=', $currentUser->id)
             ->get();
