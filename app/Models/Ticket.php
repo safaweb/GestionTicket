@@ -75,6 +75,18 @@ class Ticket extends Model
         return $this->belongsTo(Validation::class, 'validation_id');
     }
 
+    public function approve()
+{
+    $this->approved_at = Carbon::now();
+    $this->save();
+}
+
+public function solve()
+{
+    $this->solved_at = Carbon::now();
+    $this->save();
+}
+
     /** Get the priority that owns the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function priority()

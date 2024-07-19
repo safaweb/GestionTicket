@@ -87,7 +87,7 @@ class TicketResource extends Resource
                     Forms\Components\Placeholder::make('approved_at')
                         ->label('Validée le:')
                         ->hiddenOn('create')
-                        ->content(fn (?Ticket $record): string => $record && $record->approved_at ? $record->approved_at->format('Y-m-d') : '-')
+                        ->content(fn (?Ticket $record): string => $record && $record->approved_at ? $record->approved_at->diffForHumans() : '-')
                         ->disabled(fn ($record) => $record !== null),
                     Forms\Components\Placeholder::make('solved_at')
                         ->translateLabel()
