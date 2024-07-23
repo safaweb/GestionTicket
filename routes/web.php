@@ -33,7 +33,3 @@ Route::get('/test-email', function() {
     $user->notify(new App\Notifications\TicketAssignedNotification($ticket));
     return 'E-mail envoyé!';
 });
-
-
-
-

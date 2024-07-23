@@ -87,6 +87,8 @@ class EditTicket extends EditRecord
                         // Logique pour envoyer une notification à l'utilisateur assigné
                         $ticket->owner->notify(new StatutDuTicketModifie($ticket, $ticket->statutDuTicket->name));
                     }
+                    // Redirect to the view page
+                    $this->redirect(route('filament.resources.tickets.view', $ticket->id));
                 });
 
                 $actions[] = Actions\Action::make('Terminer')
@@ -140,6 +142,8 @@ class EditTicket extends EditRecord
                     }
                     
                     $ticket->save();
+                    // Redirect to the view page
+                    $this->redirect(route('filament.resources.tickets.view', $ticket->id));
                 });
         }
         return $actions;    

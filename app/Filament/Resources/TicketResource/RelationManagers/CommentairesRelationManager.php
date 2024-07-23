@@ -70,6 +70,10 @@ class CommentairesRelationManager extends RelationManager
                         return $data;
                     })
                     ->label('Ajouter un commentaire')
+                    ->visible(function (Livewire $livewire) {
+                        $ticket = $livewire->ownerRecord;
+                        return !in_array($ticket->validation_id, [2, 3]);
+                    })
                     ->after(function (Livewire $livewire) {
                         $ticket = $livewire->ownerRecord;
                         $currentUser = auth()->user();
@@ -77,9 +81,6 @@ class CommentairesRelationManager extends RelationManager
                         $usersInSameSociete = User::where('societe_id', $currentUser->societe_id)
                             ->where('id', '!=', $currentUser->id)
                             ->get();
-                        // Filtrer les utilisateurs qui travaillent sur le même projet
-                        /*   $usersWithSameProject = $usersInSameSociete->filter(function ($user) use ($ticket) {
-                            return $user->projets->contains($ticket->projet_id);});*/
                         // Ajouter l'utilisateur qui a créé le ticket
                         $ticketOwner = $ticket->owner;
                         // Fusionner les destinataires en un tableau unique sans doublons
@@ -98,7 +99,11 @@ class CommentairesRelationManager extends RelationManager
                 Tables\Actions\Action::make('attachment')->action(function ($record) {
                     return response()->download('storage/' . $record->attachments);
                 })->hidden(fn ($record) => $record->attachments == ''),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->visible(function (Livewire $livewire) {
+                    $ticket = $livewire->ownerRecord;
+                    return !in_array($ticket->validation_id, [2, 3]);
+                }),
             ])
             ->bulkActions([]);
     }

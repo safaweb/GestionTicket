@@ -121,11 +121,11 @@ class TicketResource extends Resource
                         ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet'])),
                     Forms\Components\Placeholder::make('created_at')
                         ->translateLabel()
-                        ->content(fn (?Ticket $record): string => $record ? $record->created_at->format('Y-m-d ')  : '-')
+                        ->content(fn (?Ticket $record): string => $record ? $record->created_at->diffForHumans() : '-')
                         ->disabled(fn ($record) => $record !== null),
                     Forms\Components\Placeholder::make('updated_at')
                         ->translateLabel()
-                        ->content(fn (?Ticket $record): string => $record ? $record->updated_at->format('Y-m-d '): '-')
+                        ->content(fn (?Ticket $record): string => $record ? $record->updated_at->diffForHumans() : '-')
                         ->disabled(fn ($record) => $record !== null),
                 ])->columnSpan(1),
             ])->columns(3);
@@ -142,7 +142,7 @@ class TicketResource extends Resource
                     ->searchable()
                     ->label(__('Projet'))
                     ->toggleable(),
-                    Tables\Columns\TextColumn::make('validation.name')
+                Tables\Columns\TextColumn::make('validation.name')
                     ->label(__('Validation'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('ProblemCategory.name')
