@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Carbon\Carbon;
 use App\Notifications\TicketAssignedNotification;
-use App\Notifications\StatutDuTicketModifie;
 use App\Notifications\TicketValidationNotification;
 
 class EditTicket extends EditRecord
@@ -44,7 +43,7 @@ class EditTicket extends EditRecord
                             'refuser' => 'Refuser',
                         ])
                         ->reactive()
-                       // ->required()
+                       ->required()
                         ->afterStateUpdated(function (callable $set, $state) {
                             $set('showCommentaire', $state === 'refuser');
                         }),
@@ -64,9 +63,8 @@ class EditTicket extends EditRecord
                         $ticket->validation_id = 1;// Enregistrer la date actuelle dans approved_at
                         $ticket->save();
                         $ticketOwner = $ticket->owner; // Assumes there is a 'user' relationship
-                        $ticketOwner->notify(new TicketValidationNotification($ticket, $data['validation']));
                         // Logique pour envoyer une notification à l'utilisateur assigné
-                        $ticket->owner->notify(new StatutDuTicketModifie($ticket, $ticket->statutDuTicket->name));
+                        $ticket->owner->notify(new TicketValidationNotification($ticket, $ticket->statutDuTicket->name, $data['validation'],$data['commentaire'] ?? null,$data['validation_id']?? null));
                     } elseif ($data['validation'] === 'refuser') {
                         if (empty($data['commentaire'])) {
                             $this->addError('commentaire', 'Vous devez spécifier un commentaire pour refuser le ticket.');
@@ -76,16 +74,14 @@ class EditTicket extends EditRecord
                         $ticket->approved_at = Carbon::now();
                         $ticket->validation_id = 2;// Enregistrer la date actuelle dans approved_at
                         $ticket->save();
+                             // Notify the ticket creator about the validation status
+                             $ticketOwner = $ticket->owner; // Assumes there is a 'user' relationship
+                             $ticket->owner->notify(new TicketValidationNotification($ticket, $ticket->statutDuTicket->name, $data['validation'],$data['commentaire'] ?? null,$data['validation_id']?? null));
                         Commentaire::create([
                             'ticket_id' => $ticket->id,
                             'user_id' => Auth::id(),
                             'commentaire' => "\nVotre ticket est refusé car " . $data['commentaire'],
                         ]);
-                        // Notify the ticket creator about the validation status
-                        $ticketOwner = $ticket->owner; // Assumes there is a 'user' relationship
-                        $ticketOwner->notify(new TicketValidationNotification($ticket, $data['validation'], $data['commentaire'] ?? null));
-                        // Logique pour envoyer une notification à l'utilisateur assigné
-                        $ticket->owner->notify(new StatutDuTicketModifie($ticket, $ticket->statutDuTicket->name));
                     }
                 });
 
@@ -140,6 +136,8 @@ class EditTicket extends EditRecord
                     }
                     
                     $ticket->save();
+
+                     
                 });
         }
         return $actions;    
@@ -150,32 +148,42 @@ class EditTicket extends EditRecord
      * @param string $newStatus
      * @param string|null $commentaire
      */
-
     protected function changeTicketStatus($ticketId, $newStatus, $commentaire = null, $data = null)
     {
         $ticket = Ticket::findOrFail($ticketId);
         $ticket->statutDuTicket()->associate(StatutDuTicket::where('name', $newStatus)->first());
-        if ($ticket->validation_id === 3 && $newStatus === 'Non Résolu' && $commentaire !== null) {
+    
+        if ($ticket->validation_id === 3) {
             $formattedCommentaire = "\nVotre ticket est $newStatus";
-            $formattedCommentaire .= " car $commentaire". "<br>";
-            $formattedCommentaire .= " la date de début est: " . ($data['date_debut'] ?? 'Non spécifiée'). "<br>";
-            $formattedCommentaire .= "La date de fin est: " . ($data['date_fin'] ?? 'Non spécifiée'). "<br>";
-            $formattedCommentaire .= "Le nombre d'heures est: " . ($data['nombre_heures'] ?? 'Non spécifié'). "<br>";
-        } elseif ($ticket->validation_id === 3 && $newStatus === 'Résolu') {
-            $formattedCommentaire = "\nVotre ticket est $newStatus". "<br>";
-            $formattedCommentaire .= "La date de début est: " . ($data['date_debut'] ?? 'Non spécifiée'). "<br>";
-            $formattedCommentaire .= "La date de fin est: " . ($data['date_fin'] ?? 'Non spécifiée'). "<br>";
-            $formattedCommentaire .= "Le nombre d'heures est: " . ($data['nombre_heures'] ?? 'Non spécifié'). "<br>";
-        } 
-        if (isset($formattedCommentaire)) {
+            if ($newStatus === 'Non Résolu' && $commentaire !== null) {
+                $formattedCommentaire .= " car $commentaire";
+            }
+            $formattedCommentaire .= "<br>La date de début est: " . ($data['date_debut'] ?? 'Non spécifiée');
+            $formattedCommentaire .= "<br>La date de fin est: " . ($data['date_fin'] ?? 'Non spécifiée');
+            $formattedCommentaire .= "<br>Le nombre d'heures est: " . ($data['nombre_heures'] ?? 'Non spécifié');
+            
             Commentaire::create([
                 'ticket_id' => $ticketId,
                 'user_id' => Auth::id(),
                 'commentaire' => $formattedCommentaire,
             ]);
         }
+    
         $ticket->save();
+    
+        $ticketOwner = $ticket->owner; // Assumes there is a 'user' relationship
+        $ticketOwner->notify(new TicketValidationNotification(
+            $ticket, 
+            $newStatus, 
+            $data['validation'] ?? null, 
+            $commentaire, 
+            3, 
+            $data['date_debut'] ?? null, 
+            $data['date_fin'] ?? null, 
+            $data['nombre_heures'] ?? null
+        ));
     }
+    
 
     /**
      * Get the list of users who should receive the notification based on roles and project.
