@@ -19,8 +19,8 @@ return new class extends Migration {
             $table->foreign(['problem_category_id'], 'tickets_ibfk_4')->references(['id'])->on('problem_categories')->onUpdate('NO ACTION')->onDelete('NO ACTION');
             $table->foreign(['responsible_id'], 'tickets_ibfk_5')->references(['id'])->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
             $table->foreign(['statuts_des_tickets_id'], 'tickets_ibfk_6')->references(['id'])->on('statuts_des_tickets')->onUpdate('NO ACTION')->onDelete('NO ACTION');
-            $table->foreign(['validation_id'], 'tickets_ibfk_7')->references(['id'])->on('validation')->onUpdate('NO ACTION')->onDelete('NO ACTION');
-            $table->foreign(['qualification_id'], 'tickets_ibfk_8')->references(['id'])->on('qualification')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            //$table->foreign(['validation_id'], 'tickets_ibfk_7')->references(['id'])->on('validation')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            //$table->foreign(['qualification_id'], 'tickets_ibfk_8')->references(['id'])->on('qualification')->onUpdate('NO ACTION')->onDelete('NO ACTION');
         });
     }
 
@@ -38,6 +38,8 @@ return new class extends Migration {
             $table->dropForeign('tickets_ibfk_4');
             $table->dropForeign('tickets_ibfk_5');
             $table->dropForeign('tickets_ibfk_6');
+            //$table->dropForeign('tickets_ibfk_7');
+            //$table->dropForeign('tickets_ibfk_8');
         });
     }
 };
