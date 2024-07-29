@@ -14,21 +14,26 @@ class TicketPolicy
     {
         return true;
     }
+    public function view(User $user, Ticket $ticket)
+    {
+        // Autoriser les super admins et les chefs de projet à voir le ticket
+        return $user->hasAnyRole(['Super Admin', 'Chef Projet']);
+    }
 
     /** Determine whether the user can view the model.*/
-    public function view(User $user, Ticket $ticket): bool
-    {
+  //  public function view(User $user, Ticket $ticket): bool
+  //  {
         // The Admin Projet can view tickets that are assigned to their specific projet.
-        if ($user->hasRole('Chef Projet')) {
-            return $user->id == $ticket->owner_id || $ticket->projet_id == $user->projet_id;
-        }
+    //    if ($user->hasRole('Chef Projet')) {
+      //      return $user->id == $ticket->owner_id || $ticket->projet_id == $user->projet_id;
+      //  }
         // The staff projet can view tickets that have been assigned to them.
-        if ($user->hasRole('Employeur')) {
-            return $user->id == $ticket->owner_id ||  $ticket->responsible_id == $user->id;
-        }
+   //     if ($user->hasRole('Employeur')) {
+    //        return $user->id == $ticket->owner_id ||  $ticket->responsible_id == $user->id;
+    //    }
         // The user can view their own ticket
-        return $user->id == $ticket->owner_id;
-    }
+    //    return $user->id == $ticket->owner_id;
+  //  }
 
     /** Determine whether the user can create models. */
     public function create(User $user): bool
@@ -69,4 +74,6 @@ class TicketPolicy
     {
         return $user->id == $ticket->owner_id;
     }
+
+  
 }

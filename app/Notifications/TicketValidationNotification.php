@@ -59,7 +59,8 @@ class TicketValidationNotification extends Notification
         return ['mail' ,'database'];
     }
 
-
+    
+    
 
     public function toMail($notifiable)
     {
