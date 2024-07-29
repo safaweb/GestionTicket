@@ -134,31 +134,54 @@ class TicketResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->translateLabel()
                     ->searchable(),
-                    Tables\Columns\TextColumn::make('validation.name')
-                    ->label(__('Validation'))
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('statutDuTicket.name')
-                    ->label(__('Statut'))
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('projet.name')
+                    Tables\Columns\TextColumn::make('projet.name')
                     ->searchable()
                     ->label(__('Projet'))
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('owner.name') 
+                    Tables\Columns\TextColumn::make('owner.name') 
                     ->label(__('User'))
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('responsible.name') 
+                    Tables\Columns\TextColumn::make('responsible.name') 
                     ->label(__('Responsible'))
                     ->sortable()
                     ->searchable()
                     ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet','Employeur']))
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('projet.pays.name')
+                    Tables\Columns\TextColumn::make('projet.pays.name')
                     ->searchable()
                     ->label(__('Pays'))
                     ->toggleable(),
+                    Tables\Columns\TextColumn::make('validation.name')
+                        ->label(__('Validation'))
+                        ->extraAttributes(function ($record) {
+                            // Colorize the text based on validation status
+                            if ($record->validation->name === 'Accepter') {
+                                return ['style' => 'color:    #666699'];
+                            } elseif ($record->validation->name === 'Terminer') {
+                                return ['style' => 'color:  	 	#ffbf00'];
+                            } elseif ($record->validation->name === 'Refuser') {
+                                return ['style' => 'color: #ff6666;'];
+                            } return [];
+                        })
+                        ->sortable(),  
+                    Tables\Columns\TextColumn::make('statutDuTicket.name')
+                        ->label(__('Statut'))
+                        ->sortable()
+                        ->extraAttributes(function ($record) {
+                            // Colorize the text based on status
+                            if ($record->statutDuTicket->name === 'Résolu') {
+                                return ['style' => 'color: green;'];
+                            } elseif ($record->statutDuTicket->name === 'Ouvert') {
+                                return ['style' => 'color: blue;'];
+                            } elseif ($record->statutDuTicket->name === 'En Cours') {
+                                return ['style' => 'color: yellow;'];
+                        } elseif ($record->statutDuTicket->name === 'Non Résolu') {
+                            return ['style' => 'color: red;'];
+                        }
+                            return [];
+                        }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->date()
                     ->translateLabel()
@@ -221,8 +244,15 @@ class TicketResource extends Resource
                 if (auth()->user()->hasRole('Super Admin')) {
                     return;
                 }
-                if (auth()->user()->hasRole('Chef Projet')) {
-                    $query->where('tickets.projet_id', auth()->user()->societe_id)->orWhere('tickets.owner_id', auth()->id());
+                $user = auth()->user();
+                if ($user->hasRole('Chef Projet')) {
+                    $query->where(function ($q) use ($user) {
+                        $q->whereIn('tickets.projet_id', function ($subQuery) use ($user) {
+                            $subQuery->select('projet_user.projet_id') // Adjusted column name
+                                    ->from('projet_user')
+                                    ->where('projet_user.user_id', $user->id);
+                        })->orWhere('tickets.owner_id', $user->id);
+                    });
                 } elseif (auth()->user()->hasRole('Employeur')) {
                     $query->where('tickets.responsible_id', auth()->id())->orWhere('tickets.owner_id', auth()->id());
                 } else {

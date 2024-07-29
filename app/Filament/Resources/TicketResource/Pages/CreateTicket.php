@@ -22,6 +22,7 @@ class CreateTicket extends CreateRecord
         $data['owner_id'] = auth()->id();
         $data['statuts_des_tickets_id'] = 5;
         $data['qualification_id'] = 1;
+        $data['validation_id'] = 4;
         return $data;
     }
 
@@ -30,7 +31,7 @@ class CreateTicket extends CreateRecord
     {
         $ticket = parent::handleRecordCreation($data);
         // Get the current user
-        $currentUser = Auth::user();
+        /*$currentUser = Auth::user();
         if ($currentUser->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur', 'Client'])) {
             $receiver = User::where('projet_id', $currentUser->projet_id)
                             ->where('id', '!=', $currentUser->id)
@@ -43,6 +44,22 @@ class CreateTicket extends CreateRecord
             })->where('projet_id', $currentUser->projet_id)
             ->where('id', '!=', $currentUser->id)
             ->get();
+        }*/
+
+        $currentUser = Auth::user();
+        $projectUsersQuery = User::query()
+            ->where('id', '!=', $currentUser->id)
+            ->whereHas('projets', function ($query) use ($currentUser) {
+                $query->where('projet_user.projet_id', $currentUser->projet_id);
+            });
+        
+        if ($currentUser->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur', 'Client'])) {
+            $receiver = $projectUsersQuery->get();
+        } else {
+            $receiver = $projectUsersQuery->whereHas('roles', function ($q) {
+                $q->where('name', 'Chef Projet')
+                    ->orWhere('name', 'Super Admin');
+            })->get();
         }
         // Send the notification to appropriate recipients
         Notification::make()
