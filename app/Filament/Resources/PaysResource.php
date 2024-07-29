@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Filament\Resources;
-use App\Filament\Resources\PaysResource\RelationManagers\ProjectRelationManager;
-use App\Filament\Resources\PaysResource\RelationManagers\UsersRelationManager;
 use App\Filament\Resources\PaysResource\Pages;
 use App\Models\Pays;
 use Filament\Forms;
@@ -51,12 +49,6 @@ class PaysResource extends Resource
             ])
         ;
     }
-
-    /*public static function getRelations(): array{
-        return [
-            ProjectRelationManager::class,
-            UsersRelationManager::class,
-        ];}*/
 
     public static function getPages(): array
     {

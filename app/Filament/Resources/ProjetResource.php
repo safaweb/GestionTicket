@@ -3,8 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjetResource\Pages;
-//use App\Filament\Resources\ProjetResource\RelationManagers\ProblemCategoriesRelationManager;
-//use App\Filament\Resources\ProjetResource\RelationManagers\UsersRelationManager;
+use App\Filament\Resources\ProjetResource\RelationManagers\UsersRelationManager;
 use App\Models\Projet;
 use App\Models\Pays;
 use App\Models\Societe;
@@ -15,6 +14,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class ProjetResource extends Resource
 {
@@ -77,8 +77,7 @@ class ProjetResource extends Resource
     public static function getRelations(): array
     {
         return [
-           // ProblemCategoriesRelationManager::class,
-           // UsersRelationManager::class,
+            UsersRelationManager::class,
         ];
         
     }
@@ -95,10 +94,24 @@ class ProjetResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
+        $user = Auth::user();
+        // Check if the user is a superadmin
+    if ($user->hasRole('Super Admin')) {
+        // Superadmin can see all projects
         return parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
-            ])
-        ;
+            ]);
+    } else {
+        // Other users can see only their associated projects
+        return parent::getEloquentQuery()
+            ->join('projet_user', 'projets.id', '=', 'projet_user.projet_id')
+            ->join('users', 'projet_user.user_id', '=', 'users.id')
+            ->where('users.id', $user->id)
+            ->select('projets.*', 'users.name as user_name')
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
     }
 }

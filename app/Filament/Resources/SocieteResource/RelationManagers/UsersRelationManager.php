@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\PaysResource\RelationManagers;
+namespace App\Filament\Resources\SocieteResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -12,11 +12,14 @@ class UsersRelationManager extends RelationManager
 {
     protected static string $relationship = 'users';
     protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $title = 'Utilisateurs';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                ->label('Nom')
                     ->required()
                     ->maxLength(255),
             ])
@@ -27,19 +30,24 @@ class UsersRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TagsColumn::make('roles.name'),
+                Tables\Columns\TextColumn::make('name')
+                ->label('Nom'),
+                Tables\Columns\TagsColumn::make('roles.name')
+                ->label('Rôles'),
             ])
             ->filters([
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make(),
+                Tables\Actions\AttachAction::make()
+                ->label('Attacher'),
             ])
             ->actions([
-                Tables\Actions\DetachAction::make(),
+                Tables\Actions\DetachAction::make()
+                ->label('Détacher'),
             ])
             ->bulkActions([
-                Tables\Actions\DetachBulkAction::make(),
+                Tables\Actions\DetachBulkAction::make()
+                ->label('Détacher en masse'),
             ])
         ;
     }

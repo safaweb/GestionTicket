@@ -23,27 +23,17 @@ class Societe extends Model
         'name',
     ];
 
-    /**
-     * Get all of the  for the Societe
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+    /**Get all of the  for the Societe
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
     public function projet()
     {
         return $this->hasMany(Projet::class);
     }
 
-    /**Get the pays that owns the Ticket.
-      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-    *public function projet()
-    *{ return $this->belongsTo(Projet::class, 'projet_id');}*/
-
     /**Get all of the users for the Societe
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
+     * @return \Illuminate\Database\Eloquent\Relations\belongsToMany*/
     public function users()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class, 'societe_user', 'societe_id', 'user_id');
     }
-
-
 }

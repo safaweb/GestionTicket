@@ -5,14 +5,15 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\TicketsRelationManager;
-use App\Models\Societe;
+use App\Filament\Resources\UserResource\RelationManagers\SocieteRelationManager;
+use App\Filament\Resources\UserResource\RelationManagers\ProjetRelationManager;
 use App\Models\Pays;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
@@ -23,12 +24,11 @@ class UserResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationLabel = 'Utilisateurs';
     protected static ?string $navigationGroup = 'Données de base';
-    
+
     public static function getLabel(): string
     {
         return __('User');
     }
-
     public static function getPluralLabel(): string
     {
         return __('Users');
@@ -38,11 +38,6 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('societe_id')
-                ->label('Societe')
-                    ->options(Societe::all()
-                        ->pluck('name', 'id'))
-                    ->searchable(),
                 Forms\Components\TextInput::make('name')
                     ->label('Nom')
                     ->required()
@@ -52,19 +47,19 @@ class UserResource extends Resource
                     ->required()->email()
                     ->maxLength(255),
                 Forms\Components\Select::make('pays_id')
-                ->label('Pays')
-                ->options(Pays::all()
-                ->pluck('name', 'id'))
-                ->required()
-                ->searchable(),
-                Forms\Components\TextInput::make('phone')
-                ->label('Numéro de Téléphone')
-                    ->tel()
-                    ->maxLength(255),
+                    ->label('Pays')
+                    ->options(Pays::all()
+                    ->pluck('name', 'id'))
+                    ->required()
+                    ->searchable(),
                 Forms\Components\Toggle::make('is_active')
                     ->label('Actif')
                     ->required(),
-            ])
+                Forms\Components\TextInput::make('phone')
+                    ->label('Numéro de Téléphone')
+                    ->tel()
+                    ->maxLength(255),
+                    ])
         ;
     }
 
@@ -100,6 +95,8 @@ class UserResource extends Resource
     {
         return [
             RolesRelationManager::class,
+            SocieteRelationManager::class,
+            ProjetRelationManager::class,
             TicketsRelationManager::class,
         ];
     }

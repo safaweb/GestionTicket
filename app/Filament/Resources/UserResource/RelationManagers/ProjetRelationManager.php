@@ -1,18 +1,20 @@
 <?php
 
-namespace App\Filament\Resources\ProjetResource\RelationManagers;
+namespace App\Filament\Resources\UserResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
+use App\Models\Pays;
 
-class ProblemCategoriesRelationManager extends RelationManager
+
+class ProjetRelationManager extends RelationManager
 {
-    protected static string $relationship = 'problemCategories';
+    protected static string $relationship = 'Projets';
     protected static ?string $recordTitleAttribute = 'name';
-    protected static ?string $title = 'Catégories de Problèmes'; // Added label
+    protected static ?string $title = 'Projets';
 
     public static function form(Form $form): Form
     {
@@ -21,6 +23,11 @@ class ProblemCategoriesRelationManager extends RelationManager
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                    Forms\Components\Select::make('pays_id')
+                    ->label('Pays')
+                    ->required()
+                    ->options(Pays::all()
+                    ->pluck('name', 'id')),
             ])
         ;
     }
@@ -30,13 +37,16 @@ class ProblemCategoriesRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('pays.name') 
+                ->searchable()
+                ->label(__('Pays'))
+                ->toggleable(),
             ])
             ->filters([
             ])
             ->headerActions([
+                Tables\Actions\AttachAction::make(),
                 Tables\Actions\CreateAction::make(),
-                Tables\Actions\AttachAction::make()
-                ->label('Attacher'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

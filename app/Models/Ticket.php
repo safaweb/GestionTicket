@@ -76,16 +76,16 @@ class Ticket extends Model
     }
 
     public function approve()
-{
-    $this->approved_at = Carbon::now();
-    $this->save();
-}
+    {
+        $this->approved_at = Carbon::now();
+        $this->save();
+    }
 
-public function solve()
-{
-    $this->solved_at = Carbon::now();
-    $this->save();
-}
+    public function solve()
+    {
+        $this->solved_at = Carbon::now();
+        $this->save();
+    }
 
     /** Get the priority that owns the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/

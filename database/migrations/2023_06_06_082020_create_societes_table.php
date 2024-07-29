@@ -15,6 +15,7 @@ return new class extends Migration {
         Schema::create('societes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
+            $table->unsignedBigInteger('user_id')->nullable()->index('user_id');
             $table->timestamps();
             $table->softDeletes();
         });

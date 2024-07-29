@@ -38,19 +38,11 @@ class Projet extends Model
         'societe',
         'user_id',
         'user',
-   
     ];
 
     public function societe()
     {
         return $this->belongsTo(Societe::class);
-    }
-
-    /** Get all of the problemCategories for the Projet
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany */
-    public function problemCategories()
-    {
-        return $this->hasMany(ProblemCategory::class);
     }
 
     /** Get the pays that owns the Ticket.
@@ -71,6 +63,7 @@ class Projet extends Model
      * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
     public function users()
     {
-        return $this->hasMany(User::class);
+    return $this->belongsToMany(User::class, 'projet_user', 'projet_id', 'user_id');
     }
+
 }

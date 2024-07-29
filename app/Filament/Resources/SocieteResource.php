@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SocieteResource\Pages;
 use App\Filament\Resources\SocieteResource\RelationManagers\ProjetRelationManager;
-//use App\Filament\Resources\SocieteResource\RelationManagers\UsersRelationManager;
+use App\Filament\Resources\SocieteResource\RelationManagers\UsersRelationManager;
 use App\Models\Societe;
 use App\Models\Projet;
 use Filament\Forms;
@@ -39,10 +39,6 @@ class SocieteResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name') ->label('Nom'),
-                //Tables\Columns\TextColumn::make('projet.name') 
-                //->searchable()
-                //->label(__('Projet'))
-               // ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -63,6 +59,7 @@ class SocieteResource extends Resource
     {
         return [
             ProjetRelationManager::class,
+            UsersRelationManager::class,
         ];
         
     }

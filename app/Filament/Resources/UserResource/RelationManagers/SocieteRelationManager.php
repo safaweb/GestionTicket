@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\PaysResource\RelationManagers;
+namespace App\Filament\Resources\UserResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -8,10 +8,13 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 
-class ProjectRelationManager extends RelationManager
+
+class SocieteRelationManager extends RelationManager
 {
-    protected static string $relationship = 'project';
+    protected static string $relationship = 'Societes';
     protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $title = 'Societes';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -32,6 +35,7 @@ class ProjectRelationManager extends RelationManager
             ->filters([
             ])
             ->headerActions([
+                Tables\Actions\AttachAction::make(),
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([

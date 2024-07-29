@@ -60,6 +60,7 @@ class User extends Authenticatable implements FilamentUser
     protected $fillable = [
         'societe_id',
         'pays_id',
+        'projet_id',
         'name',
         'email',
         'password',
@@ -94,11 +95,22 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->belongsTo(Societe::class);
     }
+    public function societes()
+    {
+        return $this->belongsToMany(Societe::class, 'societe_user', 'user_id', 'societe_id');
+    }
 
     /**Get the projet that owns the User.
-    * public function projet()
-    * {  return $this->belongsTo(Projet::class);}
-    */
+     */
+    public function projet()
+    {  
+        return $this->belongsTo(Projet::class);
+    }
+    public function projets()
+    {
+        return $this->belongsToMany(Projet::class, 'projet_user', 'user_id', 'projet_id');
+    }
+
     
     /** Get the pays that owns the Ticket.
       * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
@@ -135,17 +147,28 @@ class User extends Authenticatable implements FilamentUser
         return auth()->user()->is_active;
     }
 
-    /** Add scope to display users based on their role.
-     * If the role is as an admin projet, then display the user based on their projet ID.*/
+    /* Add scope to display users based on their role.
+    If the role is as an admin projet, then display the user based on their projet ID.
     public function scopeByRole($query)
     {
         if (auth()->user()->hasRole('Chef Projet')) {
         if (auth()->user()->hasRole('Chef Projet')) {
-            //return $query->where('users.projet_id', auth()->user()->projet_id);
-            return $query->where('users.societe_id', auth()->user()->societe_id);
+            return $query->where('projet_user.projet_id', auth()->user()->projet_id);
         }
+        }
+    }*/
+public function scopeByRole($query)
+{
+    $user = auth()->user();
+    if ($user->hasRole('Chef Projet')) {
+        return $query->whereHas('projets', function ($query) use ($user) {
+            $query->where('projet_user.projet_id', $user->projet_id)
+                ->where('projet_user.user_id', $user->id);
+        });
     }
-    }
+    return $query;
+}
+
 
     /**Get all of the socialiteUsers for the User
      * @return \Illuminate\Database\Eloquent\Relations\HasMany*/

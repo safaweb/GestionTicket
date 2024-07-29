@@ -17,6 +17,6 @@ class ViewProblemCategory extends ViewRecord
     }
     protected function getTitle(): string
     {
-        return 'Afficher Catégorie de problème'; // Update this line
+        return 'Afficher Catégorie de problème';
     } 
 }

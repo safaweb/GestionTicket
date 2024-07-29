@@ -37,7 +37,6 @@ class UserSeeder extends Seeder
         $userProjet  = User::factory()->create([
             'name' => 'Client',
             'email' => 'user@example.com',
-            'societe_id' => 1,
             'pays_id' => 1,
         ]);
         $userProjet ->syncRoles('Client');
