@@ -271,9 +271,6 @@ class EditTicket extends EditRecord
             \Log::info('Date de Début: ' . ($data['date_debut'] ?? 'Non spécifiée'));
             \Log::info('Date de Fin: ' . ($data['date_fin'] ?? 'Non spécifiée'));
             \Log::info('Nombre d\'Heures: ' . ($data['nombre_heures'] ?? 'Non spécifié'));
-
-
-           
     
             // Send notification to the database
             Notification::make()
@@ -285,16 +282,19 @@ class EditTicket extends EditRecord
                 ])
                 ->sendToDatabase([$ticketOwner]);
     
-            // Optionally send notification via other channels if needed
-           $ticketOwner->notify(new TicketValidationNotification(
-            $ticket,
-           $ticket->statutDuTicket->name,
-           $newStatus,
-           3,
-           $data['commentaire'] ?? null,
-           $data['validation_id'] ?? null,
-            
-        ));
+        // Optionally send notification via other channels if needed
+        if (in_array($newStatus, ['accepter', 'refuser'])) {
+            $ticketOwner->notify(new TicketValidationNotification(
+                $ticket,
+                $ticket->statutDuTicket->name,
+                $newStatus,
+                3,
+                $data['commentaire'] ?? null,
+                $data['date_debut'] ?? null,
+                $data['date_fin'] ?? null,
+                $data['nombre_heures'] ?? null
+            ));
+        }
             
         }
   
