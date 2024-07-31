@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Projet.
@@ -47,9 +48,9 @@ class Projet extends Model
 
     /** Get the pays that owns the Ticket.
       * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
-    public function pays()
+    public function pays(): BelongsTo
     {
-        return $this->belongsTo(Pays::class, 'pays_id');
+        return $this->belongsTo(Pays::class);
     }
 
     /**Get all of the tickets for the Projet

@@ -23,6 +23,11 @@ class Pays extends Model
         'name',
     ];
 
+    public function getShortcutAttribute()
+    {
+        return substr($this->name, 0, 4); // or any logic you want to create the shortcut
+    }
+
     /** Get all of the tickets for the Pays
      * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
     public function tickets()

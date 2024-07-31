@@ -116,12 +116,16 @@ class UserResource extends Resource
             ->actions([
                 Impersonate::make()
                     ->redirectTo(route('filament.pages.dashboard')),
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                ->label('')
+                ->icon('heroicon-s-eye'),
+                Tables\Actions\EditAction::make()
+                ->label('')
+                ->icon('heroicon-s-pencil'),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
+                //Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
             ])
         ;

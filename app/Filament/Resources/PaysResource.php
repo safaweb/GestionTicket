@@ -39,12 +39,16 @@ class PaysResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                ->label('')
+                ->icon('heroicon-s-eye'),
+                Tables\Actions\EditAction::make()
+                ->label('')
+                ->icon('heroicon-s-pencil'),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
+                //Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
             ])
         ;

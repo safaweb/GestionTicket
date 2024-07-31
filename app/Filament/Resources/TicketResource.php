@@ -149,10 +149,11 @@ class TicketResource extends Resource
                     ->searchable()
                     ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet','Employeur']))
                     ->toggleable(),
-                    Tables\Columns\TextColumn::make('projet.pays.name')
+                    Tables\Columns\TextColumn::make('projet.pays.shortcut')
                     ->searchable()
                     ->label(__('Pays'))
-                    ->toggleable(),
+                    ->toggleable()
+                    ->size(40), // Adjust size as needed
                     Tables\Columns\TextColumn::make('validation.name')
                         ->label(__('Validation'))
                         ->extraAttributes(function ($record) {
@@ -201,8 +202,12 @@ class TicketResource extends Resource
                 Tables\Filters\TrashedFilter::make()
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+                ->label('')
+                ->icon('heroicon-s-eye'),
                 Tables\Actions\EditAction::make()
+                ->label('')
+                ->icon('heroicon-s-pencil')
                 //->visible(fn () => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']))
                 //->visible(fn ($record) => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']) && $record->validation_id === 1)
                 ->visible(fn ($record) => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']) && in_array($record->validation_id, [4, 1]))
@@ -210,7 +215,7 @@ class TicketResource extends Resource
         ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
+                //Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
             ])
             ->defaultSort('created_at', 'desc');
