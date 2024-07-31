@@ -106,11 +106,10 @@ class EditTicket extends EditRecord
                     Forms\Components\DatePicker::make('date_debut')
                         ->label('Date de Début')
                         ->required()
-                        ->default(fn () => Carbon::now()), // Optional: Default to current date
-                    Forms\Components\DatePicker::make('date_fin')
+                        ->default(fn () => $this->record->approved_at ? $this->record->approved_at: Carbon::now()->format('Y-m-d')),                    Forms\Components\DatePicker::make('date_fin')
                         ->label('Date de Fin')
                         ->required()
-                        ->default(fn () => Carbon::now()->addDays(1)), // Optional: Default to 1 day after current date
+                        ->default(fn () => Carbon::now()), // Optional: Default to 1 day after current date
                     Forms\Components\TextInput::make('nombre_heures')
                         ->label('Nombre d\'Heures')
                         ->numeric()
@@ -181,7 +180,6 @@ class EditTicket extends EditRecord
             $data['nombre_heures'] ?? null,
             
         ));
-     
     }
 
     private function saveValidation($ticketId, $validationId) {
@@ -217,11 +215,11 @@ class EditTicket extends EditRecord
         } else {
             return User::whereHas('roles', function ($q) {
                 $q->where('name', 'Employeur')
-                  ->orWhere('name', 'Employeur')
-                  ->orWhere('name', 'Super Admin');            
+                ->orWhere('name', 'Employeur')
+                ->orWhere('name', 'Super Admin');            
             })->where('projet_id', $currentUser->projet_id)
-              ->where('id', '!=', $currentUser->id)
-              ->get();
+            ->where('id', '!=', $currentUser->id)
+            ->get();
         }
     }
 
@@ -234,25 +232,22 @@ class EditTicket extends EditRecord
         if ($ticketOwner) {
             $title = '';
             $body = '';
-    
+
             // Determine the title and body based on the validation status
             switch ($newStatus) {
                 case 'accepter':
                     $title = 'Votre ticket a été accepté';
                     break;
-    
                 case 'refuser':
                     $title = 'Votre ticket a été refusé';
                     $body = "Commentaire: " . ($data['commentaire'] ?? 'Aucun commentaire');
                     break;
-    
                 case 'Résolu':
                     $title = 'Votre ticket a été terminé';
                     $body = "Le ticket a été marqué comme résolu.<br>La date de début est: " . ($data['date_debut'] ?? 'Non spécifiée');
                     $body .= "<br>La date de fin est: " . ($data['date_fin'] ?? 'Non spécifiée');
                     $body .= "<br>Le nombre d'heures est: " . ($data['nombre_heures'] ?? 'Non spécifié');
                     break;
-    
                 case 'Non Résolu':
                     $title = 'Votre ticket a été terminé';
                     $body = "Le ticket a été marqué comme non résolu.<br>La date de début est: " . ($data['date_debut'] ?? 'Non spécifiée');
@@ -260,18 +255,15 @@ class EditTicket extends EditRecord
                     $body .= "<br>Le nombre d'heures est: " . ($data['nombre_heures'] ?? 'Non spécifié');
                     $body .= "<br>Commentaire: " . ($data['commentaire'] ?? 'Aucun commentaire');
                     break;
-    
                 default:
                     \Log::error('Invalid validation status for ticket ID: ' . $ticket->id);
                     return;
             }
-    
             // Log the body for debugging
             \Log::info('Notification Body: ' . $body);
             \Log::info('Date de Début: ' . ($data['date_debut'] ?? 'Non spécifiée'));
             \Log::info('Date de Fin: ' . ($data['date_fin'] ?? 'Non spécifiée'));
             \Log::info('Nombre d\'Heures: ' . ($data['nombre_heures'] ?? 'Non spécifié'));
-    
             // Send notification to the database
             Notification::make()
                 ->title($title)
@@ -281,7 +273,6 @@ class EditTicket extends EditRecord
                         ->url(route('filament.resources.tickets.view', $ticket->id)),
                 ])
                 ->sendToDatabase([$ticketOwner]);
-    
         // Optionally send notification via other channels if needed
         if (in_array($newStatus, ['accepter', 'refuser'])) {
             $ticketOwner->notify(new TicketValidationNotification(
@@ -294,12 +285,8 @@ class EditTicket extends EditRecord
                 $data['date_fin'] ?? null,
                 $data['nombre_heures'] ?? null
             ));
+        } 
         }
-            
-        }
-  
-
     }
-    
     
 }

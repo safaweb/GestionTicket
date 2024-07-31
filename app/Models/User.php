@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
@@ -49,6 +50,9 @@ class User extends Authenticatable implements FilamentUser
         'two_factor_confirmed_at' => 'datetime',
         'user_level_id' => 'int',
         'is_active' => 'bool',
+        'is_contrat' => 'bool',
+        'start_date' => 'date', // Add this line
+        'end_date' => 'date', // Add this line
     ];
 
     protected $hidden = [
@@ -72,6 +76,9 @@ class User extends Authenticatable implements FilamentUser
         'phone',
         'user_level_id',
         'is_active',
+        'is_contrat',
+        'start_date',
+        'end_date',
     ];
 
     protected static function boot()
@@ -106,7 +113,7 @@ class User extends Authenticatable implements FilamentUser
     {  
         return $this->belongsTo(Projet::class);
     }
-    public function projets()
+    public function projets(): BelongsToMany
     {
         return $this->belongsToMany(Projet::class, 'projet_user', 'user_id', 'projet_id');
     }

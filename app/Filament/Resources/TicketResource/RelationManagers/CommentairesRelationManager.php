@@ -77,14 +77,22 @@ class CommentairesRelationManager extends RelationManager
                     ->after(function (Livewire $livewire) {
                         $ticket = $livewire->ownerRecord;
                         $currentUser = auth()->user();
-                        // Récupérer les utilisateurs de la même société
-                        $usersInSameSociete = User::where('societe_id', $currentUser->societe_id)
-                            ->where('id', '!=', $currentUser->id)
-                            ->get();
+                        
+                        // Récupérer les utilisateurs de la même société via la table societe_user
+                        $usersInSameSociete = User::whereIn('id', function ($query) use ($currentUser) {
+                            $query->select('user_id')
+                                ->from('societe_user')
+                                ->where('societe_id', $currentUser->societe_id);
+                        })
+                        ->where('id', '!=', $currentUser->id)
+                        ->get();
+                        
                         // Ajouter l'utilisateur qui a créé le ticket
                         $ticketOwner = $ticket->owner;
+                        
                         // Fusionner les destinataires en un tableau unique sans doublons
                         $receiver = $usersInSameSociete->push($ticketOwner)->unique();
+                        
                         // Envoyer la notification aux destinataires appropriés
                         Notification::make()
                             ->title('Il y a un nouveau commentaire sur votre ticket')
