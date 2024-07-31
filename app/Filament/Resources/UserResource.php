@@ -111,6 +111,12 @@ class UserResource extends Resource
             ])
             
             ->filters([
+                Tables\Filters\SelectFilter::make('is_contrat')
+                ->label('Contrat')
+                ->options([
+                    '1' => 'Yes', // You can customize the label as needed
+                    '0' => 'No',
+                ]),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([

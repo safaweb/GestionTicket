@@ -46,14 +46,15 @@ class ProjetRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\AttachAction::make(),
-                Tables\Actions\CreateAction::make(),
+              //  Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+               // Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DetachBulkAction::make(),
+               // Tables\Actions\DeleteBulkAction::make(),
             ])
         ;
     }
