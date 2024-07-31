@@ -37,3 +37,4 @@ class StatutsDesTicketsChart extends ApexChartWidget
         ];
     }
 }
+
