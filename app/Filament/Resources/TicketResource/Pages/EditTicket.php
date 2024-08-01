@@ -134,14 +134,12 @@ class EditTicket extends EditRecord
                         }
                         $this->changeTicketStatus($ticketId, 'Non Résolu', $data['commentaire'], $data);
                     }
-                    
                     $ticket->save();
                     // Redirect to the view page
                     $this->redirect(route('filament.resources.tickets.view', $ticket->id));
                 
                 });
         }
-
         return $actions;    
     }
 
@@ -149,7 +147,6 @@ class EditTicket extends EditRecord
     {
         $ticket = Ticket::findOrFail($ticketId);
         $ticket->statutDuTicket()->associate(StatutDuTicket::where('name', $newStatus)->first());
-    
         if ($ticket->validation_id === 3) {
             $formattedCommentaire = "\nVotre ticket est $newStatus";
             if ($newStatus === 'Non Résolu' && $commentaire !== null) {
@@ -158,14 +155,12 @@ class EditTicket extends EditRecord
             $formattedCommentaire .= "<br>La date de début est: " . ($data['date_debut'] ?? 'Non spécifiée');
             $formattedCommentaire .= "<br>La date de fin est: " . ($data['date_fin'] ?? 'Non spécifiée');
             $formattedCommentaire .= "<br>Le nombre d'heures est: " . ($data['nombre_heures'] ?? 'Non spécifié');
-            
             Commentaire::create([
                 'ticket_id' => $ticketId,
                 'user_id' => Auth::id(),
                 'commentaire' => $formattedCommentaire,
             ]);
         }
-    
         $ticket->save();
         $this->notifyTicketOwner($ticket, $data, $newStatus);
         $ticketOwner = $ticket->owner; // Assumes there is a 'user' relationship
@@ -178,7 +173,6 @@ class EditTicket extends EditRecord
             $data['date_debut'] ?? null, 
             $data['date_fin'] ?? null, 
             $data['nombre_heures'] ?? null,
-            
         ));
     }
 
@@ -186,53 +180,73 @@ class EditTicket extends EditRecord
         $ticket = Ticket::findOrFail($ticketId);
         $ticket->validation_id = $validationId;
         $ticket->save();
-        
     }
 
-    protected function notifyAssignedUser($ticketId)
+    protected function mutateFormDataBeforeSave(array $data): array
     {
-        $ticket = Ticket::findOrFail($ticketId);
-        $currentUser = Auth::user();
-        $receiver = $this->getNotificationRecipients($currentUser);
-        Notification::make()
-            ->title('Vous avez été assigné comme responsable d\'un ticket')
-            ->actions([
-                NotificationAction::make('Voir')
-                    ->url(route('filament.resources.tickets.view', $ticket->id)),
-            ])
-            ->sendToDatabase($receiver);
-        foreach ($receiver as $user) {
-            $user->notify(new TicketAssignedNotification($ticket));
+        // Find the existing ticket record
+        $ticket = Ticket::findOrFail($this->record->id);
+        // Check if the responsible_id has changed
+        if ($ticket->responsible_id !== $data['responsible_id']) {
+            // Notify the newly assigned responsible user
+            $this->notifyAssignedUser($ticket, $data['responsible_id']);
         }
+        return $data;
+    }
+
+    protected function notifyAssignedUser(Ticket $ticket, $newResponsibleId)
+    {
+        // Find the newly assigned responsible user
+        $newResponsibleUser = User::find($newResponsibleId);
+        // Retrieve the recipients who should be notified
+        $receiver = $this->getNotificationRecipients($newResponsibleUser);
+        if ($receiver->isNotEmpty()) {
+            // Notify each recipient using the custom notification builder
+            foreach ($receiver as $user) {
+                Notification::make()
+                    ->title('Vous avez été assigné comme responsable d\'un ticket')
+                    ->actions([
+                        NotificationAction::make('Voir')
+                            ->url(route('filament.resources.tickets.view', $ticket->id)),
+                    ])
+                    ->sendToDatabase($user);
+            }
+        }
+        // Notify the newly assigned user specifically if not already included in the receiver list
+        if ($newResponsibleUser && !$receiver->contains($newResponsibleUser)) {
+            Notification::make()
+                ->title('Vous avez été assigné comme responsable d\'un ticket')
+                ->actions([
+                    NotificationAction::make('Voir')
+                        ->url(route('filament.resources.tickets.view', $ticket->id)),
+                ])
+                ->sendToDatabase($newResponsibleUser);
+            $newResponsibleUser->notify(new TicketAssignedNotification($ticket));
+        }
+        // Optionally, log the notification action
+        \Log::info("Notification sent to user ID {$newResponsibleId} for ticket ID {$ticket->id}");
     }
 
     private function getNotificationRecipients($currentUser)
     {
-        if ($currentUser->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])) {
-            return User::where('projet_id', $currentUser->projet_id)
-                        ->where('id', '!=', $currentUser->id)
-                        ->get();
-        } else {
-            return User::whereHas('roles', function ($q) {
-                $q->where('name', 'Employeur')
-                ->orWhere('name', 'Employeur')
-                ->orWhere('name', 'Super Admin');            
-            })->where('projet_id', $currentUser->projet_id)
-            ->where('id', '!=', $currentUser->id)
-            ->get();
-        }
+        // Get all users with the "Employeur" role and associated with the same project as the current user
+        return User::whereHas('roles', function ($q) {
+            $q->where('name', 'Employeur');
+        })
+        ->whereHas('projets', function ($query) use ($currentUser) {
+            $query->whereIn('projets.id', $currentUser->projets()->pluck('projets.id'));
+        })
+        ->where('id', '!=', $currentUser->id)
+        ->get();
     }
 
     protected function notifyTicketOwner($ticket, $data, $newStatus)
     {
         $ticketOwner = $ticket->owner;
         \Log::info('Notification Data: ', $data);
-
-    
         if ($ticketOwner) {
             $title = '';
             $body = '';
-
             // Determine the title and body based on the validation status
             switch ($newStatus) {
                 case 'accepter':
