@@ -32,8 +32,9 @@ class StatutsDesTicketsChart extends ApexChartWidget
         if ($user->hasRole('Super Admin')) {
             // Super Admins can see all tickets
             $statutsDesTickets = $query->withCount('tickets')->get();
-        /*} elseif ($user->hasRole('Chef Projet')) {
-            // Get the IDs of the projects related to the user
+        } elseif ($user->hasRole('Chef Projet')) {
+        $statutsDesTickets = $query->withCount('tickets')->get();
+         /*   // Get the IDs of the projects related to the user
             $projectIds = $user->projects()->pluck('id')->toArray();
         
             // Query to filter tickets based on the projects associated with the user
