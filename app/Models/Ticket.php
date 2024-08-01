@@ -149,21 +149,6 @@ class Ticket extends Model
     {
         return $this->hasMany(Commentaire::class, 'ticket_id');
     }
-
- //   protected static function boot()
- //   {
-    //    parent::boot();
-   //     static::updated(function ($ticket) {
-   //         if ($ticket->isDirty('statuts_des_tickets_id') && in_array($ticket->statuts_des_tickets_id, [ StatutDuTicket::OUVERT, StatutDuTicket::EN_COURS, StatutDuTicket::RESOLU   , StatutDuTicket::NONRESOLU, StatutDuTicket::RIEN])) {
-    //            \Log::info('Status changed for ticket ID: ' . $ticket->id);
-     //           if ($ticket->owner) {
-              //      \Log::info('Sending notification to user ID: ' . $ticket->owner->id);
-      //              $ticket->owner->notify(new TicketValidationNotification($ticket, $ticket->statutDuTicket->name, $data['validation'],$data['commentaire'] ?? null));
-      //          } else {
-       //             \Log::warning('No user associated with ticket ID: ' . $ticket->id);
-        //        }
-        //    }
-     //   });
+ 
     
-  //  }
 }
