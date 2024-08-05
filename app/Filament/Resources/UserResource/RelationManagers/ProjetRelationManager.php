@@ -7,12 +7,12 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
+use App\Models\Projet; // Make sure to import the Projet model
 use App\Models\Pays;
-
 
 class ProjetRelationManager extends RelationManager
 {
-    protected static string $relationship = 'Projets';
+    protected static string $relationship = 'projets';
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?string $title = 'Projets';
 
@@ -23,13 +23,11 @@ class ProjetRelationManager extends RelationManager
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                    Forms\Components\Select::make('pays_id')
+                Forms\Components\Select::make('pays_id')
                     ->label('Pays')
                     ->required()
-                    ->options(Pays::all()
-                    ->pluck('name', 'id')),
-            ])
-        ;
+                    ->options(Pays::all()->pluck('name', 'id')),
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -37,25 +35,30 @@ class ProjetRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('pays.name') 
-                ->searchable()
-                ->label(__('Pays'))
-                ->toggleable(),
+                Tables\Columns\TextColumn::make('pays.name')
+                    ->searchable()
+                    ->label(__('Pays'))
+                    ->toggleable(),
             ])
-            ->filters([
-            ])
+            ->filters([])
             ->headerActions([
-                Tables\Actions\AttachAction::make(),
-              //  Tables\Actions\CreateAction::make(),
+                Tables\Actions\AttachAction::make()
+                    ->form(fn ($record) => [
+                        Forms\Components\Select::make('projet_id')
+                            ->label('')
+                            ->options(Projet::all()->pluck('name', 'id'))
+                            ->searchable()
+                            ->required(),
+                    ]),
+                // Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-               // Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),
-               // Tables\Actions\DeleteBulkAction::make(),
-            ])
-        ;
+                // Tables\Actions\DeleteBulkAction::make(),
+            ]);
     }
 }
