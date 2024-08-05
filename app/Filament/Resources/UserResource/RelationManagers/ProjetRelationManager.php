@@ -7,7 +7,7 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
-use App\Models\Projet; // Make sure to import the Projet model
+use App\Models\Projet; // Ensure the Projet model is imported
 use App\Models\Pays;
 
 class ProjetRelationManager extends RelationManager
@@ -43,22 +43,22 @@ class ProjetRelationManager extends RelationManager
             ->filters([])
             ->headerActions([
                 Tables\Actions\AttachAction::make()
-                    ->form(fn ($record) => [
+                    ->form(fn () => [
                         Forms\Components\Select::make('projet_id')
                             ->label('')
                             ->options(Projet::all()->pluck('name', 'id'))
                             ->searchable()
                             ->required(),
-                    ]),
-                // Tables\Actions\CreateAction::make(),
+                    ])
+                    ->action(function ($data, $livewire) {
+                        $livewire->ownerRecord->projets()->attach($data['projet_id']);
+                    }),
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),
-                // Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 }

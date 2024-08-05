@@ -7,7 +7,7 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
-use App\Models\Societe; // Make sure to import the Societe model
+use App\Models\Societe;
 
 class SocieteRelationManager extends RelationManager
 {
@@ -34,23 +34,27 @@ class SocieteRelationManager extends RelationManager
             ->filters([])
             ->headerActions([
                 Tables\Actions\AttachAction::make()
-                    ->form(fn ($record) => [
-                        Forms\Components\Select::make('societe_id')
-                            ->label('')
-                            ->options(Societe::all()->pluck('name', 'id'))
-                            ->searchable()
-                            ->required(),
-                    ]),
-                // Tables\Actions\CreateAction::make(),
+                    ->form(function ($record) {
+                        return [
+                            Forms\Components\Select::make('societe_id')
+                                ->label('')
+                                ->options(Societe::all()->pluck('name', 'id'))
+                                ->searchable()
+                                ->required(),
+                        ];
+                    })
+                    ->action(function ($data, $livewire) {
+                        $livewire->ownerRecord->societes()->attach($data['societe_id']);
+                    }),
+                
             ])
             ->actions([
                 Tables\Actions\DetachAction::make(),
-                // Tables\Actions\EditAction::make(),
-                // Tables\Actions\DeleteAction::make(),
+               
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),
-                // Tables\Actions\DeleteBulkAction::make(),
+               
             ]);
     }
 }

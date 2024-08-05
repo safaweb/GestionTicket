@@ -38,17 +38,20 @@ class RolesRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->form(fn ($record) => [
-                        Forms\Components\Select::make('role_id')   
-                        ->label('')
+                    ->form(fn () => [
+                        Forms\Components\Select::make('role_id')
+                            ->label('')
                             ->options(Role::all()->pluck('name', 'id'))
-                            ->searchable(),
-                            
-                    ]),
+                            ->searchable()
+                            ->required(),
+                    ])
+                    ->action(function ($data, $livewire) {
+                        $livewire->ownerRecord->roles()->attach($data['role_id']);
+                    }),
             ])
             ->actions([
                 DetachAction::make(),
-            ]) 
+            ])
             ->bulkActions([
                 DetachBulkAction::make(),
             ]);
