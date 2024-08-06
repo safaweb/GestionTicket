@@ -20,7 +20,7 @@ class TicketPolicy
     {
         // The Admin Projet can view tickets that are assigned to their specific projet.
         if ($user->hasRole('Chef Projet')) {
-            return $user->id == $ticket->owner_id || $ticket->projet_id == $user->projet_id;
+            return $user->id == $ticket->owner_id || $user->projets->contains($ticket->projet_id);
         }
         // The staff projet can view tickets that have been assigned to them.
         if ($user->hasRole('Employeur')) {
