@@ -47,22 +47,24 @@ class TicketResource extends Resource
                         ->pluck('name', 'id'))
                         ->searchable()
                         ->disabled(fn ($record) => $record !== null ),
-                    Forms\Components\Select::make('projet_id')
+                     
+                        Forms\Components\Select::make('projet_id')
                         ->label(__('Projets'))
-                        ->options(function (callable $get) {
-                            $user = auth()->user();
-                            $societeId = \DB::table('societe_user')
-                                ->where('user_id', $user->id)
-                                ->pluck('societe_id')
-                                ->first();
-                        
-                            return Projet::where('societe_id', $societeId)->pluck('name', 'id');
+                        ->options(function () {
+                            // Fetch all projects or modify this query based on your requirements
+                            return Projet::pluck('name', 'id')->toArray();
                         })
                         ->searchable()
                         ->required()
-                        ->afterStateUpdated(function ($state, callable $get, callable $set) {$projet = Projet::find($state);})
                         ->reactive()
-                        ->disabled(fn ($record) => $record !== null),
+                        ->disabled(fn ($record) => $record !== null)
+                        ->afterStateUpdated(function ($state, callable $get, callable $set) {
+                            // Optionally debug the state value
+                            dd($state);
+                        }),
+                    
+                     
+                     
                     Forms\Components\Select::make('problem_category_id')
                         ->label(__('Problem Category'))
                         ->options(function (callable $get, callable $set) {return ProblemCategory::all()->pluck('name', 'id');})
