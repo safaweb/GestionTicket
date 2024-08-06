@@ -1,7 +1,7 @@
 Installation : 
 Install Composer
 
-Clone the repository: git clone https://github.com/ruswan/laravel_helpdesk.git
+Clone the repository: git clone https://github.com/safaweb/GestionTicket.git
 
 Install PHP dependencies: composer install (or update)
 

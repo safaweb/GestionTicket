@@ -158,13 +158,17 @@ class TicketResource extends Resource
                         ->label(__('Validation'))
                         ->extraAttributes(function ($record) {
                             // Colorize the text based on validation status
-                            if ($record->validation->name === 'Accepter') {
-                                return ['style' => 'color:    #666699'];
-                            } elseif ($record->validation->name === 'Terminer') {
-                                return ['style' => 'color:  	 	#ffbf00'];
-                            } elseif ($record->validation->name === 'Refuser') {
-                                return ['style' => 'color: #ff6666;'];
-                            } return [];
+                            if ($record->validation) {
+                                // Colorize the text based on validation status
+                                if ($record->validation->name === 'Accepter') {
+                                    return ['style' => 'color: #666699'];
+                                } elseif ($record->validation->name === 'Terminer') {
+                                    return ['style' => 'color: #ffbf00'];
+                                } elseif ($record->validation->name === 'Refuser') {
+                                    return ['style' => 'color: #ff6666'];
+                                }
+                            
+                            }return [];
                         })
                         ->sortable(),  
                     Tables\Columns\TextColumn::make('statutDuTicket.name')
