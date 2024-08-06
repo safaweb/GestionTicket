@@ -107,7 +107,7 @@ class TicketResource extends Resource
                         ->label(__('Responsible'))
                         ->options(
                             User::whereHas('roles', function($query) {
-                                $query->whereIn('name', ['Super Admin', 'Chef Projet', 'Employeur']);
+                                $query->whereIn('name', ['Chef Projet', 'Employeur']);
                             })->pluck('name', 'id') )
                         ->searchable()
                         ->required()
