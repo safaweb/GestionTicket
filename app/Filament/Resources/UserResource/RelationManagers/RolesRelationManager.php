@@ -17,7 +17,7 @@ class RolesRelationManager extends RelationManager
 {
     protected static string $relationship = 'roles';
     protected static ?string $recordTitleAttribute = 'name';
-    
+
     public static function form(Form $form): Form
     {
         return $form
@@ -29,7 +29,7 @@ class RolesRelationManager extends RelationManager
                     ->required(),
             ]);
     }
-    
+
     public static function table(Table $table): Table
     {
         return $table
@@ -46,14 +46,27 @@ class RolesRelationManager extends RelationManager
                             ->required(),
                     ])
                     ->action(function ($data, $livewire) {
-                        $livewire->ownerRecord->roles()->attach($data['role_id']);
+                        $user = $livewire->ownerRecord;
+                        // Detach all existing roles before attaching the new one
+                        $user->roles()->detach();
+                        $user->roles()->attach($data['role_id']);
                     }),
             ])
             ->actions([
-                DetachAction::make(),
+                DetachAction::make()
+                    ->action(function ($record, $livewire) {
+                        $user = $livewire->ownerRecord;
+                        // Detach the selected role
+                        $user->roles()->detach($record->id);
+                    }),
             ])
             ->bulkActions([
-                DetachBulkAction::make(),
+                DetachBulkAction::make()
+                    ->action(function ($records, $livewire) {
+                        $user = $livewire->ownerRecord;
+                        // Detach all selected roles
+                        $user->roles()->detach($records->pluck('id')->toArray());
+                    }),
             ]);
     }
 }
