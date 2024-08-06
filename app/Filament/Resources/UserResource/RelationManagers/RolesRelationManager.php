@@ -47,7 +47,6 @@ class RolesRelationManager extends RelationManager
                     ])
                     ->action(function ($data, $livewire) {
                         $user = $livewire->ownerRecord;
-                        // Detach all existing roles before attaching the new one
                         $user->roles()->detach();
                         $user->roles()->attach($data['role_id']);
                     }),
