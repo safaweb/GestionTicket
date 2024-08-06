@@ -47,7 +47,6 @@ class TicketResource extends Resource
                         ->pluck('name', 'id'))
                         ->searchable()
                         ->disabled(fn ($record) => $record !== null ),
-                     
                         Forms\Components\Select::make('projet_id')
                         ->label(__('Projets'))
                         ->options(function () {
@@ -62,9 +61,6 @@ class TicketResource extends Resource
                             // Optionally debug the state value
                             dd($state);
                         }),
-                    
-                     
-                     
                     Forms\Components\Select::make('problem_category_id')
                         ->label(__('Problem Category'))
                         ->options(function (callable $get, callable $set) {return ProblemCategory::all()->pluck('name', 'id');})
