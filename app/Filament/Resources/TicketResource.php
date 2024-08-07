@@ -56,11 +56,7 @@ class TicketResource extends Resource
                         ->searchable()
                         ->required()
                         ->reactive()
-                        ->disabled(fn ($record) => $record !== null)
-                        ->afterStateUpdated(function ($state, callable $get, callable $set) {
-                            // Optionally debug the state value
-                            dd($state);
-                        }),
+                        ->disabled(fn ($record) => $record !== null),
                     Forms\Components\Select::make('problem_category_id')
                         ->label(__('Problem Category'))
                         ->options(function (callable $get, callable $set) {return ProblemCategory::all()->pluck('name', 'id');})
