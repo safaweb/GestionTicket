@@ -7,6 +7,7 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
+use App\Models\User;
 
 class UsersRelationManager extends RelationManager
 {
@@ -39,7 +40,17 @@ class UsersRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\AttachAction::make()
-                ->label('Attacher'),
+                ->label('Attacher')
+                ->form(fn () => [
+                    Forms\Components\Select::make('user_id')
+                        ->label('')
+                        ->options(User::all()->pluck('name', 'id'))
+                        ->searchable()
+                        ->required(),
+                ])
+                ->action(function ($data, $livewire) {
+                    $livewire->ownerRecord->users()->attach($data['user_id']);
+                }),
             ])
             ->actions([
                 Tables\Actions\DetachAction::make()
