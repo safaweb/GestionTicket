@@ -38,7 +38,11 @@ class SocieteRelationManager extends RelationManager
                         return [
                             Forms\Components\Select::make('societe_id')
                                 ->label('')
-                                ->options(Societe::all()->pluck('name', 'id'))
+                                //->options(Societe::all()->pluck('name', 'id'))
+                                ->options(function() {
+                                    // Directly fetch the options without caching
+                                    return Societe::pluck('name', 'id');
+                                })
                                 ->searchable()
                                 ->required(),
                         ];

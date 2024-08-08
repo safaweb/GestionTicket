@@ -28,19 +28,18 @@ class ProjetResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->label('Nom')
-                    ->label('Nom')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Select::make('pays_id')
                     ->label('Pays')
                     ->required()
-                    ->options(Pays::all()
-                    ->pluck('name', 'id')),
+                    ->options(Pays::pluck('name', 'id')),
+                    //->options(Pays::all()->pluck('name', 'id')),
                 Forms\Components\Select::make('societe_id')
-                    ->label('Societe')
+                    ->label('Société')
                     ->required()
-                    ->options(Societe::all()
-                    ->pluck('name', 'id'))
+                    ->options(Societe::pluck('name', 'id')),
+                    //->options(Societe::all()->pluck('name', 'id'))
             ])
         ;
     }
@@ -49,17 +48,26 @@ class ProjetResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name') ->label('Nom'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nom')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('pays.name') 
-                ->searchable()
-                ->label(__('Pays'))
-                ->toggleable(),
+                    ->searchable()
+                    ->label(__('Pays'))
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('societe.name') 
-                ->searchable()
-                ->label(__('Societe'))
-                ->toggleable(),
+                    ->searchable()
+                    ->label('Société')
+                    ->toggleable(),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('societe_id')
+                ->options(Societe::query()->pluck('name', 'id')->toArray()) // Optimize filter loading
+                ->label(__('Societe')),
+                Tables\Filters\SelectFilter::make('pays_id')
+                ->options(Pays::query()->pluck('name', 'id')->toArray()) // Optimize filter loading
+                ->label(__('Pays')),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
@@ -75,6 +83,7 @@ class ProjetResource extends Resource
                 //Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
             ])
+            ->defaultSort('name', 'asc'); // Default sorting by name
         ;
     }
 

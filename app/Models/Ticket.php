@@ -69,24 +69,7 @@ class Ticket extends Model
         'solved_at',
         'accepted',
     ];
-
-    public function validation()
-    {
-        return $this->belongsTo(Validation::class, 'validation_id');
-    }
-
-    public function approve()
-    {
-        $this->approved_at = Carbon::now();
-        $this->save();
-    }
-
-    public function solve()
-    {
-        $this->solved_at = Carbon::now();
-        $this->save();
-    }
-
+    
     /** Get the priority that owns the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function priority()
@@ -100,9 +83,9 @@ class Ticket extends Model
     {
         return $this->belongsTo(Projet::class);
     }
-
+    
     /** Get the pays that owns the Ticket.
-      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function pays()
     {
         return $this->belongsTo(Pays::class);
@@ -114,41 +97,56 @@ class Ticket extends Model
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
-
+    
     /** Get the responsible that owns the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function responsible()
     {
         return $this->belongsTo(User::class, 'responsible_id');
     }
-
+    
     /**Get the problemCategory that owns the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function problemCategory()
     {
         return $this->belongsTo(ProblemCategory::class);
     }
-
+    
     /** Get the user that owns the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
+    
     /**Get the statutDuTicket that owns the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function statutDuTicket()
     {
         return $this->belongsTo(StatutDuTicket::class, 'statuts_des_tickets_id');
     }
-
+    
     /** Get all of the commentaires for the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\HasMany */
     public function commentaires()
     {
         return $this->hasMany(Commentaire::class, 'ticket_id');
     }
- 
-    
+
+    /**Get the validation that owns the Ticket.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
+    public function validation()
+    {
+        return $this->belongsTo(Validation::class, 'validation_id');
+    }
+    public function approve()
+    {
+        $this->approved_at = Carbon::now();
+        $this->save();
+    }
+    public function solve()
+    {
+        $this->solved_at = Carbon::now();
+        $this->save();
+    }
 }

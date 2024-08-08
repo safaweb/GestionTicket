@@ -41,7 +41,11 @@ class RolesRelationManager extends RelationManager
                     ->form(fn () => [
                         Forms\Components\Select::make('role_id')
                             ->label('')
-                            ->options(Role::all()->pluck('name', 'id'))
+                            //->options(Role::all()->pluck('name', 'id'))
+                            ->options(function() {
+                                // Directly fetch the options without caching
+                                return Role::pluck('name', 'id');
+                            })
                             ->searchable()
                             ->required(),
                     ])

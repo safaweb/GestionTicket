@@ -27,7 +27,6 @@ class SocieteResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->label('Nom')
-                    ->label('Nom')
                     ->required()
                     ->maxLength(255), 
             ])
@@ -38,7 +37,10 @@ class SocieteResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name') ->label('Nom'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nom')
+                    ->sortable()
+                    ->searchable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -56,6 +58,7 @@ class SocieteResource extends Resource
                 //Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
             ])
+            ->defaultSort('name', 'asc'); // Default sorting by name
         ;
     }
 

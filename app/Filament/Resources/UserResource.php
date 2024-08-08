@@ -65,7 +65,6 @@ class UserResource extends Resource
                         ->required()
                         ->default(fn () => Carbon::now())
                         ->hidden(fn ($get) => !$get('is_contrat')), // Use the correct closure parameter
-                    
                     Forms\Components\Toggle::make('is_contrat')
                         ->label('Contrat')
                         ->required()
@@ -75,7 +74,6 @@ class UserResource extends Resource
                             $set('start_date', $state ? Carbon::now() : null);
                             $set('end_date', $state ? Carbon::now() : null);
                         }),
-                    
                     Forms\Components\DatePicker::make('end_date')
                         ->label('Date Fin Du Contrat')
                         ->required()
@@ -114,7 +112,7 @@ class UserResource extends Resource
                 Tables\Filters\SelectFilter::make('is_contrat')
                 ->label('Contrat')
                 ->options([
-                    '1' => 'Yes', // You can customize the label as needed
+                    '1' => 'Yes',
                     '0' => 'No',
                 ]),
                 Tables\Filters\TrashedFilter::make(),
@@ -134,6 +132,8 @@ class UserResource extends Resource
                 //Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
             ])
+            // **Pagination Implementation**
+            //->paginate(10) // <- Added pagination here
         ;
     }
 
@@ -163,6 +163,8 @@ class UserResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ])
+            // **Eager Loading Implementation**
+            ->with(['roles', 'tickets']) // <- Eager loading related models
         ;
     }
 }

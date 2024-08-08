@@ -9,6 +9,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use App\Models\Projet; // Ensure the Projet model is imported
 use App\Models\Pays;
+use Illuminate\Support\Facades\Cache;
 
 class ProjetRelationManager extends RelationManager
 {
@@ -26,7 +27,11 @@ class ProjetRelationManager extends RelationManager
                 Forms\Components\Select::make('pays_id')
                     ->label('Pays')
                     ->required()
-                    ->options(Pays::all()->pluck('name', 'id')),
+                    //->options(Pays::all()->pluck('name', 'id')),
+                    ->options(function() {
+                        // Using a cache method for options
+                        return Pays::cacheFor(now()->addMinutes(10))->pluck('name', 'id');
+                    }),
             ]);
     }
 
@@ -46,7 +51,17 @@ class ProjetRelationManager extends RelationManager
                     ->form(fn () => [
                         Forms\Components\Select::make('projet_id')
                             ->label('')
-                            ->options(Projet::all()->pluck('name', 'id'))
+                            //->options(Projet::all()->pluck('name', 'id'))
+                            /*->options(function() {
+                                // Cache the options for 10 minutes
+                                return Cache::remember('projet_options', now()->addMinutes(10), function () {
+                                    return Projet::pluck('name', 'id');
+                                });
+                            })*/
+                            ->options(function() {
+                                // Directly fetch the options without caching
+                                return Projet::pluck('name', 'id');
+                            })
                             ->searchable()
                             ->required(),
                     ])

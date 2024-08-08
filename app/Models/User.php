@@ -46,8 +46,8 @@ class User extends Authenticatable implements FilamentUser
     protected $table = 'users';
 
     protected $casts = [
-        'societe_id'=>'int',
-        'two_factor_confirmed_at' => 'datetime',
+        //'societe_id'=>'int',
+        //'two_factor_confirmed_at' => 'datetime',
         'user_level_id' => 'int',
         'is_active' => 'bool',
         'is_contrat' => 'bool',
@@ -57,22 +57,22 @@ class User extends Authenticatable implements FilamentUser
 
     protected $hidden = [
         'password',
-        'two_factor_secret',
+        //'two_factor_secret',
         'remember_token',
     ];
 
     protected $fillable = [
-        'societe_id',
-        'pays_id',
-        'projet_id',
+        //'societe_id',
+        //'projet_id',
         'name',
         'email',
         'password',
-        'two_factor_secret',
-        'two_factor_recovery_codes',
-        'two_factor_confirmed_at',
+        //'two_factor_secret',
+        //'two_factor_recovery_codes',
+        //'two_factor_confirmed_at',
         'remember_token',
         'pays',
+        'pays_id',
         'phone',
         'user_level_id',
         'is_active',
@@ -118,7 +118,6 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(Projet::class, 'projet_user', 'user_id', 'projet_id');
     }
 
-    
     /** Get the pays that owns the Ticket.
       * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function pays()
@@ -147,6 +146,13 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Ticket::class, 'responsible_id');
     }
 
+    /**Get all of the socialiteUsers for the User
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
+    public function socialiteUsers()
+    {
+        return $this->hasMany(SocialiteUser::class);
+    }
+
     /** Determine who has access.
      * Only active users can access the filament*/
     public function canAccessFilament(): bool
@@ -164,23 +170,16 @@ class User extends Authenticatable implements FilamentUser
         }
         }
     }*/
-public function scopeByRole($query)
-{
-    $user = auth()->user();
-    if ($user->hasRole('Chef Projet')) {
-        return $query->whereHas('projets', function ($query) use ($user) {
-            $query->where('projet_user.projet_id', $user->projet_id)
-                ->where('projet_user.user_id', $user->id);
-        });
-    }
-    return $query;
-}
 
-
-    /**Get all of the socialiteUsers for the User
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
-    public function socialiteUsers()
+    public function scopeByRole($query)
     {
-        return $this->hasMany(SocialiteUser::class);
+        $user = auth()->user();
+        if ($user->hasRole('Chef Projet')) {
+            return $query->whereHas('projets', function ($query) use ($user) {
+                $query->where('projet_user.projet_id', $user->projet_id)
+                    ->where('projet_user.user_id', $user->id);
+            });
+        }
+        return $query;
     }
 }

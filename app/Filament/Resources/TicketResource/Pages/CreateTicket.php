@@ -30,13 +30,22 @@ class CreateTicket extends CreateRecord
     protected function handleRecordCreation(array $data): Ticket
     {
         $ticket = Ticket::create($data);
-        $superAdmins = User::whereHas('roles', function ($query) {
+        /*$superAdmins = User::whereHas('roles', function ($query) {
             $query->where('name', 'Super Admin');
         })->get();
         $chefProjets = User::whereHas('roles', function ($query) {
             $query->where('name', 'Chef Projet');
         })->whereHas('projets', function ($query) use ($ticket) {
             $query->where('projet_id', $ticket->projet_id);
+        })->get();*/
+         // Use eager loading to prevent N+1 query problems
+        $superAdmins = User::with('roles')->whereHas('roles', function ($query) {
+            $query->where('name', 'Super Admin');
+        })->get();
+        $chefProjets = User::with(['roles', 'projets' => function ($query) use ($ticket) {
+            $query->where('projet_id', $ticket->projet_id);
+        }])->whereHas('roles', function ($query) {
+            $query->where('name', 'Chef Projet');
         })->get();
         $receivers = $superAdmins->merge($chefProjets);
         Notification::make()

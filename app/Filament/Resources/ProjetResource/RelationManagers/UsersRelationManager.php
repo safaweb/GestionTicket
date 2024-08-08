@@ -44,7 +44,11 @@ class UsersRelationManager extends RelationManager
                 ->form(fn () => [
                     Forms\Components\Select::make('user_id')
                         ->label('')
-                        ->options(User::all()->pluck('name', 'id'))
+                        ->options(function() {
+                            // Directly fetch the options without caching
+                            return User::pluck('name', 'id');
+                        })
+                        //->options(User::all()->pluck('name', 'id'))
                         ->searchable()
                         ->required(),
                 ])

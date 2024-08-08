@@ -46,7 +46,8 @@ class StatutDuTicketResource extends Resource
             ])
             ->filters([])
             ->actions([])
-            ->bulkActions([]);
+            ->bulkActions([])
+            ->defaultSort('id', 'asc'); // Default sorting by ID
     }
 
     public static function getRelations(): array
@@ -69,6 +70,7 @@ class StatutDuTicketResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
+            ->withCount('tickets') // Eager load tickets count to avoid N+1 problem
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);

@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\EmailTestController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -10,26 +12,19 @@ use App\Http\Controllers\Auth\SocialiteController;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
 */
+
 Route::get('/', function () {
     return view('landing');
 });
-// socialite login
+
+// Socialite login
 Route::get('/auth/{provider}', [SocialiteController::class, 'redirectToProvider']);
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProvideCallback']);
-Route::get('/home', 'HomeController@index')->name('home'); // Remove 'verified'
 
-Route::get('/test-email', function () {
-    $owner = App\Models\User::find(1); // Replace with an existing user ID
-    $owner->notify(new App\Notifications\StatutDuTicketModifie());
-});
-Route::get('/test-email', function () {
-    $owner = App\Models\User::find(1); // Replace with an existing user ID
-    $owner->notify(new App\Notifications\UserCreated());
-});
+// Home route
+//Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/test-email', function() {
-    $user = User::find(1); // Remplacez par un utilisateur existant
-    $ticket = Ticket::find(1); // Remplacez par un ticket existant
-    $user->notify(new App\Notifications\TicketAssignedNotification($ticket));
-    return 'E-mail envoyé!';
-});
+// Test email routes
+Route::get('/test-email/StatutDuTicketModifie', [EmailTestController::class, 'sendStatutDuTicketModifie']);
+Route::get('/test-email/CreationTicket', [EmailTestController::class, 'sendUserCreated']);
+Route::get('/test-email/TicketAssigned', [EmailTestController::class, 'sendTicketAssigned']);
