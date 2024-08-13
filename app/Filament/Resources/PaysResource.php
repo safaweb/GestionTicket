@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Filament\Resources;
-use App\Filament\Resources\PaysResource\RelationManagers\ProjectRelationManager;
-use App\Filament\Resources\PaysResource\RelationManagers\UsersRelationManager;
 use App\Filament\Resources\PaysResource\Pages;
 use App\Models\Pays;
 use Filament\Forms;
@@ -41,22 +39,20 @@ class PaysResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                ->label('')
+                ->icon('heroicon-s-eye'),
+                Tables\Actions\EditAction::make()
+                ->label('')
+                ->icon('heroicon-s-pencil'),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
+                //Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
             ])
         ;
     }
-    
-    /*public static function getRelations(): array{
-        return [
-            ProjectRelationManager::class,
-            UsersRelationManager::class,
-        ];}*/
 
     public static function getPages(): array
     {

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Projet.
@@ -38,7 +39,6 @@ class Projet extends Model
         'societe',
         'user_id',
         'user',
-   
     ];
 
     public function societe()
@@ -46,18 +46,11 @@ class Projet extends Model
         return $this->belongsTo(Societe::class);
     }
 
-    /** Get all of the problemCategories for the Projet
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany */
-    public function problemCategories()
-    {
-        return $this->hasMany(ProblemCategory::class);
-    }
-
     /** Get the pays that owns the Ticket.
       * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
-    public function pays()
+    public function pays(): BelongsTo
     {
-        return $this->belongsTo(Pays::class, 'pays_id');
+        return $this->belongsTo(Pays::class);
     }
 
     /**Get all of the tickets for the Projet
@@ -71,6 +64,7 @@ class Projet extends Model
      * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
     public function users()
     {
-        return $this->hasMany(User::class);
+    return $this->belongsToMany(User::class, 'projet_user', 'projet_id', 'user_id');
     }
+
 }

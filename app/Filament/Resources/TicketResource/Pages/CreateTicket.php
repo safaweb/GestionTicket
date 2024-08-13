@@ -20,42 +20,45 @@ class CreateTicket extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['owner_id'] = auth()->id();
-        $data['statuts_des_tickets_id'] = 1;
+        $data['statuts_des_tickets_id'] = 5;
         $data['qualification_id'] = 1;
+        $data['validation_id'] = 4;
         return $data;
     }
 
     /**Gérer la création du ticket et envoyer une notification après la création.*/
     protected function handleRecordCreation(array $data): Ticket
     {
-        $ticket = parent::handleRecordCreation($data);
-        // Get the current user
-        $currentUser = Auth::user();
-        if ($currentUser->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur', 'Client'])) {
-            $receiver = User::where('societe_id', $currentUser->societe_id)
-                            ->where('id', '!=', $currentUser->id)
-                            ->get();
-        } else {
-            // Send notification to users with specific roles, excluding current user
-            $receiver = User::whereHas('roles', function ($q) {
-                $q->where('name', 'Chef Projet')
-                ->orWhere('name', 'Super Admin');
-            })->where('societe_id', $currentUser->societe_id)
-            ->where('id', '!=', $currentUser->id)
-            ->get();
-        }
-        // Send the notification to appropriate recipients
+        $ticket = Ticket::create($data);
+        /*$superAdmins = User::whereHas('roles', function ($query) {
+            $query->where('name', 'Super Admin');
+        })->get();
+        $chefProjets = User::whereHas('roles', function ($query) {
+            $query->where('name', 'Chef Projet');
+        })->whereHas('projets', function ($query) use ($ticket) {
+            $query->where('projet_id', $ticket->projet_id);
+        })->get();*/
+         // Use eager loading to prevent N+1 query problems
+        $superAdmins = User::with('roles')->whereHas('roles', function ($query) {
+            $query->where('name', 'Super Admin');
+        })->get();
+        $chefProjets = User::with(['roles', 'projets' => function ($query) use ($ticket) {
+            $query->where('projet_id', $ticket->projet_id);
+        }])->whereHas('roles', function ($query) {
+            $query->where('name', 'Chef Projet');
+        })->get();
+        $receivers = $superAdmins->merge($chefProjets);
         Notification::make()
             ->title('Il y a un nouveau ticket créé')
             ->actions([
                 Action::make('Voir')
                     ->url(route('filament.resources.tickets.view', $ticket->id)),
             ])
-            ->sendToDatabase($receiver);
+            ->sendToDatabase($receivers);
         // send email for ticket creation
-            foreach ($receiver as $user) {
-                $user->notify(new TicketCreatedNotification($ticket));
-            }
+        foreach ($receivers as $user) {
+            $user->notify(new TicketCreatedNotification($ticket));
+        }
         return $ticket;
     }
 }

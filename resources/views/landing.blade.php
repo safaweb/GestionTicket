@@ -20,32 +20,22 @@
                         class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Ticket System</span>
                 </a>
                 <div class="flex items-center lg:order-2">
-                    <a href="{{ route('filament.auth.login') }}"
-                        class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
-                        {{ __('Login') }}</a>
+                <a href="{{ route('filament.auth.login') }}"
+                style="background-color: #f89c0c;" 
+                class="text-white hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+                {{ __('Login') }}</a>
                 </div>
             </div>
         </nav>
     </header>
 
     <section class="bg-white dark:bg-gray-900">
-        <div class="grid py-8 px-4 mx-auto max-w-screen-xl lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
-            <div class="place-self-center mr-auto lg:col-span-7">
-                <h1 class="mb-4 max-w-2xl text-4xl font-extrabold leading-none md:text-5xl xl:text-6xl dark:text-white">
-                    {{ config('app.name') }}</h1>
-                <p class="mb-6 max-w-2xl font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
-                    {{ env('APP_DESCRIPTION', 'This is descriptions') }}</p>
-                <a href="{{ route('filament.auth.login') }}"
-                    class="inline-flex justify-center items-center py-3 px-5 mr-3 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900">
-                    {{ __('Login') }}
-                </a>
-            </div>
-            <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
-                <img src="{{ url('simsoft-n.png') }}">
-            </div>
+    <div class="flex items-center justify-center py-8 px-4 mx-auto max-w-screen-xl lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
+        <div class="lg:col-span-12 flex justify-center">
+            <img src="{{ url('simsoft-n.png') }}" alt="Centered Image">
         </div>
+    </div>
     </section>
-
 
     <section class="bg-gray-50 dark:bg-gray-900 dark:bg-gray-800">
         <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 ">
@@ -70,5 +60,4 @@
         </div>
     </footer>
 </body>
-
 </html>

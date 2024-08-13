@@ -13,8 +13,8 @@ class SocieteSeeder extends Seeder
     public function run(): void
     {
         Societe::insert([
-            ['name' => 'SOTUFAB'],
-            ['name' => 'Coprofa'],
+            ['id' => 1,'name' => 'SOTUFAB'],
+            ['id' => 2,'name' => 'Coprofa'],
         ]);
     }
 }

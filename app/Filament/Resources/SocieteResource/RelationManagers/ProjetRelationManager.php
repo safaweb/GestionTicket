@@ -14,7 +14,7 @@ class ProjetRelationManager extends RelationManager
 {
     protected static string $relationship = 'Projet';
     protected static ?string $recordTitleAttribute = 'name';
-    protected static ?string $title = 'Projets'; // Added label
+    protected static ?string $title = 'Projets';
 
     public static function form(Form $form): Form
     {
@@ -26,8 +26,8 @@ class ProjetRelationManager extends RelationManager
                     Forms\Components\Select::make('pays_id')
                     ->label('Pays')
                     ->required()
-                    ->options(Pays::all()
-                    ->pluck('name', 'id')),
+                    //->options(Pays::all()->pluck('name', 'id'))
+                    ->options(Pays::pluck('name', 'id')),
             ])
         ;
     }

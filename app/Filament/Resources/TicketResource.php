@@ -10,6 +10,7 @@ use App\Models\Ticket;
 use App\Models\StatutDuTicket;
 use App\Models\Projet;
 use App\Models\Societe;
+use App\Models\Validation;
 use App\Models\User;
 use App\Models\Qualification;
 use App\Http\Middleware\Authenticate;
@@ -30,6 +31,11 @@ class TicketResource extends Resource
     protected static ?int $navigationSort = 3;
     protected static ?string $recordTitleAttribute = 'title';
 
+    public static function getPluralModelLabel(): string
+    {
+        return __('Tickets');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -37,36 +43,21 @@ class TicketResource extends Resource
                 Card::make()->schema([
                     Forms\Components\Select::make('qualification_id')
                         ->label(__('Qualifications'))
-                        ->options(Qualification::all()
-                        ->pluck('name', 'id'))
+                        //->options(Qualification::all()->pluck('name', 'id'))
+                        ->options(Qualification::query()->pluck('name', 'id')->toArray()) // Optimize options loading
                         ->searchable()
                         ->disabled(fn ($record) => $record !== null ),
                     Forms\Components\Select::make('projet_id')
                         ->label(__('Projets'))
-                        //->options(Projet::all()
-                        //->pluck('name', 'id'))
-                        ->options(function (callable $get) {
-                            $user = auth()->user();
-                            $societeId = $user->societe_id; // Assuming the user model has a societe_id attribute
-                            return Projet::where('societe_id', $societeId)->pluck('name', 'id');
-                        })
+                        //->options(function () { return Projet::pluck('name', 'id')->toArray();})
+                        ->options(Projet::query()->pluck('name', 'id')->toArray()) // Optimize options loading
                         ->searchable()
                         ->required()
-                        ->afterStateUpdated(function ($state, callable $get, callable $set) {
-                            $projet = Projet::find($state);
-                        /*if ($projet) {$problemCategoryId = (int) $get('problem_category_id');
-                                if ($problemCategoryId && $problemCategory = ProblemCategory::find($problemCategoryId)) {
-                                    if ($problemCategory->projet_id !== $projet->id) {$set('problem_category_id', null);}}}*/
-                        })
                         ->reactive()
                         ->disabled(fn ($record) => $record !== null),
                     Forms\Components\Select::make('problem_category_id')
                         ->label(__('Problem Category'))
-                        ->options(function (callable $get, callable $set) {
-                            /*$projet = Projet::find($get('projet_id'));
-                            if ($projet) {return $projet->problemCategories->pluck('name', 'id');}*/
-                        return ProblemCategory::all()->pluck('name', 'id');
-                        })
+                        ->options(function (callable $get, callable $set) {return ProblemCategory::all()->pluck('name', 'id');})
                         ->searchable()
                         ->required()
                         ->disabled(fn ($record) => $record !== null),
@@ -74,15 +65,13 @@ class TicketResource extends Resource
                         ->label(__('Title'))
                         ->required()
                         ->maxLength(255)
-                        ->columnSpan([
-                            'sm' => 2,])
+                        ->columnSpan(['sm' => 2,])
                         ->disabled(fn ($record) => $record !== null),
                     Forms\Components\RichEditor::make('description')
                         ->label(__('Description'))
                         ->required()
                         ->maxLength(65535)
-                        ->columnSpan([
-                            'sm' => 2,])
+                        ->columnSpan(['sm' => 2,])
                         ->disabled(fn ($record) => $record !== null),
                     Forms\Components\Placeholder::make('approved_at')
                         ->label('Validée le:')
@@ -94,38 +83,43 @@ class TicketResource extends Resource
                         ->hiddenOn('create')
                         ->content(fn (?Ticket $record): string => $record->solved_at ? $record->solved_at->diffForHumans() : '-')
                         ->disabled(fn ($record) => $record !== null),
-                        ])->columns([
-                        'sm' => 2,
-                        ])->columnSpan(2),
-                        Card::make()->schema([
+                    ])->columns(['sm' => 2,
+                    ])->columnSpan(2),
+                Card::make()->schema([
                     Forms\Components\Select::make('priority_id')
                         ->label(__('Priority'))
-                        ->options(Priority::all()->pluck('name', 'id'))
+                        //->options(Priority::all()->pluck('name', 'id'))
+                        ->options(Priority::query()->pluck('name', 'id')->toArray()) // Optimize options loading
                         ->searchable()
                         ->required()
                         ->disabled(fn ($record) => $record !== null),
                     Forms\Components\Placeholder::make('statuts_des_tickets_id')
                         ->label(__('Statut'))
                         ->hiddenOn('create')
-                        //->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : 'Ouvert')
+                        ->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : '-')
                         ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
                     Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
-                        ->options(
+                        /*->options(
                             User::whereHas('roles', function($query) {
-                                $query->whereIn('name', ['Super Admin', 'Chef Projet', 'Employeur']);
-                            })->pluck('name', 'id') )
+                                $query->whereIn('name', ['Chef Projet', 'Employeur']);
+                            })->pluck('name', 'id') )*/
+                        ->options(
+                            User::query()->whereHas('roles', function($query) {
+                                $query->whereIn('name', ['Chef Projet', 'Employeur']);
+                            })->pluck('name', 'id')->toArray() // Optimize options loading
+                        )
                         ->searchable()
                         ->required()
                         ->hiddenOn('create')
                         ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet'])),
                     Forms\Components\Placeholder::make('created_at')
                         ->translateLabel()
-                        ->content(fn (?Ticket $record): string => $record ? $record->created_at->format('Y-m-d ')  : '-')
+                        ->content(fn (?Ticket $record): string => $record ? $record->created_at->diffForHumans() : '-')
                         ->disabled(fn ($record) => $record !== null),
                     Forms\Components\Placeholder::make('updated_at')
                         ->translateLabel()
-                        ->content(fn (?Ticket $record): string => $record ? $record->updated_at->format('Y-m-d '): '-')
+                        ->content(fn (?Ticket $record): string => $record ? $record->updated_at->diffForHumans() : '-')
                         ->disabled(fn ($record) => $record !== null),
                 ])->columnSpan(1),
             ])->columns(3);
@@ -142,51 +136,78 @@ class TicketResource extends Resource
                     ->searchable()
                     ->label(__('Projet'))
                     ->toggleable(),
-                    Tables\Columns\TextColumn::make('validation.name')
-                    ->label(__('Validation'))
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('ProblemCategory.name')
-                    ->searchable()
-                    ->label(__('Catégorie des problèmes'))
-                    ->toggleable(),
                 Tables\Columns\TextColumn::make('owner.name') 
                     ->label(__('User'))
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('responsible.name') 
+                    ->label(__('Responsible'))
+                    ->sortable()
+                    ->searchable()
+                    ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet','Employeur']))
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('projet.pays.name')
                     ->searchable()
                     ->label(__('Pays'))
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('validation.name')
+                    ->label(__('Validation'))
+                    ->extraAttributes(function ($record) {
+                        // Colorize the text based on validation status
+                        if ($record->validation) {
+                            // Colorize the text based on validation status
+                            if ($record->validation->name === 'Accepter') {
+                                return ['style' => 'color: #666699'];
+                            } elseif ($record->validation->name === 'Terminer') {
+                                return ['style' => 'color: #ffbf00'];
+                            } elseif ($record->validation->name === 'Refuser') {
+                                return ['style' => 'color: #ff6666'];}}return [];})
+                    ->sortable(),  
                 Tables\Columns\TextColumn::make('statutDuTicket.name')
                     ->label(__('Statut'))
-                    ->sortable(),
+                    ->sortable()
+                    ->extraAttributes(function ($record) {
+                        // Colorize the text based on status
+                        if ($record->statutDuTicket->name === 'Résolu') {
+                            return ['style' => 'color: green;'];
+                        } elseif ($record->statutDuTicket->name === 'Ouvert') {
+                            return ['style' => 'color: blue;'];
+                        } elseif ($record->statutDuTicket->name === 'En Cours') {
+                            return ['style' => 'color: yellow;'];
+                        } elseif ($record->statutDuTicket->name === 'Non Résolu') {
+                        return ['style' => 'color: red;'];}
+                        return [];}),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->date()
                     ->translateLabel()
                     ->sortable()
                     ->toggleable(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\SelectFilter::make('validation_id')
+                    ->options(Validation::query()->pluck('name', 'id')->toArray()) // Optimize filter loading
+                    ->label(__('Validation')),
+                Tables\Filters\SelectFilter::make('tatuts_des_tickets_id')
+                    ->options(StatutDuTicket::query()->pluck('name', 'id')->toArray()) // Optimize filter loading
+                    ->label(__('Statut Du Ticket')),
                 Tables\Filters\SelectFilter::make('projet_id')
-                    ->options(Projet::all()->pluck('name', 'id')->toArray())
+                    ->options(Projet::query()->pluck('name', 'id')->toArray()) // Optimize filter loading
                     ->label(__('Projet')),
-                Tables\Filters\SelectFilter::make('pays_id')
-                    ->options(Pays::all()->pluck('name', 'id')->toArray())
-                    ->label(__('Pays'))
+                Tables\Filters\TrashedFilter::make()
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                //Tables\Actions\EditAction::make(),
-                // Conditionally add the Edit action based on user roles
+                Tables\Actions\ViewAction::make()
+                ->label('')
+                ->icon('heroicon-s-eye'),
                 Tables\Actions\EditAction::make()
-                //->visible(fn () => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']))
-                ->visible(fn ($record) => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']) && $record->validation_id === 1)
+                ->visible(fn ($record) => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']) && in_array($record->validation_id, [4, 1]))
+                ->label('')
+                ->icon('heroicon-s-pencil')
         ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
+                //Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
             ])
             ->defaultSort('created_at', 'desc');
@@ -217,13 +238,21 @@ class TicketResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
+            ->with(['projet', 'owner', 'responsible', 'validation', 'statutDuTicket']) // Eager load relationships
             ->where(function ($query) {
                 // Display all tickets to Super Admin
                 if (auth()->user()->hasRole('Super Admin')) {
                     return;
                 }
-                if (auth()->user()->hasRole('Chef Projet')) {
-                    $query->where('tickets.projet_id', auth()->user()->societe_id)->orWhere('tickets.owner_id', auth()->id());
+                $user = auth()->user();
+                if ($user->hasRole('Chef Projet')) {
+                    $query->where(function ($q) use ($user) {
+                        $q->whereIn('tickets.projet_id', function ($subQuery) use ($user) {
+                            $subQuery->select('projet_user.projet_id') // Adjusted column name
+                                    ->from('projet_user')
+                                    ->where('projet_user.user_id', $user->id);
+                        })->orWhere('tickets.owner_id', $user->id);
+                    });
                 } elseif (auth()->user()->hasRole('Employeur')) {
                     $query->where('tickets.responsible_id', auth()->id())->orWhere('tickets.owner_id', auth()->id());
                 } else {
@@ -234,10 +263,4 @@ class TicketResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
-
-    public static function getPluralModelLabel(): string
-    {
-        return __('Tickets');
-    }
 }
-

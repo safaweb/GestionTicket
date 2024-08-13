@@ -22,10 +22,12 @@ use Illuminate\Support\Facades\Auth;
 class ProblemCategoryResource extends Resource
 {
     protected static ?string $model = ProblemCategory::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-link';
-
     protected static ?int $navigationSort = 5;
+    public static function getPluralModelLabel(): string
+    {
+        return __('Catégories Des Problèmes');
+    }
 
     public static function form(Form $form): Form
     {
@@ -50,12 +52,16 @@ class ProblemCategoryResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                ->label('')
+                ->icon('heroicon-s-eye'),
+                Tables\Actions\EditAction::make()
+                ->label('')
+                ->icon('heroicon-s-pencil'),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
+                //Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
             ]);
     }
@@ -83,17 +89,10 @@ class ProblemCategoryResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return __('Catégories Des Problèmes');
+        // Role-based filtering
+        if (Auth::user()->hasRole('Chef Projet')) {
+            $query->where('projet_id', Auth::user()->projet_id);
+        }
+        return $query;
     }
 }
-
-    /*public static function getEloquentQuery(): Builder in return parent::getEloquentQuery()
-    ->where(function ($query) {
-        if (auth()->user()->hasRole('Chef Projet')) {
-            $query->where('problem_categories.projet_id', auth()->user()->projet_id);
-        }
-    });*/

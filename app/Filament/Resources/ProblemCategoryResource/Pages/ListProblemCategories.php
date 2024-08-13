@@ -19,6 +19,6 @@ class ListProblemCategories extends ListRecords
     
     protected function getTitle(): string
     {
-        return 'Liste des Catégories des problèmes'; // Update this line
+        return 'Liste des Catégories des problèmes';
     }
 }

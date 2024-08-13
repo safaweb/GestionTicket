@@ -21,6 +21,6 @@ class EditProblemCategory extends EditRecord
 
     protected function getTitle(): string
     {
-        return 'Modifier Catégorie de problème'; // Update this line
+        return 'Modifier Catégorie de problème'; 
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
@@ -43,36 +44,61 @@ class User extends Authenticatable implements FilamentUser
 {
     use SoftDeletes, HasRoles, HasSuperAdmin, HasFactory, Notifiable;
     protected $table = 'users';
-
+    
     protected $casts = [
-        'societe_id'=>'int',
-        'two_factor_confirmed_at' => 'datetime',
+        //'societe_id'=>'int',
+        //'two_factor_confirmed_at' => 'datetime',
         'user_level_id' => 'int',
         'is_active' => 'bool',
+        'is_contrat' => 'bool',
+        'start_date' => 'date', // Add this line
+        'end_date' => 'date', // Add this line
     ];
 
     protected $hidden = [
         'password',
-        'two_factor_secret',
+        //'two_factor_secret',
         'remember_token',
     ];
 
     protected $fillable = [
-        'societe_id',
-        'pays_id',
+        //'societe_id',
+        //'projet_id',
         'name',
         'email',
         'password',
-        'two_factor_secret',
-        'two_factor_recovery_codes',
-        'two_factor_confirmed_at',
+        //'two_factor_secret',
+        //'two_factor_recovery_codes',
+        //'two_factor_confirmed_at',
         'remember_token',
         'pays',
+        'pays_id',
         'phone',
         'user_level_id',
         'is_active',
+        'is_contrat',
+        'start_date',
+        'end_date',
     ];
 
+    public static function rules($id = null): array
+    {
+        return [
+           
+            'email' => 'required|email|unique:users,email,' . $id,
+           
+        ];
+    }
+    public static function messages(): array
+    {
+        return [
+          
+        
+            'email.email' => 'L\'email doit être une adresse email valide.',
+            'email.unique' => 'Cet email est déjà utilisé.',
+        ];
+    }
+     
     protected static function boot()
     {
         parent::boot();
@@ -94,12 +120,22 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->belongsTo(Societe::class);
     }
+    public function societes()
+    {
+        return $this->belongsToMany(Societe::class, 'societe_user', 'user_id', 'societe_id');
+    }
 
     /**Get the projet that owns the User.
-    * public function projet()
-    * {  return $this->belongsTo(Projet::class);}
-    */
-    
+     */
+    public function projet()
+    {  
+        return $this->belongsTo(Projet::class);
+    }
+    public function projets(): BelongsToMany
+    {
+        return $this->belongsToMany(Projet::class, 'projet_user', 'user_id', 'projet_id');
+    }
+
     /** Get the pays that owns the Ticket.
       * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function pays()
@@ -128,6 +164,13 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Ticket::class, 'responsible_id');
     }
 
+    /**Get all of the socialiteUsers for the User
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
+    public function socialiteUsers()
+    {
+        return $this->hasMany(SocialiteUser::class);
+    }
+
     /** Determine who has access.
      * Only active users can access the filament*/
     public function canAccessFilament(): bool
@@ -135,22 +178,26 @@ class User extends Authenticatable implements FilamentUser
         return auth()->user()->is_active;
     }
 
-    /** Add scope to display users based on their role.
-     * If the role is as an admin projet, then display the user based on their projet ID.*/
+    /* Add scope to display users based on their role.
+    If the role is as an admin projet, then display the user based on their projet ID.
     public function scopeByRole($query)
     {
         if (auth()->user()->hasRole('Chef Projet')) {
         if (auth()->user()->hasRole('Chef Projet')) {
-            //return $query->where('users.projet_id', auth()->user()->projet_id);
-            return $query->where('users.societe_id', auth()->user()->societe_id);
+            return $query->where('projet_user.projet_id', auth()->user()->projet_id);
         }
-    }
-    }
+        }
+    }*/
 
-    /**Get all of the socialiteUsers for the User
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany*/
-    public function socialiteUsers()
+    public function scopeByRole($query)
     {
-        return $this->hasMany(SocialiteUser::class);
+        $user = auth()->user();
+        if ($user->hasRole('Chef Projet')) {
+            return $query->whereHas('projets', function ($query) use ($user) {
+                $query->where('projet_user.projet_id', $user->projet_id)
+                    ->where('projet_user.user_id', $user->id);
+            });
+        }
+        return $query;
     }
 }

@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SocieteResource\Pages;
 use App\Filament\Resources\SocieteResource\RelationManagers\ProjetRelationManager;
-//use App\Filament\Resources\SocieteResource\RelationManagers\UsersRelationManager;
+use App\Filament\Resources\SocieteResource\RelationManagers\UsersRelationManager;
 use App\Models\Societe;
 use App\Models\Projet;
 use Filament\Forms;
@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class SocieteResource extends Resource
 {
     protected static ?string $model = Societe::class;
-    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
+    protected static ?string $navigationIcon = 'heroicon-o-office-building';
     protected static ?string $navigationGroup = 'Données de base';
 
     public static function form(Form $form): Form
@@ -26,7 +26,6 @@ class SocieteResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Nom')
                     ->label('Nom')
                     ->required()
                     ->maxLength(255), 
@@ -38,24 +37,28 @@ class SocieteResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name') ->label('Nom'),
-                //Tables\Columns\TextColumn::make('projet.name') 
-                //->searchable()
-                //->label(__('Projet'))
-               // ->toggleable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nom')
+                    ->sortable()
+                    ->searchable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                ->label('')
+                ->icon('heroicon-s-eye'),
+                Tables\Actions\EditAction::make()
+                ->label('')
+                ->icon('heroicon-s-pencil'),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
+                //Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
             ])
+            ->defaultSort('name', 'asc'); // Default sorting by name
         ;
     }
 
@@ -63,6 +66,7 @@ class SocieteResource extends Resource
     {
         return [
             ProjetRelationManager::class,
+            UsersRelationManager::class,
         ];
         
     }

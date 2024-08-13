@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Notifications\StatutDuTicketModifie;
+use App\Notifications\TicketValidationNotification;
 
 /**
  * Class Ticket.
@@ -69,24 +69,7 @@ class Ticket extends Model
         'solved_at',
         'accepted',
     ];
-
-    public function validation()
-    {
-        return $this->belongsTo(Validation::class, 'validation_id');
-    }
-
-    public function approve()
-{
-    $this->approved_at = Carbon::now();
-    $this->save();
-}
-
-public function solve()
-{
-    $this->solved_at = Carbon::now();
-    $this->save();
-}
-
+    
     /** Get the priority that owns the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function priority()
@@ -100,9 +83,9 @@ public function solve()
     {
         return $this->belongsTo(Projet::class);
     }
-
+    
     /** Get the pays that owns the Ticket.
-      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function pays()
     {
         return $this->belongsTo(Pays::class);
@@ -114,35 +97,35 @@ public function solve()
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
-
+    
     /** Get the responsible that owns the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function responsible()
     {
         return $this->belongsTo(User::class, 'responsible_id');
     }
-
+    
     /**Get the problemCategory that owns the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function problemCategory()
     {
         return $this->belongsTo(ProblemCategory::class);
     }
-
+    
     /** Get the user that owns the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
+    
     /**Get the statutDuTicket that owns the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
     public function statutDuTicket()
     {
         return $this->belongsTo(StatutDuTicket::class, 'statuts_des_tickets_id');
     }
-
+    
     /** Get all of the commentaires for the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\HasMany */
     public function commentaires()
@@ -150,20 +133,20 @@ public function solve()
         return $this->hasMany(Commentaire::class, 'ticket_id');
     }
 
-    protected static function boot()
+    /**Get the validation that owns the Ticket.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
+    public function validation()
     {
-        parent::boot();
-        static::updated(function ($ticket) {
-            if ($ticket->isDirty('statuts_des_tickets_id') && in_array($ticket->statuts_des_tickets_id, [ StatutDuTicket::OUVERT, StatutDuTicket::EN_COURS, StatutDuTicket::RESOLU   , StatutDuTicket::NONRESOLU])) {
-                \Log::info('Status changed for ticket ID: ' . $ticket->id);
-                if ($ticket->owner) {
-                    \Log::info('Sending notification to user ID: ' . $ticket->owner->id);
-                    $ticket->owner->notify(new StatutDuTicketModifie($ticket, $ticket->StatutDuTicket->name));
-                } else {
-                    \Log::warning('No user associated with ticket ID: ' . $ticket->id);
-                }
-            }
-        });
-    
+        return $this->belongsTo(Validation::class, 'validation_id');
+    }
+    public function approve()
+    {
+        $this->approved_at = Carbon::now();
+        $this->save();
+    }
+    public function solve()
+    {
+        $this->solved_at = Carbon::now();
+        $this->save();
     }
 }
