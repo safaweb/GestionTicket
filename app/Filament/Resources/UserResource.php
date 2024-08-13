@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
@@ -18,6 +17,7 @@ use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
+use Filament\Notifications\Notification;
 
 class UserResource extends Resource
 {
@@ -60,27 +60,26 @@ class UserResource extends Resource
                 Forms\Components\Toggle::make('is_active')
                         ->label('Actif')
                         ->required(),
-                        Forms\Components\DatePicker::make('start_date')
-                        ->label('Date Début Du Contrat')
-                        ->required()
-                        ->default(fn () => Carbon::now())
-                        ->hidden(fn ($get) => !$get('is_contrat')), // Use the correct closure parameter
-                    Forms\Components\Toggle::make('is_contrat')
-                        ->label('Contrat')
-                        ->required()
-                        ->reactive() // Make the form reactive to changes in this field
-                        ->afterStateUpdated(function ($state, $set) {
-                            // When the toggle is updated, adjust visibility of the date pickers
-                            $set('start_date', $state ? Carbon::now() : null);
-                            $set('end_date', $state ? Carbon::now() : null);
-                        }),
-                    Forms\Components\DatePicker::make('end_date')
-                        ->label('Date Fin Du Contrat')
-                        ->required()
-                        ->default(fn () => Carbon::now())
-                        ->hidden(fn ($get) => !$get('is_contrat')), // Use the correct closure parameter
-                    ])
-        ;
+                Forms\Components\DatePicker::make('start_date')
+                    ->label('Date Début Du Contrat')
+                    ->required()
+                    ->default(fn () => Carbon::now())
+                    ->hidden(fn ($get) => !$get('is_contrat')), // Use the correct closure parameter
+                Forms\Components\Toggle::make('is_contrat')
+                    ->label('Contrat')
+                    ->required()
+                    ->reactive() // Make the form reactive to changes in this field
+                    ->afterStateUpdated(function ($state, $set) {
+                        // When the toggle is updated, adjust visibility of the date pickers
+                        $set('start_date', $state ? Carbon::now() : null);
+                        $set('end_date', $state ? Carbon::now() : null);
+                    }),
+                Forms\Components\DatePicker::make('end_date')
+                    ->label('Date Fin Du Contrat')
+                    ->required()
+                    ->default(fn () => Carbon::now())
+                    ->hidden(fn ($get) => !$get('is_contrat')), // Use the correct closure parameter
+            ]);
     }
 
     public static function table(Table $table): Table

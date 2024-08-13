@@ -44,7 +44,7 @@ class User extends Authenticatable implements FilamentUser
 {
     use SoftDeletes, HasRoles, HasSuperAdmin, HasFactory, Notifiable;
     protected $table = 'users';
-
+    
     protected $casts = [
         //'societe_id'=>'int',
         //'two_factor_confirmed_at' => 'datetime',
@@ -81,6 +81,24 @@ class User extends Authenticatable implements FilamentUser
         'end_date',
     ];
 
+    public static function rules($id = null): array
+    {
+        return [
+           
+            'email' => 'required|email|unique:users,email,' . $id,
+           
+        ];
+    }
+    public static function messages(): array
+    {
+        return [
+          
+        
+            'email.email' => 'L\'email doit être une adresse email valide.',
+            'email.unique' => 'Cet email est déjà utilisé.',
+        ];
+    }
+     
     protected static function boot()
     {
         parent::boot();

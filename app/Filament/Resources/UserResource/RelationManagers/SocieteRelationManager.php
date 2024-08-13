@@ -8,6 +8,8 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 use App\Models\Societe;
+use Filament\Tables\Actions\DetachAction;
+use Filament\Tables\Actions\DetachBulkAction;
 
 class SocieteRelationManager extends RelationManager
 {
@@ -48,15 +50,29 @@ class SocieteRelationManager extends RelationManager
                         ];
                     })
                     ->action(function ($data, $livewire) {
-                        $livewire->ownerRecord->societes()->attach($data['societe_id']);
+                        $user = $livewire->ownerRecord;
+                        $user->societes()->detach();
+                        $user->societes()->attach($data['societe_id']);
+                       
+        
                     }),
                 
             ])
             ->actions([
-                Tables\Actions\DetachAction::make(),
+                DetachAction::make()
+                    ->action(function ($record, $livewire) {
+                        $user = $livewire->ownerRecord;
+                        // Detach the selected project
+                        $user->societes()->detach($record->id);
+                    }),
             ])
             ->bulkActions([
-                Tables\Actions\DetachBulkAction::make(),
+                DetachBulkAction::make()
+                    ->action(function ($records, $livewire) {
+                        $user = $livewire->ownerRecord;
+                        // Detach all selected projects
+                        $user->societes()->detach($records->pluck('id')->toArray());
+                    }),
             ]);
     }
 }
