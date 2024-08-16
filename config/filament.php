@@ -261,7 +261,7 @@ return [
         asset('/simsoft-n.ico')
     */
 
-    'favicon' => '/simsoft-n.png',
+    'favicon' => asset('/simsoft-n.png') ,
 
     /*
 

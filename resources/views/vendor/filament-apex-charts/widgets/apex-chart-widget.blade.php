@@ -15,12 +15,12 @@
     $footer = $this->getFooter();
     $readyToLoad = $this->readyToLoad;
 @endphp
+ 
 <x-filament::widget class="filament-widgets-chart-widget filament-apex-charts-widget">
+  
     <x-filament::card class="filament-apex-charts-card" x-data="{ dropdownOpen: false }"
         @apexhcharts-dropdown.window="dropdownOpen = event.detail.open">
-
-        <x-filament-apex-charts::header :$heading :$subheading :$filters :$indicatorsCount :$width
-            :$filterFormAccessible>
+        <x-filament-apex-charts::header :$heading :$subheading :$filters :$indicatorsCount :$width  :$filterFormAccessible>
             <x-slot:filterForm>
                 {{ $this->form }}
             </x-slot:filterForm>
