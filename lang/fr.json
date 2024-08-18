@@ -32,5 +32,12 @@
     "Ticket Statuses ": "Statuts des tickets",
     "Owner": "Propriétaire",
     "Login": "Connexion",
-    "Why Use Helpdesk?": "Pourquoi utiliser un Ticket ?"
+    "Why Use Helpdesk?": "Pourquoi utiliser un Ticket ?",
+    "validation.min.string": "Mot de passe trop court.",
+    "validation.same": "Les mots de passe ne sont pas identiques.",
+    "validation.required": "Ce champs est obligatoire",
+    "submit": "Valider"
+
+   
+
 }

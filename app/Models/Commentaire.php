@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Ticket $ticket */
 class Commentaire extends Model
 {
-    use SoftDeletes;
+  //  use SoftDeletes;
     protected $table = 'commentaires';
 
     protected $casts = [

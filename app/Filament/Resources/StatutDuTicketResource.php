@@ -11,7 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class StatutDuTicketResource extends Resource
 {
@@ -70,10 +69,7 @@ class StatutDuTicketResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withCount('tickets') // Eager load tickets count to avoid N+1 problem
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+            ->withCount('tickets'); // Eager load tickets count to avoid N+1 problem
     }
 
     public static function getPluralModelLabel(): string

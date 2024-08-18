@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\EmailTestController;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,3 +29,8 @@ Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProv
 Route::get('/test-email/StatutDuTicketModifie', [EmailTestController::class, 'sendStatutDuTicketModifie']);
 Route::get('/test-email/CreationTicket', [EmailTestController::class, 'sendUserCreated']);
 Route::get('/test-email/TicketAssigned', [EmailTestController::class, 'sendTicketAssigned']);
+
+Route::get('/storage/{path}', function ($path) {
+    $path = str_replace('-', '/', $path);
+    return Storage::disk('local')->get($path);
+})->where('path', '.*');
