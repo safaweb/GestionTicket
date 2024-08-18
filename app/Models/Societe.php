@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Societe extends Model
 {
-    use SoftDeletes;
+   // use SoftDeletes;
     public $timestamps = false;
     protected $table = 'societes';
 

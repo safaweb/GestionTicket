@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Pays extends Model
 {
-    use SoftDeletes;
+   // use SoftDeletes;
     public $timestamps = false;
     protected $table = 'pays';
 
