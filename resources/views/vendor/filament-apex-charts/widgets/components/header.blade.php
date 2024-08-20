@@ -1,8 +1,8 @@
 @props(['heading', 'subheading', 'filters', 'indicatorsCount', 'width', 'filterFormAccessible'])
+
 <div class="filament-apex-charts-header">
     @if ($heading || $subheading || $filters || $filterFormAccessible)
         <div class="sm:flex justify-between gap-4 py-2 relative">
-
             <div>
                 @if ($heading)
                     <x-filament::card.heading class="filament-apex-charts-heading">

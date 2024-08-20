@@ -80,7 +80,6 @@ class EditTicket extends EditRecord
                             'user_id' => Auth::id(),
                             'commentaire' => "\nVotre ticket est refusé car " . $data['commentaire'],
                         ]);
-<<<<<<< HEAD
                      // Notify the ticket creator about the validation status
                   //  $ticket = Ticket::findOrFail($ticketId);
                     $ticketOwner = $ticket->owner; // Assumes there is a 'user' relationship
@@ -88,8 +87,6 @@ class EditTicket extends EditRecord
 
                         // Logique pour envoyer une notification à l'utilisateur assigné
                         //$ticket->owner->notify(new StatutDuBilletModifie($ticket, $ticket->statutDuTicket->name));
-=======
->>>>>>> 156773efc367419b2184a42f20ad8a46a8c836cd
                     }
                     // Redirect to the view page
                     $this->redirect(route('filament.resources.tickets.view', $ticket->id));
@@ -239,7 +236,6 @@ class EditTicket extends EditRecord
 
     private function getNotificationRecipients($currentUser)
     {
-<<<<<<< HEAD
         if ($currentUser->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])) {
             return User::where('societe_id', $currentUser->societe_id)
                         ->where('id', '!=', $currentUser->id)
@@ -252,22 +248,10 @@ class EditTicket extends EditRecord
             ->where('id', '!=', $currentUser->id)
             ->get();
         }
-
         // Send the notification to appropriate recipients
     foreach ($receiver as $user) {
     $user->notify(new TicketAssignedNotification($ticket));
 }
-=======
-        // Get all users with the "Employeur" role and associated with the same project as the current user
-        return User::whereHas('roles', function ($q) {
-            $q->where('name', 'Employeur');
-        })
-        ->whereHas('projets', function ($query) use ($currentUser) {
-            $query->whereIn('projets.id', $currentUser->projets()->pluck('projets.id'));
-        })
-        ->where('id', '!=', $currentUser->id)
-        ->get();
->>>>>>> 156773efc367419b2184a42f20ad8a46a8c836cd
     }
 
     protected function notifyTicketOwner($ticket, $data, $newStatus)
