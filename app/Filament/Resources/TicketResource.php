@@ -61,6 +61,13 @@ class TicketResource extends Resource
                         ->searchable()
                         ->required()
                         ->disabled(fn ($record) => $record !== null),
+                    Forms\Components\Select::make('priority_id')
+                        ->label(__('Priority'))
+                        //->options(Priority::all()->pluck('name', 'id'))
+                        ->options(Priority::query()->pluck('name', 'id')->toArray()) // Optimize options loading
+                        ->searchable()
+                        ->required()
+                        ->disabled(fn ($record) => $record !== null),
                     Forms\Components\TextInput::make('title')
                         ->label(__('Title'))
                         ->required()
@@ -108,13 +115,7 @@ class TicketResource extends Resource
                     ])->columns(['sm' => 2,
                     ])->columnSpan(2),
                 Card::make()->schema([
-                    Forms\Components\Select::make('priority_id')
-                        ->label(__('Priority'))
-                        //->options(Priority::all()->pluck('name', 'id'))
-                        ->options(Priority::query()->pluck('name', 'id')->toArray()) // Optimize options loading
-                        ->searchable()
-                        ->required()
-                        ->disabled(fn ($record) => $record !== null),
+                   
                     Forms\Components\Placeholder::make('statuts_des_tickets_id')
                         ->label(__('Statut'))
                         ->hiddenOn('create')
@@ -219,16 +220,16 @@ class TicketResource extends Resource
                 //Tables\Filters\TrashedFilter::make()
             ])
             ->actions([
+                Tables\Actions\Action::make('attachment')->action(function ($record) {
+                    return response()->download('storage/' . $record->attachments);
+                })->hidden(fn ($record) => $record->attachments == ''),
                 Tables\Actions\ViewAction::make()
                 ->label('')
                 ->icon('heroicon-s-eye'),
                 Tables\Actions\EditAction::make()
                 ->visible(fn ($record) => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']) && in_array($record->validation_id, [4, 1]))
                 ->label('')
-                ->icon('heroicon-s-pencil'),
-                Tables\Actions\Action::make('attachment')->action(function ($record) {
-                        return response()->download('storage/' . $record->attachments);
-                    })->hidden(fn ($record) => $record->attachments == ''),])
+                ->icon('heroicon-s-pencil'),])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
                 //Tables\Actions\ForceDeleteBulkAction::make(),
