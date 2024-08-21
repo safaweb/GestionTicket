@@ -86,9 +86,10 @@ class ProblemCategoryResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+            // ->withoutGlobalScopes([
+            //     SoftDeletingScope::class,
+            // ])
+            ;
         // Role-based filtering
         if (Auth::user()->hasRole('Chef Projet')) {
             $query->where('projet_id', Auth::user()->projet_id);

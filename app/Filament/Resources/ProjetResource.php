@@ -112,9 +112,10 @@ class ProjetResource extends Resource
     if ($user->hasRole('Super Admin')) {
         // Superadmin can see all projects
         return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+            // ->withoutGlobalScopes([
+            //     SoftDeletingScope::class,
+            // ])
+            ;
     } else {
         // Other users can see only their associated projects
         return parent::getEloquentQuery()
@@ -122,9 +123,10 @@ class ProjetResource extends Resource
             ->join('users', 'projet_user.user_id', '=', 'users.id')
             ->where('users.id', $user->id)
             ->select('projets.*', 'users.name as user_name')
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+            // ->withoutGlobalScopes([
+            //     SoftDeletingScope::class,
+            // ])
+            ;
     }
     }
 }

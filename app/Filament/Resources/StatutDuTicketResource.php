@@ -71,9 +71,10 @@ class StatutDuTicketResource extends Resource
     {
         return parent::getEloquentQuery()
             ->withCount('tickets') // Eager load tickets count to avoid N+1 problem
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+            // ->withoutGlobalScopes([
+            //     SoftDeletingScope::class,
+            // ])
+            ;
     }
 
     public static function getPluralModelLabel(): string

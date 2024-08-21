@@ -159,9 +159,9 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ])
+            // ->withoutGlobalScopes([
+            //     SoftDeletingScope::class,
+            // ])
             // **Eager Loading Implementation**
             ->with(['roles', 'tickets']) // <- Eager loading related models
         ;

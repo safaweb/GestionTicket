@@ -259,8 +259,10 @@ class TicketResource extends Resource
                     $query->where('tickets.owner_id', auth()->id());
                 }
             })
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+            // ->withoutGlobalScopes([
+            //     SoftDeletingScope::class,
+            // ])
+            
+            ;
     }
 }
