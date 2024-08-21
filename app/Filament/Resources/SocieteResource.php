@@ -13,7 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+
 
 class SocieteResource extends Resource
 {
@@ -43,7 +43,7 @@ class SocieteResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+              //  Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()

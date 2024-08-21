@@ -15,20 +15,40 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie' , 'livewire/*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie','livewire/*','storage/*'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [ 'http://localhost', '*'],
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['*', 'Content-Type', 'X-Requested-With', 'Authorization', 'X-CSRF-TOKEN'],
+    'allowed_headers' => ['*'],
 
     'exposed_headers' => [],
 
     'max_age' => 0,
 
     'supports_credentials' => false,
+
+
+
+
+    
+ 
+
+   
+
+ 
+
+ 
+
+    
+
+ 
+
+    
+
+ 
 
 ];

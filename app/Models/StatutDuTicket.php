@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class StatutDuTicket extends Model
 {
-    use SoftDeletes;
+  //  use SoftDeletes;
 
     public const OUVERT = 1;
     public const EN_COURS = 2;

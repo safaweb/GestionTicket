@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Projet extends Model
 {
-    use SoftDeletes;
+  //  use SoftDeletes;
     public $timestamps = false;
     protected $table = 'projets';
 

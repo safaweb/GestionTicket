@@ -11,7 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class StatutDuTicketResource extends Resource
 {
@@ -74,7 +73,7 @@ class StatutDuTicketResource extends Resource
             // ->withoutGlobalScopes([
             //     SoftDeletingScope::class,
             // ])
-            ;
+            ; 
     }
 
     public static function getPluralModelLabel(): string

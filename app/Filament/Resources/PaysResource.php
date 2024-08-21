@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Filament\Resources;
+
 use App\Filament\Resources\PaysResource\Pages;
 use App\Models\Pays;
 use Filament\Forms;
@@ -9,8 +10,6 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-
 class PaysResource extends Resource
 {
     protected static ?string $model = Pays::class;
@@ -21,37 +20,39 @@ class PaysResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make ('name')
+                Forms\Components\TextInput::make('name')
                     ->label('Nom')
                     ->required()
                     ->maxLength(255),
-            ])
-        ;
+            ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name') ->label('Nom'),
+                Tables\Columns\TextColumn::make('name')->label('Nom'),
             ])
-            ->filters([
-                Tables\Filters\TrashedFilter::make(),
-            ])
+           // ->filters([
+               // Tables\Filters\TrashedFilter::make(),
+           // ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                ->label('')
-                ->icon('heroicon-s-eye'),
+                    ->label('')
+                    ->icon('heroicon-s-eye'),
                 Tables\Actions\EditAction::make()
-                ->label('')
-                ->icon('heroicon-s-pencil'),
+                    ->label('')
+                    ->icon('heroicon-s-pencil'),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-                //Tables\Actions\ForceDeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->action(function (array $records) {
+                        foreach ($records as $record) {
+                            $record->forceDelete();
+                        }
+                    }),
                 Tables\Actions\RestoreBulkAction::make(),
-            ])
-        ;
+            ]);
     }
 
     public static function getPages(): array
@@ -66,10 +67,7 @@ class PaysResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            // ->withoutGlobalScopes([
-            //     SoftDeletingScope::class,
-            // ])
-        ;
+        // Retourne le query builder sans modifications supplémentaires
+        return parent::getEloquentQuery();
     }
 }

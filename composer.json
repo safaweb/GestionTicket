@@ -14,6 +14,7 @@
         "bezhansalleh/filament-language-switch": "^1.0",
         "dutchcodingcompany/filament-socialite": "^0.2.5",
         "filament/filament": "^2.0",
+        "filament/forms": "^2.17",
         "guzzlehttp/guzzle": "^7.2",
         "jeffgreco13/filament-breezy": "^1.5",
         "laravel-lang/lang": "^15.2",

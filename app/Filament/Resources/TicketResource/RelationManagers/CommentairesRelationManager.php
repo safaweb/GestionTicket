@@ -33,11 +33,27 @@ class CommentairesRelationManager extends RelationManager
                 Card::make()->schema([
                     Forms\Components\RichEditor::make('commentaire')
                         ->required()
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->toolbarButtons([
+                            'bold',
+                            'italic',
+                            'underline',
+                            'strike',
+                            'link',
+                            'heading', // Pour les titres
+                            'subheading', // Pour les sous-titres (si supporté)
+                            'redo',
+                            'undo',
+                            'blockquote',   // Citations
+                            'codeBlock',    // Blocs de code
+                            'orderedList', // Pour les listes numérotées
+                            'bulletList', // Pour les listes à points
+                        ]),
                     Forms\Components\FileUpload::make('attachments')
                         ->directory('commentaire-attachments/' . date('m-y'))
                         ->maxSize(2000)
-                        ->enableDownload(),
+                        ->enableDownload()
+                        ->visible(fn ($record) => $record === null), // Hide after creation,     ,
                 ])
             ]);
     }
@@ -108,6 +124,7 @@ class CommentairesRelationManager extends RelationManager
                     return response()->download('storage/' . $record->attachments);
                 })->hidden(fn ($record) => $record->attachments == ''),
                 Tables\Actions\EditAction::make()
+                ->modalHeading(fn ($record) => 'Modifier')
                 ->visible(function (Livewire $livewire) {
                     $ticket = $livewire->ownerRecord;
                     return !in_array($ticket->validation_id, [2, 3]);
