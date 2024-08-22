@@ -1,6 +1,5 @@
 <?php
 namespace App\Filament\Resources\TicketResource\RelationManagers;
-
 use App\Filament\Resources\TicketResource;
 use App\Models\User;
 use Filament\Forms;
@@ -15,7 +14,6 @@ use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Livewire\Component as Livewire;
-
 class CommentairesRelationManager extends RelationManager
 {
     protected static string $relationship = 'commentaires';
@@ -25,7 +23,6 @@ class CommentairesRelationManager extends RelationManager
     {
         return false;
     }
-
     public static function form(Form $form): Form
     {
         return $form
@@ -33,15 +30,30 @@ class CommentairesRelationManager extends RelationManager
                 Card::make()->schema([
                     Forms\Components\RichEditor::make('commentaire')
                         ->required()
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->toolbarButtons([
+                            'bold',
+                            'italic',
+                            'underline',
+                            'strike',
+                            'link',
+                            'heading', // Pour les titres
+                            'subheading', // Pour les sous-titres (si supporté)
+                            'redo',
+                            'undo',
+                            'blockquote',   // Citations
+                            'codeBlock',    // Blocs de code
+                            'orderedList', // Pour les listes numérotées
+                            'bulletList', // Pour les listes à points
+                        ]),
                     Forms\Components\FileUpload::make('attachments')
                         ->directory('commentaire-attachments/' . date('m-y'))
                         ->maxSize(2000)
                         ->enableDownload(),
+                     //   ->visible(fn ($record) => $record === null), // Hide after creation,     
                 ])
             ]);
     }
-
     public static function table(Table $table): Table
     {
         return $table
@@ -108,6 +120,7 @@ class CommentairesRelationManager extends RelationManager
                     return response()->download('storage/' . $record->attachments);
                 })->hidden(fn ($record) => $record->attachments == ''),
                 Tables\Actions\EditAction::make()
+                ->modalHeading(fn ($record) => 'Modifier')
                 ->visible(function (Livewire $livewire) {
                     $ticket = $livewire->ownerRecord;
                     return !in_array($ticket->validation_id, [2, 3]);

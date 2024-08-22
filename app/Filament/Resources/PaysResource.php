@@ -9,7 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+
 
 class PaysResource extends Resource
 {
@@ -36,7 +36,7 @@ class PaysResource extends Resource
                 Tables\Columns\TextColumn::make('name') ->label('Nom'),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+             //   Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
@@ -68,7 +68,7 @@ class PaysResource extends Resource
     {
         return parent::getEloquentQuery()
             ->withoutGlobalScopes([
-                SoftDeletingScope::class,
+               
             ])
         ;
     }

@@ -13,7 +13,6 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
 class ProjetResource extends Resource
@@ -68,7 +67,7 @@ class ProjetResource extends Resource
                 Tables\Filters\SelectFilter::make('pays_id')
                 ->options(Pays::query()->pluck('name', 'id')->toArray()) // Optimize filter loading
                 ->label(__('Pays')),
-                Tables\Filters\TrashedFilter::make(),
+              //  Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
@@ -113,7 +112,7 @@ class ProjetResource extends Resource
         // Superadmin can see all projects
         return parent::getEloquentQuery()
             ->withoutGlobalScopes([
-                SoftDeletingScope::class,
+               
             ]);
     } else {
         // Other users can see only their associated projects
@@ -123,7 +122,7 @@ class ProjetResource extends Resource
             ->where('users.id', $user->id)
             ->select('projets.*', 'users.name as user_name')
             ->withoutGlobalScopes([
-                SoftDeletingScope::class,
+                
             ]);
     }
     }
