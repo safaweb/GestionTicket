@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\EmailTestController;
 use Illuminate\Support\Facades\Storage;
-
+use App\Http\Controllers\DownloadController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -34,3 +34,6 @@ Route::get('/storage/{path}', function ($path) {
     $path = str_replace('-', '/', $path);
     return Storage::disk('local')->get($path);
 })->where('path', '.*');
+
+
+Route::get('/download/{filename}', [DownloadController::class, 'download'])->name('download');

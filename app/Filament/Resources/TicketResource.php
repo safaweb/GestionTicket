@@ -20,6 +20,7 @@ use Filament\Forms\Components\Card;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
+use Filament\Forms\Components\View;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component as Livewire;
@@ -96,12 +97,20 @@ class TicketResource extends Resource
                                 'orderedList', // Pour les listes numérotées
                                 'bulletList', // Pour les listes à points
                             ]),
-                            Forms\Components\FileUpload::make('attachments')
-                            ->directory('ticket-attachments/' . date('m-y'))
-                            ->maxSize(2000)
-                            ->enableDownload()  
-                            ->columnSpan(['sm' => 2])
-                            ->visible(fn ($record) => $record === null), // Hide after creation,      
+                            // Forms\Components\FileUpload::make('attachments')
+                            // ->directory('ticket-attachments/' . date('m-y'))
+                            // ->maxSize(2000)
+                            // ->enableDownload()
+                            // ->columnSpan(['sm' => 2]),
+                         Forms\Components\FileUpload::make('attachments')
+                         ->directory('ticket-attachments/' . date('m-y'))
+                         ->maxSize(2000)
+                         ->enableDownload()  
+                         ->columnSpan(['sm' => 2]),
+
+
+
+                            // ->visible(fn ($record) => $record === null), // Hide after creation,      
                     Forms\Components\Placeholder::make('approved_at')
                         ->label('Validée le:')
                         ->hiddenOn('create')
