@@ -16,7 +16,6 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
 class ProblemCategoryResource extends Resource
@@ -49,7 +48,7 @@ class ProblemCategoryResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+               // Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
@@ -87,7 +86,7 @@ class ProblemCategoryResource extends Resource
     {
         return parent::getEloquentQuery()
             ->withoutGlobalScopes([
-                SoftDeletingScope::class,
+                
             ]);
         // Role-based filtering
         if (Auth::user()->hasRole('Chef Projet')) {
