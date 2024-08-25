@@ -6,6 +6,7 @@ return [
     'section.users'                 => 'Utilisateurs',
     'section.user'                  => 'Utilisateur',
 
+    
     /*
         |--------------------------------------------------------------------------
         | Fields
