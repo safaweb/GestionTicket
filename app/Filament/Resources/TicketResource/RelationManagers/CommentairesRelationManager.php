@@ -50,7 +50,7 @@ class CommentairesRelationManager extends RelationManager
                         ->directory('commentaire-attachments/' . date('m-y'))
                         ->maxSize(2000)
                         ->enableDownload(),
-                     //   ->visible(fn ($record) => $record === null), // Hide after creation,     
+                        
                 ])
             ]);
     }

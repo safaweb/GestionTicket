@@ -94,9 +94,11 @@ class TicketResource extends Resource
                                 'codeBlock',    // Blocs de code
                                 'orderedList', // Pour les listes numérotées
                                 'bulletList', // Pour les listes à points
-                            ]),
+                            ])
+                            ->extraAttributes([ 'style' => 'max-height: 300px; overflow-y: auto; word-wrap: break-word;', ]),
+
                             Forms\Components\FileUpload::make('attachments')
-                            ->directory('public/' . date('m-y'))
+                            ->directory('tickets-attachements/' . date('m-y'))
                             ->maxSize(20000) // La taille est en Ko, donc 20000 Ko = 20 Mo
                            ->enableDownload()
                             ->columnSpan(['sm' => 2]),
