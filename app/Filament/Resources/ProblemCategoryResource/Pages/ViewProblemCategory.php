@@ -13,6 +13,7 @@ class ViewProblemCategory extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
+            Actions\DeleteAction::make(),
         ];
     }
     protected function getTitle(): string

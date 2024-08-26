@@ -18,6 +18,7 @@ class ViewUser extends ViewRecord
             Impersonate::make()
                 ->record($this->getRecord())
                 ->redirectTo(route('filament.pages.dashboard')),
+                Actions\DeleteAction::make(),
         ];
     }
 }
