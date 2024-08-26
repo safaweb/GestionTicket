@@ -24,7 +24,7 @@ use Filament\Forms\Components\View;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component as Livewire;
-
+use Filament\Facades\Filament;
 class TicketResource extends Resource
 {
     protected static ?string $model = Ticket::class;
@@ -39,11 +39,13 @@ class TicketResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $user= AUTH::user();
         return $form
             ->schema([
                 Card::make()->schema([
                     Forms\Components\Select::make('qualification_id')
                         ->label(__('Qualifications'))
+                        ->required()
                         //->options(Qualification::all()->pluck('name', 'id'))
                         ->options(Qualification::query()->pluck('name', 'id')->toArray()) // Optimize options loading
                         ->searchable()
@@ -51,7 +53,19 @@ class TicketResource extends Resource
                     Forms\Components\Select::make('projet_id')
                         ->label(__('Projets'))
                         //->options(function () { return Projet::pluck('name', 'id')->toArray();})
-                        ->options(Projet::query()->pluck('name', 'id')->toArray()) // Optimize options loading
+                        ->options(function () {
+                            $user = Filament::auth()->user(); // Get the current user
+                    
+                            return Projet::where('societe_id', function ($query) use ($user) {
+                                $query->select('projet_id')
+                                      ->from('projet_user')
+                                      ->where('user_id', $user->id)
+                                      ->limit(1);
+                            })
+                            ->pluck('name', 'id') // Pluck project names and IDs
+                            ->toArray();
+                        })                         
+                        // Optimize options loading
                         ->searchable()
                         ->required()
                         ->reactive()
@@ -96,12 +110,8 @@ class TicketResource extends Resource
                                 'codeBlock',    // Blocs de code
                                 'orderedList', // Pour les listes numérotées
                                 'bulletList', // Pour les listes à points
-                            ]),
-                            // Forms\Components\FileUpload::make('attachments')
-                            // ->directory('ticket-attachments/' . date('m-y'))
-                            // ->maxSize(2000)
-                            // ->enableDownload()
-                            // ->columnSpan(['sm' => 2]),
+                            ])->extraAttributes([ 'style' => 'max-height: 300px; overflow-y: auto; word-wrap: break-word;', ]) , 
+                            
                          Forms\Components\FileUpload::make('attachments')
                          ->directory('ticket-attachments/' . date('m-y'))
                          ->maxSize(2000)
@@ -224,7 +234,18 @@ class TicketResource extends Resource
                     ->options(StatutDuTicket::query()->pluck('name', 'id')->toArray()) // Optimize filter loading
                     ->label(__('Statut Du Ticket')),
                 Tables\Filters\SelectFilter::make('projet_id')
-                    ->options(Projet::query()->pluck('name', 'id')->toArray()) // Optimize filter loading
+                ->options(function () {
+                    $user = Filament::auth()->user(); // Get the current user
+            
+                    return Projet::where('societe_id', function ($query) use ($user) {
+                        $query->select('projet_id')
+                              ->from('projet_user')
+                              ->where('user_id', $user->id)
+                              ->limit(1);
+                    })
+                    ->pluck('name', 'id') // Pluck project names and IDs
+                    ->toArray();
+                })   // Optimize filter loading
                     ->label(__('Projet')),
                 //Tables\Filters\TrashedFilter::make()
             ])
