@@ -1,6 +1,5 @@
 <?php
 namespace App\Filament\Resources;
-
 use App\Filament\Resources\TicketResource\Pages;
 use App\Filament\Resources\TicketResource\RelationManagers\CommentairesRelationManager;
 use App\Models\Priority;
@@ -25,18 +24,19 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component as Livewire;
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\URL;
+
+
 class TicketResource extends Resource
 {
     protected static ?string $model = Ticket::class;
     protected static ?string $navigationIcon = 'heroicon-o-ticket';
     protected static ?int $navigationSort = 3;
     protected static ?string $recordTitleAttribute = 'title';
-
     public static function getPluralModelLabel(): string
     {
         return __('Tickets');
     }
-
     public static function form(Form $form): Form
     {
         $user= AUTH::user();
@@ -110,17 +110,15 @@ class TicketResource extends Resource
                                 'codeBlock',    // Blocs de code
                                 'orderedList', // Pour les listes numérotées
                                 'bulletList', // Pour les listes à points
-                            ])->extraAttributes([ 'style' => 'max-height: 300px; overflow-y: auto; word-wrap: break-word;', ]) , 
-                            
-                         Forms\Components\FileUpload::make('attachments')
-                         ->directory('ticket-attachments/' . date('m-y'))
-                         ->maxSize(2000)
-                         ->enableDownload()  
-                         ->columnSpan(['sm' => 2]),
+                            ])
+                            ->extraAttributes([ 'style' => 'max-height: 300px; overflow-y: auto; word-wrap: break-word;', ]),
 
-
-
-                            // ->visible(fn ($record) => $record === null), // Hide after creation,      
+                            Forms\Components\FileUpload::make('attachments')
+                            ->directory('tickets-attachements/' . date('m-y'))
+                            ->maxSize(20000) // La taille est en Ko, donc 20000 Ko = 20 Mo
+                           ->enableDownload()
+                            ->columnSpan(['sm' => 2]),
+                             
                     Forms\Components\Placeholder::make('approved_at')
                         ->label('Validée le:')
                         ->hiddenOn('create')
@@ -166,7 +164,6 @@ class TicketResource extends Resource
                 ])->columnSpan(1),
             ])->columns(3);
     }
-
     public static function table(Table $table): Table
     {
         return $table
@@ -267,14 +264,12 @@ class TicketResource extends Resource
             ])
             ->defaultSort('created_at', 'desc');
     }
-
     public static function getRelations(): array
     {
         return [
             CommentairesRelationManager::class,
         ];
     } 
-
     public static function getPages(): array
     {
         return [
@@ -284,7 +279,6 @@ class TicketResource extends Resource
             'edit' => Pages\EditTicket::route('/{record}/edit'),
         ];
     }
-
     /**Display tickets based on each role.
      * If it is a Super Admin, then display all tickets.
      * If it is a Admin Projet, then display tickets based on the tickets they have created and their Projet id.
@@ -314,10 +308,6 @@ class TicketResource extends Resource
                     $query->where('tickets.owner_id', auth()->id());
                 }
             })
-            // ->withoutGlobalScopes([
-            //     SoftDeletingScope::class,
-            // ])
-             
           ;
     }
 }

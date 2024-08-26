@@ -10,6 +10,8 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
+
+
 class PaysResource extends Resource
 {
     protected static ?string $model = Pays::class;
@@ -31,7 +33,10 @@ class PaysResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('Nom'),
+                Tables\Columns\TextColumn::make('name') ->label('Nom'),
+            ])
+            ->filters([
+             //   Tables\Filters\TrashedFilter::make(),
             ])
            // ->filters([
                // Tables\Filters\TrashedFilter::make(),

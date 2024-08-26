@@ -1,6 +1,5 @@
 <?php
 namespace App\Filament\Resources\TicketResource\RelationManagers;
-
 use App\Filament\Resources\TicketResource;
 use App\Models\User;
 use Filament\Forms;
@@ -15,7 +14,6 @@ use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Livewire\Component as Livewire;
-
 class CommentairesRelationManager extends RelationManager
 {
     protected static string $relationship = 'commentaires';
@@ -25,7 +23,6 @@ class CommentairesRelationManager extends RelationManager
     {
         return false;
     }
-
     public static function form(Form $form): Form
     {
         return $form
@@ -57,7 +54,6 @@ class CommentairesRelationManager extends RelationManager
                 ])
             ]);
     }
-
     public static function table(Table $table): Table
     {
         return $table

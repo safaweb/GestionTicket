@@ -5,7 +5,6 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Notifications\TicketValidationNotification;
 
 /**
@@ -152,4 +151,5 @@ class Ticket extends Model
         $this->solved_at = Carbon::now();
         $this->save();
     }
+
 }
