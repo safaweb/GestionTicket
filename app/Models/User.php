@@ -42,7 +42,7 @@ use App\Notifications\UserCreated;
  */
 class User extends Authenticatable implements FilamentUser
 {
-    use SoftDeletes, HasRoles, HasSuperAdmin, HasFactory, Notifiable;
+    use  HasRoles, HasSuperAdmin, HasFactory, Notifiable;
     protected $table = 'users';
     
     protected $casts = [
