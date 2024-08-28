@@ -26,14 +26,14 @@ class EditTicket extends EditRecord
     {
         $actions = [
             Actions\ViewAction::make(),
+          
         ];
 
         $ticketStatus = $this->record->statutDuTicket ? $this->record->statutDuTicket->name : null;
-        if ($ticketStatus !== 'Non Résolu') {
-            $actions[] = Actions\DeleteAction::make();
-            $actions[] = Actions\ForceDeleteAction::make();
-            $actions[] = Actions\RestoreAction::make();
-        }
+       // if ($ticketStatus !== 'Non Résolu') {
+        //    $actions[] = Actions\DeleteAction::make();
+           
+       // }
 
         if (Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])) {
             $actions[] = Actions\Action::make('Validation')

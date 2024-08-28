@@ -80,7 +80,7 @@ class ProjetResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
                 //Tables\Actions\ForceDeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
+               // Tables\Actions\RestoreBulkAction::make(),
             ])
             ->defaultSort('name', 'asc'); // Default sorting by name
         ;
