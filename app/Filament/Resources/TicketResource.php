@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component as Livewire;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\URL;
-
+use Illuminate\Support\Facades\DB;
 
 class TicketResource extends Resource
 {
@@ -52,16 +52,17 @@ class TicketResource extends Resource
                         ->disabled(fn ($record) => $record !== null ),
                     Forms\Components\Select::make('projet_id')
                         ->label(__('Projets'))
-                        //->options(function () { return Projet::pluck('name', 'id')->toArray();})
+                        //->options(Projet::query()->pluck('name', 'id')->toArray()) // Optimize options loading              
                         ->options(function () {
-                            $user = Filament::auth()->user(); // Get the current user
-                    
-                            return Projet::where('societe_id', function ($query) use ($user) {
-                                $query->select('projet_id')
-                                      ->from('projet_user')
-                                      ->where('user_id', $user->id)
-                                      ->limit(1);
-                            })
+                            $userId = Filament::auth()->user()->id; // Get the current user's ID
+
+                            $projetIds = DB::select("select societe_id from societe_user where user_id = ?", [$userId]);
+                       
+                            $societeIdsArray = array_map(function($value) {
+                                return $value->societe_id;
+                            }, $projetIds);
+                             
+                            return Projet::whereIn('societe_id', $societeIdsArray)->get()
                             ->pluck('name', 'id') // Pluck project names and IDs
                             ->toArray();
                         })                         
@@ -260,7 +261,7 @@ class TicketResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
                 //Tables\Actions\ForceDeleteBulkAction::make(),
-               // Tables\Actions\RestoreBulkAction::make(),
+                Tables\Actions\RestoreBulkAction::make(),
             ])
             ->defaultSort('created_at', 'desc');
     }
@@ -279,11 +280,7 @@ class TicketResource extends Resource
             'edit' => Pages\EditTicket::route('/{record}/edit'),
         ];
     }
-    /**Display tickets based on each role.
-     * If it is a Super Admin, then display all tickets.
-     * If it is a Admin Projet, then display tickets based on the tickets they have created and their Projet id.
-     * If it is a Staff Projet, then display tickets based on the tickets they have created and the tickets assigned to them.
-     * If it is a Regular User, then display tickets based on the tickets they have created.*/
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()

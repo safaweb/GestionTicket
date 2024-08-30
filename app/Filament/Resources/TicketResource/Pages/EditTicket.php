@@ -205,6 +205,7 @@ class EditTicket extends EditRecord
     {
         // Find the newly assigned responsible user
         $newResponsibleUser = User::find($newResponsibleId);
+  
         // Retrieve the recipients who should be notified
         $receiver = $this->getNotificationRecipients($newResponsibleUser);
         if ($receiver->isNotEmpty()) {
@@ -236,15 +237,22 @@ class EditTicket extends EditRecord
 
     private function getNotificationRecipients($currentUser)
     {
+
+
         if ($currentUser->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])) {
-            return User::where('societe_id', $currentUser->societe_id)
-                        ->where('id', '!=', $currentUser->id)
-                        ->get();
+            return User::whereHas('projets', function ($query) use ($currentUser) {
+             
+                    $query->whereIn('projets.id', $currentUser->projets()->pluck('projets.id'));
+                })
+                ->where('id', '!=', $currentUser->id)
+                ->get();
         } else {
             return User::whereHas('roles', function ($q) {
                 $q->where('name', 'Employeur'); 
                 $q->orwhere('name', 'Chef Projet');                
-            })->where('societe_id', $currentUser->societe_id)
+            })->whereHas('projets', function ($query) use ($currentUser) {             
+                $query->whereIn('projets.id', $currentUser->projets()->pluck('projets.id'));
+            })
             ->where('id', '!=', $currentUser->id)
             ->get();
         }

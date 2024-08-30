@@ -124,10 +124,11 @@ class UserResource extends Resource
                 Tables\Actions\EditAction::make()
                 ->label('')
                 ->icon('heroicon-s-pencil'),
+                
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-                //Tables\Actions\ForceDeleteBulkAction::make(),
+                // Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\ForceDeleteBulkAction::make(),
                // Tables\Actions\RestoreBulkAction::make(),
             ])
             // **Pagination Implementation**
