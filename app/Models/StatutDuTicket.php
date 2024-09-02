@@ -23,7 +23,7 @@ class StatutDuTicket extends Model
     public const RIEN = 5;
     public $timestamps = false;
     protected $table = 'statuts_des_tickets';
-
+    
     protected $fillable = [
         'name',
     ];

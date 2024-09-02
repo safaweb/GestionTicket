@@ -23,7 +23,6 @@ class TicketValidationNotification extends Notification
     private $nombre_heures;
   
    
-
     public function __construct(Ticket $ticket, $newStatus ,  $validation = null, $commentaire = null, $validation_id, $date_debut = null, $date_fin = null, $nombre_heures = null)
     {
         $this->ticket = $ticket;
@@ -58,13 +57,12 @@ class TicketValidationNotification extends Notification
     {
         return ['mail' ,'database'];
     }
-
     
     
 
     public function toMail($notifiable)
     {
-        $loginUrl = 'http://127.0.0.1:8000/admin/login';  
+        $loginUrl = 'http://192.168.1.230:80/GestionTicket/public/admin/login';  
                     
         $mailMessage = new MailMessage();
 

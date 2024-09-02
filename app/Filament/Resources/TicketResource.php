@@ -33,6 +33,7 @@ class TicketResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-ticket';
     protected static ?int $navigationSort = 3;
     protected static ?string $recordTitleAttribute = 'title';
+    public static ?bool $responsable = false;
     public static function getPluralModelLabel(): string
     {
         return __('Tickets');
@@ -123,12 +124,12 @@ class TicketResource extends Resource
                     Forms\Components\Placeholder::make('approved_at')
                         ->label('Validée le:')
                         ->hiddenOn('create')
-                        ->content(fn (?Ticket $record): string => $record && $record->approved_at ? $record->approved_at->diffForHumans() : '-')
+                        ->content(fn (?Ticket $record): string => $record && $record->approved_at ? $record->approved_at->format('d-m-Y : H:i') : '-')
                         ->disabled(fn ($record) => $record !== null),
                     Forms\Components\Placeholder::make('solved_at')
                         ->translateLabel()
                         ->hiddenOn('create')
-                        ->content(fn (?Ticket $record): string => $record->solved_at ? $record->solved_at->diffForHumans() : '-')
+                        ->content(fn (?Ticket $record): string => $record->solved_at ? $record->solved_at->format('d-m-Y : H:i') : '-')
                         ->disabled(fn ($record) => $record !== null),
                     ])->columns(['sm' => 2,
                     ])->columnSpan(2),
@@ -141,10 +142,6 @@ class TicketResource extends Resource
                         ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
                     Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
-                        /*->options(
-                            User::whereHas('roles', function($query) {
-                                $query->whereIn('name', ['Chef Projet', 'Employeur']);
-                            })->pluck('name', 'id') )*/
                         ->options(
                             User::query()->whereHas('roles', function($query) {
                                 $query->whereIn('name', ['Chef Projet', 'Employeur']);
@@ -153,14 +150,20 @@ class TicketResource extends Resource
                         ->searchable()
                         ->required()
                         ->hiddenOn('create')
-                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet'])),
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']))
+                        ->reactive()
+                        ->afterStateUpdated(function (callable $set, $state) {
+                        if ($state) {  
+                            $responsable=true;
+                        }
+                    }),
                     Forms\Components\Placeholder::make('created_at')
                         ->translateLabel()
-                        ->content(fn (?Ticket $record): string => $record ? $record->created_at->diffForHumans() : '-')
+                        ->content(fn (?Ticket $record): string => $record ? $record->created_at->format('d-m-Y : H:i') : '-')
                         ->disabled(fn ($record) => $record !== null),
                     Forms\Components\Placeholder::make('updated_at')
                         ->translateLabel()
-                        ->content(fn (?Ticket $record): string => $record ? $record->updated_at->diffForHumans() : '-')
+                        ->content(fn (?Ticket $record): string => $record ? $record->updated_at->format('d-m-Y : H:i') : '-')
                         ->disabled(fn ($record) => $record !== null),
                 ])->columnSpan(1),
             ])->columns(3);
