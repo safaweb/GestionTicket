@@ -1,11 +1,13 @@
 @props(['chartId', 'chartOptions', 'contentHeight', 'pollingInterval', 'loadingIndicator', 'deferLoading', 'readyToLoad', 'darkMode'])
-
+ 
 <div {!! $deferLoading ? ' wire:init="loadWidget" ' : '' !!} class="flex items-center justify-center filament-apex-charts-chart"
     style="{{ $contentHeight ? 'height: ' . $contentHeight . 'px;' : '' }}">
+ 
     @if ($readyToLoad)
         <div wire:ignore class="w-full filament-apex-charts-chart-container">
 
             <div class="filament-apex-charts-chart-object" x-ref="{{ $chartId }}" id="{{ $chartId }}">
+                
             </div>
 
             <div {!! $pollingInterval ? 'wire:poll.' . $pollingInterval . '="updateOptions"' : '' !!} x-data="{

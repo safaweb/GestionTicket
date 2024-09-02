@@ -5,7 +5,6 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Notifications\TicketValidationNotification;
 
 /**
@@ -35,7 +34,7 @@ use App\Notifications\TicketValidationNotification;
  */
 class Ticket extends Model
 {
-    use SoftDeletes;
+   // use SoftDeletes;
     protected $table = 'tickets';
 
     protected $casts = [
@@ -51,6 +50,7 @@ class Ticket extends Model
         'approved_at' => 'datetime',
         'solved_at' => 'datetime',
         'accepted' => 'boolean',
+     
     ];
 
     protected $fillable = [
@@ -68,7 +68,9 @@ class Ticket extends Model
         'approved_at',
         'solved_at',
         'accepted',
+        'attachments',
     ];
+    
     
     /** Get the priority that owns the Ticket.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo*/
@@ -149,4 +151,5 @@ class Ticket extends Model
         $this->solved_at = Carbon::now();
         $this->save();
     }
+
 }

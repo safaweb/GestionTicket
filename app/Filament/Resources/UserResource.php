@@ -15,7 +15,6 @@ use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use Filament\Notifications\Notification;
 
@@ -114,7 +113,7 @@ class UserResource extends Resource
                     '1' => 'Yes',
                     '0' => 'No',
                 ]),
-                Tables\Filters\TrashedFilter::make(),
+             //   Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Impersonate::make()
@@ -125,11 +124,12 @@ class UserResource extends Resource
                 Tables\Actions\EditAction::make()
                 ->label('')
                 ->icon('heroicon-s-pencil'),
+                
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-                //Tables\Actions\ForceDeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
+                // Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\ForceDeleteBulkAction::make(),
+               // Tables\Actions\RestoreBulkAction::make(),
             ])
             // **Pagination Implementation**
             //->paginate(10) // <- Added pagination here
@@ -159,9 +159,7 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ])
+           
             // **Eager Loading Implementation**
             ->with(['roles', 'tickets']) // <- Eager loading related models
         ;

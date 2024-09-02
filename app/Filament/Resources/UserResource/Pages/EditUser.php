@@ -17,9 +17,9 @@ class EditUser extends EditRecord
     {
         return [
             Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
-            Actions\ForceDeleteAction::make(),
-            Actions\RestoreAction::make(),
+          //  Actions\DeleteAction::make(),
+         //   Actions\ForceDeleteAction::make(),
+          //  Actions\RestoreAction::make(),
         ];
     }
     protected function mutateFormDataBeforeSave(array $data): array

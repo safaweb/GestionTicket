@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 /**
  * Class StatutDuTicket.
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class StatutDuTicket extends Model
 {
-    use SoftDeletes;
+  //  use SoftDeletes;
 
     public const OUVERT = 1;
     public const EN_COURS = 2;
@@ -23,7 +23,7 @@ class StatutDuTicket extends Model
     public const RIEN = 5;
     public $timestamps = false;
     protected $table = 'statuts_des_tickets';
-
+    
     protected $fillable = [
         'name',
     ];

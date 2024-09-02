@@ -13,7 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+
 
 class SocieteResource extends Resource
 {
@@ -43,7 +43,7 @@ class SocieteResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+              //  Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
@@ -56,7 +56,7 @@ class SocieteResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
                 //Tables\Actions\ForceDeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
+                //Tables\Actions\RestoreBulkAction::make(),
             ])
             ->defaultSort('name', 'asc'); // Default sorting by name
         ;
@@ -84,9 +84,9 @@ class SocieteResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ])
+            // ->withoutGlobalScopes([
+            //     SoftDeletingScope::class,
+            // ])
         ;
     }
 }

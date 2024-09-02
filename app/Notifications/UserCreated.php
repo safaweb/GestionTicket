@@ -27,7 +27,7 @@ class UserCreated extends Notification implements ShouldQueue
 
     public function toMail($notifiable)
     {
-        $loginUrl = 'http://127.0.0.1:8000/admin/login';
+        $loginUrl = 'http://192.168.1.230:80/GestionTicket/public/admin/login';
         return (new MailMessage)
                     ->subject('Votre compte a été créé')
                     ->line('Votre compte a été créé avec succès.')

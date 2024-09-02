@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Societe.
@@ -15,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Societe extends Model
 {
-    use SoftDeletes;
+   // use SoftDeletes;
     public $timestamps = false;
     protected $table = 'societes';
 

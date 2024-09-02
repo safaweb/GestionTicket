@@ -25,17 +25,10 @@ class EditTicket extends EditRecord
     protected function getActions(): array
     {
         $actions = [
-            Actions\ViewAction::make(),
+            Actions\ViewAction::make()          
         ];
-
-        $ticketStatus = $this->record->statutDuTicket ? $this->record->statutDuTicket->name : null;
-        if ($ticketStatus !== 'Non Résolu') {
-            $actions[] = Actions\DeleteAction::make();
-            $actions[] = Actions\ForceDeleteAction::make();
-            $actions[] = Actions\RestoreAction::make();
-        }
-
-        if (Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])) {
+        $ticketStatus = $this->record->statutDuTicket ? $this->record->statutDuTicket->name : null; 
+        if (Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet' ])) {
             $actions[] = Actions\Action::make('Validation')
                 ->label('Validation')
                 ->form([
@@ -80,11 +73,77 @@ class EditTicket extends EditRecord
                             'user_id' => Auth::id(),
                             'commentaire' => "\nVotre ticket est refusé car " . $data['commentaire'],
                         ]);
+                     // Notify the ticket creator about the validation status
+                  //  $ticket = Ticket::findOrFail($ticketId);
+                    $ticketOwner = $ticket->owner; // Assumes there is a 'user' relationship
+                    // $ticketOwner->notify(new TicketValidationNotification($ticket,'Non Résolu',$data['validation'], $data['commentaire'] ?? null,2,   null ,  null, null) );
+
+                    $ticketOwner->notify(new TicketValidationNotification($ticket, $data['validation'], $data['commentaire'] ?? null));
+
+                        // Logique pour envoyer une notification à l'utilisateur assigné
+                        //$ticket->owner->notify(new StatutDuBilletModifie($ticket, $ticket->statutDuTicket->name));
                     }
                     // Redirect to the view page
                     $this->redirect(route('filament.resources.tickets.view', $ticket->id));
-                });
+            });
 
+            
+            $actions[] = Actions\Action::make('Terminer')
+                ->label('Terminer')
+                ->visible(fn () => $this->record->validation_id === 1) // Show only if validation_id is 1
+                ->form([
+                    Forms\Components\Radio::make('status')
+                        ->options([
+                            'resolu' => 'Résolu',
+                            'non_resolu' => 'Non Résolu',
+                        ])
+                        ->reactive()
+                        ->required()
+                        ->afterStateUpdated(function (callable $set, $state) {
+                            $set('showCommentaire', $state === 'non_resolu');
+                        }),
+                    Forms\Components\Textarea::make('commentaire')
+                        ->label('Commentaire')
+                        ->visible(fn (callable $get) => $get('showCommentaire'))
+                        ->required(fn (callable $get) => $get('showCommentaire')),
+                    Forms\Components\DatePicker::make('date_debut')
+                        ->label('Date de Début')
+                        ->required()
+                        ->default(fn () => $this->record->approved_at ? $this->record->approved_at: Carbon::now()->format('Y-m-d')),                    Forms\Components\DatePicker::make('date_fin')
+                        ->label('Date de Fin')
+                        ->required()
+                        ->default(fn () => Carbon::now()), // Optional: Default to 1 day after current date
+                    Forms\Components\TextInput::make('nombre_heures')
+                        ->label('Nombre d\'Heures')
+                        ->numeric()
+                        ->required(),
+                ])
+                ->action(function ($data) {
+                    $ticketId = $this->record->id;
+                    if (!isset($data['status'])) {
+                        return;
+                    }
+                    // Set validation_id to 3
+                    $this->saveValidation($ticketId, 3);
+                    // Set the solved_at date to now
+                    $ticket = Ticket::findOrFail($ticketId);
+                    $ticket->solved_at = Carbon::now();
+                    if ($data['status'] === 'resolu') {
+                        $this->changeTicketStatus($ticketId, 'Résolu', null, $data);
+                    } elseif ($data['status'] === 'non_resolu') {
+                        if (empty($data['commentaire'])) {
+                            $this->addError('commentaire', 'Vous devez spécifier un commentaire pour marquer le ticket comme non résolu.');
+                            return;
+                        }
+                        $this->changeTicketStatus($ticketId, 'Non Résolu', $data['commentaire'], $data);
+                    }
+                    $ticket->save();
+                    // Redirect to the view page
+                    $this->redirect(route('filament.resources.tickets.view', $ticket->id));
+                
+                });
+        }
+        if (Auth::user()->hasAnyRole([  'Employeur'])) { 
             $actions[] = Actions\Action::make('Terminer')
                 ->label('Terminer')
                 ->visible(fn () => $this->record->validation_id === 1) // Show only if validation_id is 1
@@ -152,7 +211,8 @@ class EditTicket extends EditRecord
             if ($newStatus === 'Non Résolu' && $commentaire !== null) {
                 $formattedCommentaire .= " car $commentaire";
             }
-            $formattedCommentaire .= "<br>La date de début est: " . ($data['date_debut'] ?? 'Non spécifiée');
+            $formattedCommentaire .= "<br>La 
+            est: " . ($data['date_debut'] ?? 'Non spécifiée');
             $formattedCommentaire .= "<br>La date de fin est: " . ($data['date_fin'] ?? 'Non spécifiée');
             $formattedCommentaire .= "<br>Le nombre d'heures est: " . ($data['nombre_heures'] ?? 'Non spécifié');
             Commentaire::create([
@@ -185,9 +245,16 @@ class EditTicket extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         // Find the existing ticket record
-        $ticket = Ticket::findOrFail($this->record->id);
+        $ticket = Ticket::findOrFail($this->record->id); 
+
+        if($ticket->validation_id !== 2){
+            $ticket->statuts_des_tickets_id = StatutDuTicket::EN_COURS;     
+            $ticket->validation_id = 1;
+            $ticket->save();
+        }
         // Check if the responsible_id has changed
         if ($ticket->responsible_id !== $data['responsible_id']) {
+            
             // Notify the newly assigned responsible user
             $this->notifyAssignedUser($ticket, $data['responsible_id']);
         }
@@ -198,6 +265,7 @@ class EditTicket extends EditRecord
     {
         // Find the newly assigned responsible user
         $newResponsibleUser = User::find($newResponsibleId);
+  
         // Retrieve the recipients who should be notified
         $receiver = $this->getNotificationRecipients($newResponsibleUser);
         if ($receiver->isNotEmpty()) {
@@ -229,15 +297,27 @@ class EditTicket extends EditRecord
 
     private function getNotificationRecipients($currentUser)
     {
-        // Get all users with the "Employeur" role and associated with the same project as the current user
-        return User::whereHas('roles', function ($q) {
-            $q->where('name', 'Employeur');
-        })
-        ->whereHas('projets', function ($query) use ($currentUser) {
-            $query->whereIn('projets.id', $currentUser->projets()->pluck('projets.id'));
-        })
-        ->where('id', '!=', $currentUser->id)
-        ->get();
+
+
+        if ($currentUser->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])) {
+            return User::whereHas('projets', function ($query) use ($currentUser) {
+             
+                    $query->whereIn('projets.id', $currentUser->projets()->pluck('projets.id'));
+                })
+                ->where('id', '!=', $currentUser->id)
+                ->get();
+        } else {
+            return User::whereHas('roles', function ($q) {
+                $q->where('name', 'Employeur'); 
+                $q->orwhere('name', 'Chef Projet');                
+            })->whereHas('projets', function ($query) use ($currentUser) {             
+                $query->whereIn('projets.id', $currentUser->projets()->pluck('projets.id'));
+            })
+            ->where('id', '!=', $currentUser->id)
+            ->get();
+        }
+        // Send the notification to appropriate recipients
+    foreach ($receiver as $user) {    $user->notify(new TicketAssignedNotification($ticket)); }
     }
 
     protected function notifyTicketOwner($ticket, $data, $newStatus)

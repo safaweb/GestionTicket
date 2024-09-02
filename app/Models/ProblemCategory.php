@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 /**
  * Class ProblemCategory.
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class ProblemCategory extends Model
 {
-    use SoftDeletes;
+ //   use SoftDeletes;
     public $timestamps = false;
     protected $table = 'problem_categories';
 

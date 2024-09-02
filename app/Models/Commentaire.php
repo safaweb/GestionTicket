@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 /**
  * Class Commentaire.
@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Ticket $ticket */
 class Commentaire extends Model
 {
-    use SoftDeletes;
+  //  use SoftDeletes;
     protected $table = 'commentaires';
 
     protected $casts = [
