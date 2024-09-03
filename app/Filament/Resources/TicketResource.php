@@ -26,6 +26,8 @@ use Livewire\Component as Livewire;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\TicketExport;
 
 class TicketResource extends Resource
 {
@@ -271,7 +273,7 @@ class TicketResource extends Resource
                     ->label(__('Export to Excel'))
                     ->icon('heroicon-o-download')
                     ->action(function () {
-                        return Excel::download(new YourTableExport, 'table_export.xlsx');
+                        return Excel::download(new TicketExport, 'table_Ticket.xlsx');
                     }),
             ])
             ->defaultSort('created_at', 'desc');
