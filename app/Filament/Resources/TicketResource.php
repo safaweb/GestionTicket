@@ -28,6 +28,8 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\TicketExport;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 class TicketResource extends Resource
 {
@@ -42,6 +44,21 @@ class TicketResource extends Resource
     }
     public static function form(Form $form): Form
     {
+       if(Str::contains(Route::currentRouteName(), 'tickets.create'))
+       {
+        $userId = Filament::auth()->user()->id; // Get the current user's ID
+        $projetIds = DB::select("select societe_id from societe_user where user_id = ?", [$userId]);                       
+        $societeIdsArray = array_map(function($value) { return $value->societe_id;}, $projetIds);  
+        $project= Projet::whereIn('societe_id', $societeIdsArray)
+            ->pluck('name', 'id')
+            ->toArray();
+       }
+       else{
+        $project= Projet::query()
+        ->pluck('name', 'id')
+        ->toArray();
+    }
+    // dd($project);
         $user= AUTH::user();
         return $form
             ->schema([
@@ -56,19 +73,7 @@ class TicketResource extends Resource
                     Forms\Components\Select::make('projet_id')
                         ->label(__('Projets'))
                         //->options(Projet::query()->pluck('name', 'id')->toArray()) // Optimize options loading              
-                        ->options(function () {
-                            $userId = Filament::auth()->user()->id; // Get the current user's ID
-
-                            $projetIds = DB::select("select societe_id from societe_user where user_id = ?", [$userId]);
-                       
-                            $societeIdsArray = array_map(function($value) {
-                                return $value->societe_id;
-                            }, $projetIds);
-                             
-                            return Projet::whereIn('societe_id', $societeIdsArray)->get()
-                            ->pluck('name', 'id') // Pluck project names and IDs
-                            ->toArray();
-                        })                         
+                        ->options($project)                         
                         // Optimize options loading
                         ->searchable()
                         ->required()
