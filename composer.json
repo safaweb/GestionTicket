@@ -24,6 +24,7 @@
         "league/uri-interfaces": "*",
         "leandrocfe/filament-apex-charts": "^2.0",
         "livewire/livewire": "^2.12",
+        "maatwebsite/excel": "^3.1",
         "owenvoke/blade-fontawesome": "^2.3",
         "stechstudio/filament-impersonate": "^2.18"
     },
