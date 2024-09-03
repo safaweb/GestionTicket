@@ -58,7 +58,7 @@ class TicketResource extends Resource
         ->pluck('name', 'id')
         ->toArray();
     }
-    // dd($project);
+
         $user= AUTH::user();
         return $form
             ->schema([
