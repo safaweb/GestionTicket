@@ -235,6 +235,14 @@ class TicketResource extends Resource
                 //Tables\Actions\ForceDeleteBulkAction::make(),
                // Tables\Actions\RestoreBulkAction::make(),
             ])
+            ->headerActions([
+                Tables\Actions\Action::make('export')
+                    ->label(__('Export to Excel'))
+                    ->icon('heroicon-o-download')
+                    ->action(function () {
+                        return Excel::download(new YourTableExport, 'table_export.xlsx');
+                    }),
+            ])
             ->defaultSort('created_at', 'desc');
     }
     public static function getRelations(): array
