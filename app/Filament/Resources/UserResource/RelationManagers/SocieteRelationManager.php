@@ -10,6 +10,7 @@ use Filament\Tables;
 use App\Models\Societe;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\DetachBulkAction;
+use Filament\Notifications\Notification;
 
 class SocieteRelationManager extends RelationManager
 {
@@ -40,9 +41,7 @@ class SocieteRelationManager extends RelationManager
                         return [
                             Forms\Components\Select::make('societe_id')
                                 ->label('')
-                                //->options(Societe::all()->pluck('name', 'id'))
                                 ->options(function() {
-                                    // Directly fetch the options without caching
                                     return Societe::pluck('name', 'id');
                                 })
                                 ->searchable()
@@ -51,18 +50,27 @@ class SocieteRelationManager extends RelationManager
                     })
                     ->action(function ($data, $livewire) {
                         $user = $livewire->ownerRecord;
-                        $user->societes()->detach();
+
+                        // Check if the société is already attached
+                        if ($user->societes()->where('societe_id', $data['societe_id'])->exists()) {
+                            // Show an error notification
+                            Notification::make()
+                                ->title('Erreur')
+                                ->body('Cette société est déjà attachée à cet utilisateur.')
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+
+                        // Attach the selected société
                         $user->societes()->attach($data['societe_id']);
-                       
-        
                     }),
-                
             ])
             ->actions([
                 DetachAction::make()
                     ->action(function ($record, $livewire) {
                         $user = $livewire->ownerRecord;
-                        // Detach the selected project
                         $user->societes()->detach($record->id);
                     }),
             ])
@@ -70,7 +78,6 @@ class SocieteRelationManager extends RelationManager
                 DetachBulkAction::make()
                     ->action(function ($records, $livewire) {
                         $user = $livewire->ownerRecord;
-                        // Detach all selected projects
                         $user->societes()->detach($records->pluck('id')->toArray());
                     }),
             ]);

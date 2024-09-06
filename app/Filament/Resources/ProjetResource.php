@@ -32,8 +32,8 @@ class ProjetResource extends Resource
                 Forms\Components\Select::make('pays_id')
                     ->label('Pays')
                     ->required()
-                    ->options(Pays::pluck('name', 'id')),
-                    //->options(Pays::all()->pluck('name', 'id')),
+                    //->options(Pays::pluck('name', 'id')),
+                    ->options(Pays::all()->pluck('name', 'id')),
                 Forms\Components\Select::make('societe_id')
                     ->label('Société')
                     ->required()
