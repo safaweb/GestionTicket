@@ -26,8 +26,9 @@ class SocieteResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Nom')
+                    ->label('Nom du societe')
                     ->required()
+                    ->unique('societes', 'name') // Ajout de la règle unique sur la colonne 'nom' de la table 'pays'
                     ->maxLength(255), 
             ])
         ;

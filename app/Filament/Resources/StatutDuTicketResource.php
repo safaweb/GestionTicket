@@ -24,8 +24,9 @@ class StatutDuTicketResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->translateLabel()
+                    ->translateLabel( 'Nom du statut du ticket')
                     ->required()
+                    ->unique('statuts_des_tickets', 'name') // Ajout de la règle unique sur la colonne 'nom' de la table 'pays'
                     ->maxLength(255),
             ]);
     }

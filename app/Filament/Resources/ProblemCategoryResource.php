@@ -33,8 +33,9 @@ class ProblemCategoryResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->translateLabel()
+                    ->translateLabel( 'Nom du catégorie du problème')
                     ->required()
+                    ->unique('problem_categories', 'name') // Ajout de la règle unique sur la colonne 'nom' de la table 'pays'
                     ->maxLength(255),
             ]);
     }

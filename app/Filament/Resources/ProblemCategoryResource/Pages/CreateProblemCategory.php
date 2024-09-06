@@ -13,14 +13,5 @@ class CreateProblemCategory extends CreateRecord
     {
         return 'Créer Catégorie de problème';
     }
-    protected function getFormSchema(): array
-    {
-        return [
-            TextInput::make('name')
-                ->required()
-                ->unique('problem_categories', 'name') // Ajout de la règle unique sur la colonne 'nom' de la table 'pays'
-                ->label('Nom du catégorie du problème '),
-        ];
-    }
 }
 

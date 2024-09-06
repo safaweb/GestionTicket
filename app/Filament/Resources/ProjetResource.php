@@ -26,8 +26,9 @@ class ProjetResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Nom')
+                    ->label('Nom du projet')
                     ->required()
+                    ->unique('projets', 'name') // Ajout de la règle unique sur la colonne 'nom' de la table 'pays'
                     ->maxLength(255),
                 Forms\Components\Select::make('pays_id')
                     ->label('Pays')
