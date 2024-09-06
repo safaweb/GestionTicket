@@ -128,7 +128,7 @@ class UserResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
                 //Tables\Actions\ForceDeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
+               // Tables\Actions\RestoreBulkAction::make(),
             ])
             // **Pagination Implementation**
             //->paginate(10) // <- Added pagination here
