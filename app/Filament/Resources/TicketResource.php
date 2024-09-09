@@ -57,7 +57,7 @@ class TicketResource extends Resource
         $project= Projet::query()
         ->pluck('name', 'id')
         ->toArray();
-    }
+        }
 
         $user= AUTH::user();
         return $form
@@ -242,19 +242,19 @@ class TicketResource extends Resource
                     ->options(StatutDuTicket::query()->pluck('name', 'id')->toArray()) // Optimize filter loading
                     ->label(__('Statut Du Ticket')),
                 Tables\Filters\SelectFilter::make('projet_id')
-                ->options(function () {
-                    $user = Filament::auth()->user(); // Get the current user
-            
-                    return Projet::where('societe_id', function ($query) use ($user) {
-                        $query->select('projet_id')
-                              ->from('projet_user')
-                              ->where('user_id', $user->id)
-                              ->limit(1);
+                    ->label(__('Projet'))
+                    ->options(function () {
+                        $user = Filament::auth()->user(); // Get the current user                        
+                        // Get the project IDs associated with the user's company
+                        $societeIds = DB::table('societe_user')
+                            ->where('user_id', $user->id)
+                            ->pluck('societe_id')
+                            ->toArray();                 
+                        // Retrieve projects that belong to the user's company/companies
+                        return Projet::whereIn('societe_id', $societeIds)
+                            ->pluck('name', 'id')
+                            ->toArray();
                     })
-                    ->pluck('name', 'id') // Pluck project names and IDs
-                    ->toArray();
-                })   // Optimize filter loading
-                    ->label(__('Projet')),
                 //Tables\Filters\TrashedFilter::make()
             ])
             ->actions([

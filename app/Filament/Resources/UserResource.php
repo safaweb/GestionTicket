@@ -17,6 +17,10 @@ use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use Filament\Notifications\Notification;
+use App\Models\Role; 
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Support\Facades\Route;
 
 class UserResource extends Resource
 {
@@ -104,16 +108,30 @@ class UserResource extends Resource
                     ->translateLabel()
                     ->sortable()
                     ->toggleable(),
-            ])
-            
+            ])            
             ->filters([
                 Tables\Filters\SelectFilter::make('is_contrat')
-                ->label('Contrat')
-                ->options([
-                    '1' => 'Yes',
-                    '0' => 'No',
-                ]),
-             //   Tables\Filters\TrashedFilter::make(),
+                    ->label('Contrat')
+                    ->options([
+                        '1' => 'Yes',
+                        '0' => 'No',
+                    ]),
+    
+                Filter::make('roles')
+                    ->label('Role')
+                    ->form([
+                        Forms\Components\Select::make('role')
+                            ->label('Role')
+                            ->options(Role::pluck('name', 'id')->toArray())
+                            ->placeholder('Tout'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        if ($data['role']) {
+                            $query->whereHas('roles', function ($query) use ($data) {
+                                $query->where('roles.id', $data['role']);
+                            });
+                        }
+                    })
             ])
             ->actions([
                 Impersonate::make()
@@ -141,7 +159,7 @@ class UserResource extends Resource
         return [
             RolesRelationManager::class,
             SocieteRelationManager::class,
-            ProjetRelationManager::class,
+            // ProjetRelationManager::class,
             TicketsRelationManager::class,
         ];
     }
