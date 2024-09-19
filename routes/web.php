@@ -5,6 +5,9 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\EmailTestController;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\DownloadController;
+use App\Http\Controllers\TicketController; 
+ 
+ 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,7 +20,7 @@ use App\Http\Controllers\DownloadController;
 Route::get('/', function () {
     return view('landing');
 });
-
+ 
 // Socialite login
 Route::get('/auth/{provider}', [SocialiteController::class, 'redirectToProvider']);
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProvideCallback']);
@@ -36,4 +39,6 @@ Route::get('/storage/{path}', function ($path) {
 })->where('path', '.*');
 
 
-Route::get('/download/{filename}', [DownloadController::class, 'download'])->name('download');
+Route::get('/download/{filename}', [DownloadController::class, 'download'])->name('download'); 
+// web.php or api.php
+Route::get('/notifications/mark-read/{notification}', [TicketController::class, 'markAsRead'])->name('notifications.mark-read');

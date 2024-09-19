@@ -29,25 +29,21 @@ class CreateTicket extends CreateRecord
     /**Gérer la création du ticket et envoyer une notification après la création.*/
     protected function handleRecordCreation(array $data): Ticket
     {
+         
+        $client= User::where('id', $data['owner_id'])->first();       
+        $clientCollection = collect([$client]); 
+        
         $ticket = Ticket::create($data);
-        /*$superAdmins = User::whereHas('roles', function ($query) {
-            $query->where('name', 'Super Admin');
-        })->get();
-        $chefProjets = User::whereHas('roles', function ($query) {
-            $query->where('name', 'Chef Projet');
-        })->whereHas('projets', function ($query) use ($ticket) {
-            $query->where('projet_id', $ticket->projet_id);
-        })->get();*/
-         // Use eager loading to prevent N+1 query problems
         $superAdmins = User::with('roles')->whereHas('roles', function ($query) {
             $query->where('name', 'Super Admin');
         })->get();
+        $receivers = $superAdmins->merge($clientCollection);
         $chefProjets = User::with(['roles', 'projets' => function ($query) use ($ticket) {
             $query->where('projet_id', $ticket->projet_id);
-        }])->whereHas('roles', function ($query) {
+             }])->whereHas('roles', function ($query) {
             $query->where('name', 'Chef Projet');
         })->get();
-        $receivers = $superAdmins->merge($chefProjets);
+        $receivers = $receivers->merge($chefProjets);  
         Notification::make()
             ->title('Il y a un nouveau ticket créé')
             ->actions([
@@ -60,5 +56,18 @@ class CreateTicket extends CreateRecord
             $user->notify(new TicketCreatedNotification($ticket));
         }
         return $ticket;
+    }
+
+
+    public function viewTicket($ticketId, $notificationId)
+    {
+        // Find the notification by its ID and mark it as read
+        $notification = DatabaseNotification::find($notificationId);
+        if ($notification) {
+            $notification->markAsRead();
+        }
+
+        // Redirect the user to the ticket view page (or display the ticket)
+        return redirect()->route('filament.resources.tickets.view', $ticketId);
     }
 }

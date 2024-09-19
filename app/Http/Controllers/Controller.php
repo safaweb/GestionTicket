@@ -31,4 +31,14 @@ class TicketController extends Controller
             return '<a href="' . asset('storage/' . $filePath) . '" download>Télécharger le fichier</a>';
         }
     }
+
+
+    public function markAsRead(DatabaseNotification $notification, $ticket)
+    {
+        // Update the `read_at` column to the current date and time
+        $notification->markAsRead();
+     
+        return redirect()->route('filament.resources.tickets.view', $ticket);
+    }
+
 }

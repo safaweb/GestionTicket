@@ -119,12 +119,13 @@ class CommentairesRelationManager extends RelationManager
                 Tables\Actions\Action::make('attachment')->action(function ($record) {
                     return response()->download('storage/' . $record->attachments);
                 })->hidden(fn ($record) => $record->attachments == ''),
-                Tables\Actions\EditAction::make()
-                ->modalHeading(fn ($record) => 'Modifier')
-                ->visible(function (Livewire $livewire) {
-                    $ticket = $livewire->ownerRecord;
-                    return !in_array($ticket->validation_id, [2, 3]);
-                }),
+
+                // Tables\Actions\EditAction::make()
+                // ->modalHeading(fn ($record) => 'Modifier')
+                // ->visible(function (Livewire $livewire) {
+                //     $ticket = $livewire->ownerRecord;
+                //     return !in_array($ticket->validation_id, [2, 3]);
+                // }),
             ])
             ->bulkActions([]);
     }

@@ -109,10 +109,13 @@ class EditTicket extends EditRecord
                     Forms\Components\DatePicker::make('date_debut')
                         ->label('Date de Début')
                         ->required()
-                        ->default(fn () => $this->record->approved_at ? $this->record->approved_at: Carbon::now()->format('Y-m-d')),                    Forms\Components\DatePicker::make('date_fin')
+                        ->default(fn () => $this->record->approved_at ? $this->record->approved_at: Carbon::now()->format('Y-m-d'))
+                        ->disabled(),                    
+                        Forms\Components\DatePicker::make('date_fin')
                         ->label('Date de Fin')
                         ->required()
-                        ->default(fn () => Carbon::now()), // Optional: Default to 1 day after current date
+                        ->default(fn () => Carbon::now())
+                        ->disabled(), // Optional: Default to 1 day after current date
                     Forms\Components\TextInput::make('nombre_heures')
                         ->label('Nombre d\'Heures')
                         ->numeric()
@@ -261,6 +264,14 @@ class EditTicket extends EditRecord
         return $data;
     }
 
+    // public function  generateTicketUrl($ticket)
+    // {
+        
+    //     $notification->markAsRead();
+    
+    //     ->url($this->generateTicketUrl($ticket)),
+    //     return redirect()->route('filament.resources.tickets.view', $ticket->id);
+    // }
     protected function notifyAssignedUser(Ticket $ticket, $newResponsibleId)
     {
         // Find the newly assigned responsible user

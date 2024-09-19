@@ -159,7 +159,7 @@ class UserResource extends Resource
         return [
             RolesRelationManager::class,
             SocieteRelationManager::class,
-            // ProjetRelationManager::class,
+            ProjetRelationManager::class,
             TicketsRelationManager::class,
         ];
     }
@@ -176,8 +176,7 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-           
+        return parent::getEloquentQuery()           
             // **Eager Loading Implementation**
             ->with(['roles', 'tickets']) // <- Eager loading related models
         ;

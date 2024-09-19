@@ -16,6 +16,7 @@
     $readyToLoad = $this->readyToLoad;
 @endphp
  
+
 <x-filament::widget class="filament-widgets-chart-widget filament-apex-charts-widget">
   
     <x-filament::card class="filament-apex-charts-card" x-data="{ dropdownOpen: false }"
