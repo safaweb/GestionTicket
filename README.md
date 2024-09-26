@@ -35,7 +35,7 @@ Chef Projet
 Email: chefprojet@example.com
 Password: 12345678
 
-Employeur
+Collaborateur
 Email: staffprojet@example.com
 Password: 12345678
 

@@ -98,9 +98,9 @@ class ProjetResource extends Resource
     {
         return [
             'index' => Pages\ListProjets::route('/'),
-            'create' => Pages\CreateProjet::route('/create'),
-            'view' => Pages\ViewProjet::route('/{record}'),
-            'edit' => Pages\EditProjet::route('/{record}/edit'),
+            // 'create' => Pages\CreateProjet::route('/create'),
+            // 'view' => Pages\ViewProjet::route('/{record}'),
+            // 'edit' => Pages\EditProjet::route('/{record}/edit'),
         ];
     }
 

@@ -23,6 +23,7 @@ class CreateTicket extends CreateRecord
         $data['statuts_des_tickets_id'] = 5;
         $data['qualification_id'] = 1;
         $data['validation_id'] = 4;
+        $data['nb_heur'] = null;
         return $data;
     }
 

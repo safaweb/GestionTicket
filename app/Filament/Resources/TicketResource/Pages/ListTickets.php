@@ -15,7 +15,7 @@ class ListTickets extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-            ->visible(fn ($record) => !Auth::user()->hasRole('Super Admin') && !Auth::user()->hasRole(['Chef Projet', 'Employeur'])),
+            ->visible(fn ($record) => !Auth::user()->hasRole('Super Admin') && !Auth::user()->hasRole(['Chef Projet', 'Collaborateur'])),
             
         ];
     }

@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('statuts_des_tickets_id')->index('statuts_des_tickets_id');
             $table->unsignedBigInteger('responsible_id')->nullable()->index('responsible_id');
             $table->string('title');
+            $table->string('nb_heur')->nullable();
             $table->text('description');
             $table->timestamps();
             $table->timestamp('approved_at')->nullable();

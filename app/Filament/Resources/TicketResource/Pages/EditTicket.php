@@ -131,6 +131,7 @@ class EditTicket extends EditRecord
                     // Set the solved_at date to now
                     $ticket = Ticket::findOrFail($ticketId);
                     $ticket->solved_at = Carbon::now();
+                    
                     if ($data['status'] === 'resolu') {
                         $this->changeTicketStatus($ticketId, 'Résolu', null, $data);
                     } elseif ($data['status'] === 'non_resolu') {
@@ -146,7 +147,7 @@ class EditTicket extends EditRecord
                 
                 });
         }
-        if (Auth::user()->hasAnyRole([  'Employeur'])) { 
+        if (Auth::user()->hasAnyRole([  'Collaborateur'])) { 
             $actions[] = Actions\Action::make('Terminer')
                 ->label('Terminer')
                 ->visible(fn () => $this->record->validation_id === 1) // Show only if validation_id is 1
@@ -168,7 +169,8 @@ class EditTicket extends EditRecord
                     Forms\Components\DatePicker::make('date_debut')
                         ->label('Date de Début')
                         ->required()
-                        ->default(fn () => $this->record->approved_at ? $this->record->approved_at: Carbon::now()->format('Y-m-d')),                    Forms\Components\DatePicker::make('date_fin')
+                        ->default(fn () => $this->record->approved_at ? $this->record->approved_at: Carbon::now()->format('Y-m-d')),                    
+                    Forms\Components\DatePicker::make('date_fin')
                         ->label('Date de Fin')
                         ->required()
                         ->default(fn () => Carbon::now()), // Optional: Default to 1 day after current date
@@ -208,6 +210,8 @@ class EditTicket extends EditRecord
     protected function changeTicketStatus($ticketId, $newStatus, $commentaire = null, $data = null)
     {
         $ticket = Ticket::findOrFail($ticketId);
+        $ticket->nb_heur= ($data['nombre_heures'] ?? null);
+        $ticket->save();
         $ticket->statutDuTicket()->associate(StatutDuTicket::where('name', $newStatus)->first());
         if ($ticket->validation_id === 3) {
             $formattedCommentaire = "\nVotre ticket est $newStatus";
@@ -310,7 +314,7 @@ class EditTicket extends EditRecord
     {
 
 
-        if ($currentUser->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])) {
+        if ($currentUser->hasAnyRole(['Super Admin', 'Chef Projet', 'Collaborateur'])) {
             return User::whereHas('projets', function ($query) use ($currentUser) {
              
                     $query->whereIn('projets.id', $currentUser->projets()->pluck('projets.id'));
@@ -319,7 +323,7 @@ class EditTicket extends EditRecord
                 ->get();
         } else {
             return User::whereHas('roles', function ($q) {
-                $q->where('name', 'Employeur'); 
+                $q->where('name', 'Collaborateur'); 
                 $q->orwhere('name', 'Chef Projet');                
             })->whereHas('projets', function ($query) use ($currentUser) {             
                 $query->whereIn('projets.id', $currentUser->projets()->pluck('projets.id'));

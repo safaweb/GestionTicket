@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 
 class TicketCreatedNotification extends Notification implements ShouldQueue
 {
@@ -44,13 +45,17 @@ class TicketCreatedNotification extends Notification implements ShouldQueue
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
-    {
+    { 
         return (new MailMessage)
-                    ->subject('Nouveau ticket créé')
-                    ->line('Un nouveau ticket a été créé avec le nom: ' . $this->ticket->title)
-                    ->line('Le client: ' . $this->ticket->owner->name)
-                    ->line('Le projet: ' . $this->ticket->projet->name)
-                    ->action('Voir le ticket', route('filament.resources.tickets.view', $this->ticket->id));
+                    ->subject('Votre Nouveau ticket créé')
+                    ->line('Bonjour Mr/Mme  '. AUTH::user()->name.', ')
+                    ->line('Votre ticket avec le numéro '. $this->ticket->id.'  a été créé avec succées ')                    
+                    // ->line('Ticket: '. $this->ticket->title)
+                    // ->line('Client: ' . $this->ticket->owner->name)
+                    // ->line('Projet: ' . $this->ticket->projet->name)
+                    ->line('Un des consultants du support client vous contactera bientôt.' )
+                    ->line('Vous pouvez voir le sort de vos tickets et ajouter une autre tickets à travers le lien suivant : ' )
+                    ->action(' Ajouter Ticket ', route('filament.resources.tickets.view', $this->ticket->id));
     }
 
     /**

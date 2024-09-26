@@ -23,7 +23,7 @@ class TicketPolicy
             return $user->id == $ticket->owner_id || $user->projets->contains($ticket->projet_id);
         }
         // The staff projet can view tickets that have been assigned to them.
-        if ($user->hasRole('Employeur')) {
+        if ($user->hasRole('Collaborateur')) {
             return $user->id == $ticket->owner_id ||  $ticket->responsible_id == $user->id;
         }
         // The user can view their own ticket
@@ -41,7 +41,7 @@ class TicketPolicy
     {
             // Only allow specific roles to update tickets
             if ($ticket->statut_des_tickets_id != StatutDuTicket::OUVERT ) {
-                return $user->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']);
+                return $user->hasAnyRole(['Super Admin', 'Chef Projet', 'Collaborateur']);
                 return $this->view($user, $ticket);
             }
             return false;

@@ -43,8 +43,8 @@ class StatutsDesTicketsChart extends ApexChartWidget
             })->withCount(['tickets' => function ($q) use ($projectIds) {
                 $q->whereIn('project_id', $projectIds);
             }])->get();*/
-        } elseif ($user->hasRole('Employeur')) {
-            // Employeur can only see tickets where they are the responsible_id
+        } elseif ($user->hasRole('Collaborateur')) {
+            // Collaborateur can only see tickets where they are the responsible_id
             $statutsDesTickets = $query->whereHas('tickets', function ($q) use ($user) {
                 $q->where('responsible_id', $user->id);
             })->withCount(['tickets' => function ($q) use ($user) {

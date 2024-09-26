@@ -28,10 +28,10 @@ class UserSeeder extends Seeder
 
         // 3. create a staff du Projet
         $staffProjet = User::factory()->create([
-            'name' => 'Employeur',
+            'name' => 'Collaborateur',
             'email' => 'staffprojet@example.com',
         ]);
-        $staffProjet ->syncRoles('Employeur');
+        $staffProjet ->syncRoles('Collaborateur');
 
         // 4. create a user
         $userProjet  = User::factory()->create([

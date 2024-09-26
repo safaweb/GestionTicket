@@ -16,6 +16,7 @@ class CreateSociete extends CreateRecord
                 ->required()
                 ->unique('societes', 'name') // Ajout de la règle unique sur la colonne 'nom' de la table 'pays'
                 ->label('Nom du societe '),
+                
         ];
     }
 

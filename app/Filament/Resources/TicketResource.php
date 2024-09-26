@@ -30,6 +30,10 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\TicketExport;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Filament\Tables\Filters\DateFilter;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\Filter; 
+use Filament\Tables\Filters\SelectFilter;
 
 class TicketResource extends Resource
 {
@@ -146,18 +150,18 @@ class TicketResource extends Resource
                         ->label(__('Statut'))
                         ->hiddenOn('create')
                         ->content(fn (?Ticket $record): string => $record->statutDuTicket ? $record->statutDuTicket->name : '-')
-                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur'])),
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Collaborateur'])),
                     Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
                         ->options(
                             User::query()->whereHas('roles', function($query) {
-                                $query->whereIn('name', ['Chef Projet', 'Employeur']);
+                                $query->whereIn('name', ['Chef Projet', 'Collaborateur']);
                             })->pluck('name', 'id')->toArray() // Optimize options loading
                         )
                         ->searchable()
                         ->required()
                         ->hiddenOn('create')
-                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']))
+                        ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Collaborateur']))
                         ->reactive()
                         ->afterStateUpdated(function (callable $set, $state) {
                         if ($state) {  
@@ -179,6 +183,10 @@ class TicketResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label(__('N°'))
+                    ->translateLabel()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('title')
                     ->translateLabel()
                     ->searchable(),
@@ -195,7 +203,7 @@ class TicketResource extends Resource
                     ->label(__('Responsible'))
                     ->sortable()
                     ->searchable()
-                    ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet','Employeur']))
+                    ->hidden(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Chef Projet','Collaborateur']))
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('projet.pays.name')
                     ->searchable()
@@ -228,34 +236,68 @@ class TicketResource extends Resource
                         } elseif ($record->statutDuTicket->name === 'Non Résolu') {
                         return ['style' => 'color: red;'];}
                         return [];}),
+                Tables\Columns\TextColumn::make('nb_heur')
+                        ->translateLabel()
+                        ->searchable()
+                        ->label(__('Durée')),
+                        
                 Tables\Columns\TextColumn::make('created_at')
                     ->date()
                     ->translateLabel()
                     ->sortable()
-                    ->toggleable(),
-            ])
+                    ->toggleable()
+                
+                    ])
+                
             ->filters([
                 Tables\Filters\SelectFilter::make('validation_id')
                     ->options(Validation::query()->pluck('name', 'id')->toArray()) // Optimize filter loading
                     ->label(__('Validation')),
-                Tables\Filters\SelectFilter::make('tatuts_des_tickets_id')
+
+                // Tables\Filters\SelectFilter::make('projet.pays.name') 
+                //     ->label(__('Pays'))
+                //     ->options(Pays::query()->pluck('name')->toArray()),
+                   
+
+                Tables\Filters\SelectFilter::make('statuts_des_tickets_id')
                     ->options(StatutDuTicket::query()->pluck('name', 'id')->toArray()) // Optimize filter loading
                     ->label(__('Statut Du Ticket')),
+
                 Tables\Filters\SelectFilter::make('projet_id')
                     ->label(__('Projet'))
                     ->options(function () {
-                        $user = Filament::auth()->user(); // Get the current user                        
+                        $user = Filament::auth()->user(); // Get the current user                                         
                         // Get the project IDs associated with the user's company
                         $societeIds = DB::table('societe_user')
                             ->where('user_id', $user->id)
                             ->pluck('societe_id')
-                            ->toArray();                 
+                            ->toArray();
+                            // dd($societeIds );                   
                         // Retrieve projects that belong to the user's company/companies
                         return Projet::whereIn('societe_id', $societeIds)
                             ->pluck('name', 'id')
                             ->toArray();
-                    })
-                //Tables\Filters\TrashedFilter::make()
+                    }),
+                SelectFilter::make('responsible_id')
+                        ->label(__('Responsible'))
+                        ->options(User::all()->pluck('name', 'id')->toArray()) ,
+                SelectFilter::make('owner_id') // Assuming 'owner_id' is the field for users
+                        ->label(__('User'))
+                        ->options(User::query()->pluck('name', 'id')->toArray()),
+              
+                Filter::make('created_at')
+                ->form([
+                    DatePicker::make('created_from')->label(__('Date de ')),
+                    DatePicker::make('created_until')->label(__('à')),
+                ])
+                ->query(function ($query, array $data) {
+                    return $query
+                        ->when($data['created_from'], fn ($query, $date) => $query->whereDate('created_at', '>=', $date))
+                        ->when($data['created_until'], fn ($query, $date) => $query->whereDate('created_at', '<=', $date));
+                })
+                ->label(__('Date de Création')),
+
+                // Tables\Filters\TrashedFilter::make()
             ])
             ->actions([
                 Tables\Actions\Action::make('attachment')->action(function ($record) {
@@ -265,21 +307,26 @@ class TicketResource extends Resource
                 ->label('')
                 ->icon('heroicon-s-eye'),
                 Tables\Actions\EditAction::make()
-                ->visible(fn ($record) => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Employeur']) && in_array($record->validation_id, [4, 1]))
+                ->visible(fn ($record) => Auth::user()->hasAnyRole(['Super Admin', 'Chef Projet', 'Collaborateur']) && in_array($record->validation_id, [4, 1]))
                 ->label('')
                 ->icon('heroicon-s-pencil'),])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-                //Tables\Actions\ForceDeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
+                // Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\ForceDeleteBulkAction::make(),
+                // Tables\Actions\RestoreBulkAction::make(),
             ])
             ->headerActions([
                 Tables\Actions\Action::make('export')
                     ->label(__('Export to Excel'))
                     ->icon('heroicon-o-download')
-                    ->action(function () {
-                        return Excel::download(new TicketExport, 'table_Ticket.xlsx');
+                    ->action(function () { 
+                        return Excel::download(new TicketExport(), 'table_Ticket.xlsx');
+                    })
+                    ->visible(function () {
+                        // Check if the user role is not 'client'
+                        return !Auth::user()->hasRole('Client');
                     }),
+
             ])
             ->defaultSort('created_at', 'desc');
     }
@@ -317,7 +364,7 @@ class TicketResource extends Resource
                                     ->where('projet_user.user_id', $user->id);
                         })->orWhere('tickets.owner_id', $user->id);
                     });
-                } elseif (auth()->user()->hasRole('Employeur')) {
+                } elseif (auth()->user()->hasRole('Collaborateur')) {
                     $query->where('tickets.responsible_id', auth()->id())->orWhere('tickets.owner_id', auth()->id());
                 } else {
                     $query->where('tickets.owner_id', auth()->id());
